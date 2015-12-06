@@ -1,0 +1,60 @@
+(admin.html)
+<br>
+Admin:
+<ul>
+  <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
+      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}}) &#187;
+      <a href="" ng-click="deleteConfirm=true">
+        delete
+      </a>
+        <span ng-show="deleteConfirm">
+          Are you sure?
+          <a href="" ng-click="deleteBook(book._id); deleteConfirm=false; deleted=true">
+            Yes
+          </a> /
+          <a href="" ng-click="deleteConfirm=false">
+            Cancel
+          </a>
+        </span>
+       -
+      <a href="" ng-click="show=true">
+        edit
+      </a>
+      <div ng-show="show">
+        <a href= "" ng-click="show=false">X</a>
+
+        <div id="editSelectBox">
+          <select id="editOptionBox" ng-model="editOption" ng-options="option.value as option.name for option in options" ng-init="editOption = options[0].value">
+          </select>
+        </div>
+
+
+        <form name="editBookForm">
+          <input type="text" ng-model="editedBook" placeholder="New {{editOption}}" required/>
+          <button ng-disabled="editedBookForm.$invalid" ng-click="editBook(book._id, editOption, editedBook)">
+            Edit {{editOption}}
+          </button>
+        </form>
+
+      </div>
+  </li>
+</ul>
+<div>
+  <a href="" ng-click="showNewBookForm=true">Add book</a>
+  <div ng-show="showNewBookForm">
+    <a href="" ng-click="showNewBookForm=false">X</a>
+    <form name="newBookForm">
+      <input type="text" ng-model="newBookTitle" placeholder="New book title" required/>
+      <br>
+      <input type="text" ng-model="newBookAuthor" placeholder="New book author" required/>
+      <br>
+      <input type="text" ng-model="newBookIsbn" placeholder="New book ISBN" required/>
+      <br>
+      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor, newBookIsbn)">
+        Add Book
+      </button>
+    </form>
+  </div>
+</div>
+
+<a ui-sref='main'>&#171; Main</a>

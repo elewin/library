@@ -1,1 +1,10 @@
-this is main.html
+(main.html)
+<br>
+books:
+<ul>
+  <li ng-repeat="book in books">
+      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
+  </li>
+</ul>
+
+<a ui-sref='admin'>Admin</a>

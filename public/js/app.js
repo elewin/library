@@ -9,5 +9,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
 			controller: 'mainCtrl',
 			templateUrl: './tmpl/main.html',
 		})
+  .state('admin', {
+  url: '/admin',
+  controller: 'adminCtrl',
+  templateUrl: './tmpl/admin.html',
+})
 	$urlRouterProvider.otherwise('/');
 });

@@ -5,6 +5,12 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+//controllers:
+var bookCtrl = require('./server-assets/controllers/bookCtrl');
+
+//schema:
+var Book = require('./server-assets/models/bookSchema');
+
 //addresses and ports:
 var serverPort = 8080;
 var dbPort = 27017;
@@ -15,6 +21,13 @@ app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
 
 //API endpoints:
+
+//books:
+app.get('/api/books', bookCtrl.getBooks);
+app.get('/api/books', bookCtrl.getBook);
+app.post('/api/books', bookCtrl.addBook);
+app.put('/api/books/:id', bookCtrl.editBook);
+app.delete('/api/books/:id', bookCtrl.deleteBook);
 
 //server start-up:
 //connect to db
