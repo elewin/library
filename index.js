@@ -7,6 +7,8 @@ var mongoose = require('mongoose');
 
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
+var userCtrl = require('./server-assets/controllers/userCtrl');
+var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 
 //schema:
 var Book = require('./server-assets/models/bookSchema');
@@ -22,12 +24,27 @@ app.use(bodyParser.json(), cors());
 
 //API endpoints:
 
-//books:
+//books
 app.get('/api/books', bookCtrl.getBooks);
-app.get('/api/books', bookCtrl.getBook);
+app.get('/api/books/:id', bookCtrl.getBook);
 app.post('/api/books', bookCtrl.addBook);
 app.put('/api/books/:id', bookCtrl.editBook);
 app.delete('/api/books/:id', bookCtrl.deleteBook);
+
+//users
+app.get('/api/users', userCtrl.getUsers);
+app.get('/api/users/:id', userCtrl.getUser);
+app.post('/api/users', userCtrl.addUser);
+app.put('/api/users/:id', userCtrl.editUser);
+app.delete('/api/users/:id', userCtrl.deleteUser);
+
+//library
+// ****move this to within each user instead of its own thing? eg /api/users/id/library
+//also, library needs to be added when new user is created. see todo
+app.get('/api/library/:id', libraryCtrl.getLibrary);
+app.post('/api/library', libraryCtrl.addLibrary);
+app.get('/api/library/:id', libraryCtrl.getLibrary);
+app.delete('api/library/:id', libraryCtrl.deleteLibrary);
 
 //server start-up:
 //connect to db

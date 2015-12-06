@@ -1,6 +1,7 @@
-angular.module('library').controller('adminCtrl', function($scope, bookService) {
+angular.module('library').controller('adminCtrl', function($scope, bookService, userService) {
 
-  $scope.options = [ //keys for editBook
+  //books:
+  $scope.bookOptions = [ //keys for editBook
 		{
 			name: 'Title',
 			value: 'title',
@@ -19,14 +20,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService) 
     bookService.getBooks().then(function (books){
       $scope.books = books.data;
     });
-  }
+  };
   getBooks();
 
   $scope.deleteBook = function(id){
     bookService.deleteBook(id).then(function(res){
       getBooks();
     });
-  }
+  };
 
   $scope.addBook = function(title, author, isbn){
     bookService.addBook(title, author, isbn);
@@ -35,12 +36,47 @@ angular.module('library').controller('adminCtrl', function($scope, bookService) 
     $scope.newBookIsbn = "";
     getBooks();
 
-  }
+  };
 
   $scope.editBook = function(id, key, val){
     bookService.editBook(id, key, val).then(function(res){
       getBooks();
     });
-  }
+  };
+
+
+  //users
+
+  $scope.userOptions = [ //keys for editBook
+		{
+			name: 'Name',
+			value: 'name',
+		},		
+	];
+
+  var getUsers = function(){
+    userService.getUsers().then(function (users){
+      $scope.users = users.data;
+    });
+  };
+  getUsers();
+
+  $scope.addUser = function(name){
+    userService.addUser(name).then(function(res){
+      getUsers();
+    });
+  };
+
+  $scope.deleteUser = function(id){
+    userService.deleteUser(id).then(function(res){
+      getUsers();
+    });
+  };
+
+  $scope.editUser = function(id, key, val){
+    userService.editUser(id, key, val).then(function(res){
+      getUsers();
+    });
+  };
 
 });

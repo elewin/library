@@ -5,7 +5,7 @@ console.log('app loads');
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 	.state('main', {
-	  url: '/',
+    url: '/',
 		controller: 'mainCtrl',
 		templateUrl: './tmpl/main.html',
 	})
