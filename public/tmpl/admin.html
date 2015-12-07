@@ -6,13 +6,13 @@ Books:
 <ul>
 
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
-      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}}) &#187;
+      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}}) id: {{book._id}} &#187;
       <a href="" ng-click="deleteConfirm=true">
         delete
       </a>
         <span ng-show="deleteConfirm">
           Are you sure?
-          <a href="" ng-click="deleteBook(book._id); deleteConfirm=false; deleted=true">
+          <a href="" ng-click="deleteBook(book._id); deleteConfirm=false; ">
             Yes
           </a> /
           <a href="" ng-click="deleteConfirm=false">
@@ -27,7 +27,7 @@ Books:
         <a href= "" ng-click="show=false">X</a>
 
         <div id="editBookSelectBox">
-          <select id="editBookOptionBox" ng-model="editBookOption" ng-options="option.value as option.name for option in bookOptions" ng-init="editBookOption = options[0].value">
+          <select id="editBookOptionBox" ng-model="editBookOption" ng-options="option.value as option.name for option in bookOptions" ng-init="editBookOption = bookOptions[0].value">
           </select>
         </div>
 
@@ -64,13 +64,13 @@ Books:
 Users:
 <ul>
   <li ng-repeat="user in users">
-    {{user.name}}
-    <!-- <a href="" ng-click="deleteConfirm=true">
+    {{user.name}}  &#187;
+    <a href="" ng-click="deleteConfirm=true">
       delete
     </a>
       <span ng-show="deleteConfirm">
         Are you sure?
-        <a href="" ng-click="deleteUser(user._id); deleteConfirm=false; deleted=true">
+        <a href="" ng-click="deleteUser(user._id); deleteConfirm=false;">
           Yes
         </a> /
         <a href="" ng-click="deleteConfirm=false">
@@ -84,25 +84,20 @@ Users:
     <div ng-show="show">
       <a href= "" ng-click="show=false">X</a>
 
-      <div id="editSelectBox">
-        <select id="editOptionBox" ng-model="editOption" ng-options="option.value as option.name for option in options" ng-init="editOption = options[0].value">
+      <div id="editUserSelectBox">
+        <select id="editUserOptionBox" ng-model="editUserOption" ng-options="option.value as option.name for option in userOptions" ng-init="editUserOption = userOptions[0].value">
         </select>
       </div>
 
 
       <form name="editUserForm">
-        <input type="text" ng-model="editedUser" placeholder="New {{editOption}}" required/>
-        <button ng-disabled="editedUserForm.$invalid" ng-click="editUser(user._id, editOption, editedUser)">
-          Edit {{editOption}}
+        <input type="text" ng-model="editedUser" placeholder="New {{editUserOption}}" required/>
+        <button ng-disabled="editedUserForm.$invalid" ng-click="editUser(user._id, editUserOption, editedUser)">
+          Edit {{editUserOption}}
         </button>
       </form>
 
-    </div> -->
-
-    <a href="" ng-click="deleteUser(user._id);" >
-      delete
-    </a>
-
+    </div>
   </li>
 </ul>
 
@@ -119,6 +114,80 @@ Users:
     </form>
   </div>
 </div>
+<hr>
+Libraries:
+<ul>
+  <li ng-repeat="library in libraryList">
+
+<!-- ----------------------->
+
+
+    library._id: {{library._id}} - {{library.tempThing}}
+    <br>
+    <form name="addBookForm">
+      <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
+
+      <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(library._id, addBookId)">
+        Add to library
+      </button>
+    </form>
+
+  books: {{library.books}}
+  <div ng-repat="book in library.books">
+    {{book}}
+
+  </div>
+
+
+
+
+
+    <br>&#187;
+
+
+<!-- ----------------------->
+
+    <a href="" ng-click="deleteConfirm=true">
+      delete
+    </a>
+      <span ng-show="deleteConfirm">
+        Are you sure?
+        <a href="" ng-click="deleteLibrary(library._id); deleteConfirm=false;">
+          Yes
+        </a> /
+        <a href="" ng-click="deleteConfirm=false">
+          Cancel
+        </a>
+      </span>
+     -
+    <a href="" ng-click="show=true">
+      edit
+    </a>
+    <div ng-show="show">
+      <a href= "" ng-click="show=false">X</a>
+
+      <div id="editLibrarySelectBox">
+        <select id="editLibraryOptionBox" ng-model="editLibraryOption" ng-options="option.value as option.name for option in libraryOptions" ng-init="editLibraryOption = libraryOptions[0].value">
+        </select>
+      </div>
+
+      <form name="editLibraryForm">
+        <input type="text" ng-model="editedLibrary" placeholder="New {{editLibraryOption}}" required/>
+        <button ng-disabled="editedLibraryForm.$invalid" ng-click="editLibrary(library._id, editLibraryOption, editedLibrary)">
+          Edit {{editLibraryOption}}
+        </button>
+      </form>
+
+    </div>
+  </li>
+</ul>
+
+<div>
+  <button ng-click="addLibrary()">
+    Add Library
+  </button>
+</div>
+
 <hr>
 
 <a ui-sref='main'>&#171; Main</a>

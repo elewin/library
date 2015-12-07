@@ -1,4 +1,4 @@
-angular.module('library').service('libraryService', function($stateParams, $http) {
+angular.module('library').service('libraryService', function($stateParams, $http, $q) {
 
   this.getLibrary =  function(id){
     return $http({
@@ -41,12 +41,16 @@ angular.module('library').service('libraryService', function($stateParams, $http
     })
   };
 
-  this.addToLibrary = function(userId, bookId){
+  this.addToLibrary = function(libraryId, bookId){ //right now userId is actually being passed libraryId
+    //var deferred = $q.defer();
+    console.log('libraryId:', libraryId, 'bookId:', bookId);
     return $http({
-      method: 'POST',
-      url: '/api/library/' + userId, //??
+      method: 'PUT',
+      url: '/api/library/' + libraryId, //??
       data: {
-        book: bookId,
+        books: {
+          book: bookId,
+        }
       },
     }).then(function(res) {
       return res.data;

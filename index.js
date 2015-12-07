@@ -23,7 +23,6 @@ app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
 
 //API endpoints:
-
 //books
 app.get('/api/books', bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
@@ -42,9 +41,10 @@ app.delete('/api/users/:id', userCtrl.deleteUser);
 // ****move this to within each user instead of its own thing? eg /api/users/id/library
 //also, library needs to be added when new user is created. see todo
 app.get('/api/library/:id', libraryCtrl.getLibrary);
+app.get('/api/library/', libraryCtrl.getAllLibraries);
 app.post('/api/library', libraryCtrl.addLibrary);
-app.get('/api/library/:id', libraryCtrl.getLibrary);
-app.delete('api/library/:id', libraryCtrl.deleteLibrary);
+app.put('/api/library/:id', libraryCtrl.editLibrary);
+app.delete('/api/library/:id', libraryCtrl.deleteLibrary);
 
 //server start-up:
 //connect to db
