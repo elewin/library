@@ -129,11 +129,11 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   //   });
   // };
 
-  $scope.addLibraryToUser = function(userId){
-    libraryService.addLibraryToUser(userId).then(function(res){
-      //getLibraryList();
-    });
-  };
+  // $scope.addLibraryToUser = function(userId){
+  //   libraryService.addLibraryToUser(userId).then(function(res){
+  //     //getLibraryList();
+  //   });
+  // };
 
   $scope.deleteLibrary = function(id){
     libraryService.deleteLibrary(id).then(function(res){

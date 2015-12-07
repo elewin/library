@@ -16,7 +16,6 @@ module.exports = {
 
 
   getUserLibrary: function(req, res){
-    console.log('getUserLibrary!');
     Library.findById(req.params.id).populate('books').exec(function(err, result){
       if (err){
         res.status(505).send(err);
@@ -62,12 +61,12 @@ module.exports = {
 
 
   addBookToLibrary: function(req, res){
-    User.findById(req.params.id).exec().then(function(user){
-      var books = user.library.books;
+    Library.findById(req.params.id).exec().then(function(library){
+      var books = library.books;
       console.log('server libraryCtrl addLibraryToUser books:', books);
-      books.push(req.body);
-      return user.save().then(function(theUser){
-        return res.json(theUser);
+      books.push(req.body.books);
+      return library.save().then(function(theLibrary){
+        return res.json(theLibrary);
       });
     }).catch(function(err){
       return res.status(508).json(err);

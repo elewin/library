@@ -63,7 +63,7 @@ Books:
 <hr>
 Users:
 <ul>
-  <li ng-repeat="user in users" ng-init="getUserLibrary(user.library)">
+  <li ng-repeat="user in users">
     name: {{user.name}} (_.id: {{user._id}})
 
     &#187;
@@ -105,6 +105,7 @@ Users:
     users library (library id: {{user.library}}):
     <br>
     <!-- books: {{userLibrary.books}} -->
+    <div ng-init="getUserLibrary(user.library)"></div>  <!-- this is buggy -->
     <div ng-repeat="book in userLibrary.books">
       {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
     </div>
@@ -147,10 +148,7 @@ Libraries:
 <ul>
   <li ng-repeat="library in libraryList">
 
-<!-- ********************  -->
-
-
-    library._id: {{library._id}} - {{library.tempThing}}
+    library._id: {{library._id}}
     &#187;
     <a href="" ng-click="deleteConfirm=true">
       delete
@@ -165,7 +163,7 @@ Libraries:
         </a>
       </span>
      -
-    <a href="" ng-click="show=true">
+    <!-- <a href="" ng-click="show=true">
       edit
     </a>
     <div ng-show="show">
@@ -183,31 +181,23 @@ Libraries:
         </button>
       </form>
 
-    </div>
+    </div> -->
 
     <br>
-    <form name="addBookForm">
+    <!-- <form name="addBookForm">
       <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
 
       <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(library._id, addBookId)">
         Add to library
       </button>
-    </form>
+    </form> -->
 
-  books: {{library.books}}
-  <br>
-  <br>
-  ng-repeat for books starts here:
+  <!-- books: {{library.books}} -->
   <div ng-repeat="book in library.books">
     {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
 
   </div>
-
-
-
-
-
-
+  <br>
   </li>
 </ul>
 

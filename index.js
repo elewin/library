@@ -47,7 +47,8 @@ app.delete('/api/users/:id', userCtrl.deleteUser);
 app.get('/api/library/', libraryCtrl.getAllLibraries); //should be removed later
 app.get('/api/library/:id', libraryCtrl.getUserLibrary);
 app.post('/api/library', libraryCtrl.addLibrary);
-app.put('/api/library/:id', libraryCtrl.editLibrary);
+//app.put('/api/library/:id', libraryCtrl.editLibrary);
+app.put('/api/library/:id', libraryCtrl.addBookToLibrary);
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary);
 
 //server start-up:
