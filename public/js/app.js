@@ -1,7 +1,5 @@
 var app = angular.module('library', ['ui.router']);
 
-console.log('app loads');
-
 app.config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 	.state('main', {

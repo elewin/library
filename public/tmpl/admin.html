@@ -63,53 +63,67 @@ Books:
 <hr>
 Users:
 <ul>
-  <li ng-repeat="user in users">
-    {{user.name}}  &#187;
+  <li ng-repeat="user in users" ng-init="getUserLibrary(user.library)">
+    name: {{user.name}} (_.id: {{user._id}})
+
+    &#187;
     <a href="" ng-click="deleteConfirm=true">
-      delete
+     delete
     </a>
-      <span ng-show="deleteConfirm">
-        Are you sure?
-        <a href="" ng-click="deleteUser(user._id); deleteConfirm=false;">
-          Yes
-        </a> /
-        <a href="" ng-click="deleteConfirm=false">
-          Cancel
-        </a>
-      </span>
-     -
+     <span ng-show="deleteConfirm">
+       Are you sure?
+       <a href="" ng-click="deleteUser(user._id, user.library); deleteConfirm=false;">
+         Yes
+       </a> /
+       <a href="" ng-click="deleteConfirm=false">
+         Cancel
+       </a>
+     </span>
+    -
     <a href="" ng-click="show=true">
-      edit
+     edit
     </a>
     <div ng-show="show">
-      <a href= "" ng-click="show=false">X</a>
+     <a href= "" ng-click="show=false">X</a>
 
-      <div id="editUserSelectBox">
-        <select id="editUserOptionBox" ng-model="editUserOption" ng-options="option.value as option.name for option in userOptions" ng-init="editUserOption = userOptions[0].value">
-        </select>
-      </div>
+     <div id="editUserSelectBox">
+       <select id="editUserOptionBox" ng-model="editUserOption" ng-options="option.value as option.name for option in userOptions" ng-init="editUserOption = userOptions[0].value">
+       </select>
+     </div>
 
 
-      <form name="editUserForm">
-        <input type="text" ng-model="editedUser" placeholder="New {{editUserOption}}" required/>
-        <button ng-disabled="editedUserForm.$invalid" ng-click="editUser(user._id, editUserOption, editedUser)">
-          Edit {{editUserOption}}
-        </button>
-      </form>
+     <form name="editUserForm">
+       <input type="text" ng-model="editedUser" placeholder="New {{editUserOption}}" required/>
+       <button ng-disabled="editedUserForm.$invalid" ng-click="editUser(user._id, editUserOption, editedUser)">
+         Edit {{editUserOption}}
+       </button>
+     </form>
 
     </div>
 
+    <br>
+    users library (library id: {{user.library}}):
+    <br>
+    <!-- books: {{userLibrary.books}} -->
+    <div ng-repeat="book in userLibrary.books">
+      {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
+    </div>
+
+    <form name="addBookForm">
+      <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
+
+      <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(user.library, addBookId)">
+        Add to library
+      </button>
+    </form>
+
+
+
+  </div>
 
 
     <br>
-    {{user._id}}
-    <button ng-click="addLibraryToUser(user._id)">
-      Add Library to user
-    </button>
 
-
-
-    
   </li>
 </ul>
 
@@ -127,6 +141,8 @@ Users:
   </div>
 </div>
 <hr>
+
+
 Libraries:
 <ul>
   <li ng-repeat="library in libraryList">
@@ -135,33 +151,7 @@ Libraries:
 
 
     library._id: {{library._id}} - {{library.tempThing}}
-    <br>
-    <form name="addBookForm">
-      <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
-
-      <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(library._id, addBookId)">
-        Add to library
-      </button>
-    </form>
-
-  books: {{library.books}}
-  <br>
-  <br>
-  ng-repeat starts here:
-  <div ng-repeat="book in library.books">
-    {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
-
-  </div>
-
-
-
-
-
-    <br>&#187;
-
-
-<!-- ********************  -->
-
+    &#187;
     <a href="" ng-click="deleteConfirm=true">
       delete
     </a>
@@ -194,14 +184,38 @@ Libraries:
       </form>
 
     </div>
+
+    <br>
+    <form name="addBookForm">
+      <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
+
+      <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(library._id, addBookId)">
+        Add to library
+      </button>
+    </form>
+
+  books: {{library.books}}
+  <br>
+  <br>
+  ng-repeat for books starts here:
+  <div ng-repeat="book in library.books">
+    {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
+
+  </div>
+
+
+
+
+
+
   </li>
 </ul>
 
-<div>
+<!-- <div>
   <button ng-click="addLibrary()">
     Add Library
   </button>
-</div>
+</div> -->
 
 <hr>
 

@@ -14,6 +14,13 @@ angular.module('library').service('libraryService', function($stateParams, $http
     })
   };
 
+  this.getUserLibrary = function(libraryId){
+    return $http({
+      method: 'GET',
+      url: '/api/library/'+libraryId,
+    })
+  };
+
     this.deleteLibrary = function(id){
     console.log('Deleting library id:', id);
     return $http({

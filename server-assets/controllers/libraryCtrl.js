@@ -19,21 +19,21 @@ module.exports = {
     console.log('getUserLibrary!');
     Library.findById(req.params.id).populate('books').exec(function(err, result){
       if (err){
-        res.status(500).send(err);
+        res.status(505).send(err);
       }
-      console.log(result);
+    //  console.log(result);
       res.send(result);
     });
   },
 
  ///this should be removed later since we dont need to see every users library
   getAllLibraries: function(req, res){
-    console.log('getAllLibraries');
+    //console.log('getAllLibraries');
     Library.find(req.query).populate('books').exec(function(err, result){
       if (err){
-        res.status(500).send(err);
+        res.status(506).send(err);
       }
-      console.log(result);
+      //console.log(result);
       res.send(result);
     });
   },
@@ -42,7 +42,7 @@ module.exports = {
     var newLibrary = new Library(req.body);
     newLibrary.save(function(err, result){
       if(err){
-        res.status(500).json(err);
+        res.status(507).json(err);
       } else {
         res.json(result);
       };
@@ -70,14 +70,14 @@ module.exports = {
         return res.json(theUser);
       });
     }).catch(function(err){
-      return res.status(500).json(err);
+      return res.status(508).json(err);
     });
   },
 
   editLibrary: function(req, res){
     Library.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if(err){
-        res.status(500).json(err);
+        res.status(509).json(err);
       } else {
         res.json(result);
       };
