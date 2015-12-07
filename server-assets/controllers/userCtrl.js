@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var Library = require('../models/librarySchema');
 var User = require('../models/userSchema');
 var bookSchema = require('../models/bookSchema');
 var Book = mongoose.model('Book', bookSchema);
@@ -34,11 +35,14 @@ module.exports = {
   },
   addUser: function(req, res){
     var newUser = new User(req.body);
+    newUser.library = new Library(); //instead of here
+    newUser.library.save();
     newUser.save(function(err, result){
       if(err){
         res.status(500).json(err);
       } else {
         res.json(result);
+        //new librarty push here for multiple libraries later intead of stuff at top (call sep function)
       }
     })
   },

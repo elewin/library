@@ -1,49 +1,40 @@
 var Library = require('../models/librarySchema');
 var User = require('../models/userSchema');
 
-// var q =require('q');
-//
-// var getLibrary = function(libraryId){
-//   var deferred = q.defer();
-//   Library.find({
-//     _id: libraryId,
-//   }, function (err, results){
-//     if (!err){
-//       console.log ('library found:', results);
-//       deferred.resolve(results[0]);
-//     }else {
-//       console.log('error on getLibrary:', err);
-//       deferred.reject(err);
-//     }
-//   });
-//   return deferred.promise;
-// }
 
 module.exports = {
-  getLibrary: function(req, res){
-    Order.findById(req.params.id, function(err, order){
-      if(err){
-        res.status(500).json(err);
-      } else {
-        library.populate(library, function(err, theLibrary){
-          console.log(theLibrary);
-          if(err){
-            res.status(500).json(err);
-          } else {
-            res.json(theLibrary);
-          }
-        })
+  // getLibrary: function(req, res){
+  //   console.log('getLibrary');
+  //   Library.findById(req.params.id).populate('books').exec(function(err, result){
+  //     if (err){
+  //       res.status(500).send(err);
+  //     }
+  //     console.log(result);
+  //     res.send(result);
+  //   });
+  // },
+
+
+  getUserLibrary: function(req, res){
+    console.log('getUserLibrary!');
+    Library.findById(req.params.id).populate('books').exec(function(err, result){
+      if (err){
+        res.status(500).send(err);
       }
-    })
+      console.log(result);
+      res.send(result);
+    });
   },
 
+ ///this should be removed later since we dont need to see every users library
   getAllLibraries: function(req, res){
-    Library.find(req.query).exec(function(err, result){
-      if(err) {
-        res.status(500).json(err);
-      } else {
-        res.json(result);
-      };
+    console.log('getAllLibraries');
+    Library.find(req.query).populate('books').exec(function(err, result){
+      if (err){
+        res.status(500).send(err);
+      }
+      console.log(result);
+      res.send(result);
     });
   },
 
@@ -57,6 +48,32 @@ module.exports = {
       };
     });
   },
+
+  // addLibraryToUser: function(req, res){
+  //   var newLibrary = new Library(req.body);
+  //   newLibrary.save(function(err, result){
+  //     if(err){
+  //       res.status(500).json(err);
+  //     } else {
+  //       res.json(result);
+  //     };
+  //   });
+  // },
+
+
+  addBookToLibrary: function(req, res){
+    User.findById(req.params.id).exec().then(function(user){
+      var books = user.library.books;
+      console.log('server libraryCtrl addLibraryToUser books:', books);
+      books.push(req.body);
+      return user.save().then(function(theUser){
+        return res.json(theUser);
+      });
+    }).catch(function(err){
+      return res.status(500).json(err);
+    });
+  },
+
   editLibrary: function(req, res){
     Library.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if(err){

@@ -98,6 +98,18 @@ Users:
       </form>
 
     </div>
+
+
+
+    <br>
+    {{user._id}}
+    <button ng-click="addLibraryToUser(user._id)">
+      Add Library to user
+    </button>
+
+
+
+    
   </li>
 </ul>
 
@@ -119,7 +131,7 @@ Libraries:
 <ul>
   <li ng-repeat="library in libraryList">
 
-<!-- ----------------------->
+<!-- ********************  -->
 
 
     library._id: {{library._id}} - {{library.tempThing}}
@@ -133,8 +145,11 @@ Libraries:
     </form>
 
   books: {{library.books}}
-  <div ng-repat="book in library.books">
-    {{book}}
+  <br>
+  <br>
+  ng-repeat starts here:
+  <div ng-repeat="book in library.books">
+    {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
 
   </div>
 
@@ -145,7 +160,7 @@ Libraries:
     <br>&#187;
 
 
-<!-- ----------------------->
+<!-- ********************  -->
 
     <a href="" ng-click="deleteConfirm=true">
       delete

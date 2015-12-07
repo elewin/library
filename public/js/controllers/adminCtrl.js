@@ -96,14 +96,21 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   };
   getLibraryList();
 
-  var getLibrary = function(id){
-    libraryService.getLibrary(id).then(function (library){
-        $scope.library = library.data;
-    });
-  };
+  // var getLibrary = function(id){
+  //   libraryService.getLibrary(id).then(function (library){
+  //       $scope.library = library.data;
+  //   });
+  //   console.log($scope.library);
+  // };
 
   $scope.addLibrary = function(){
     libraryService.addLibrary().then(function(res){
+      getLibraryList();
+    });
+  };
+
+  $scope.addLibraryToUser = function(userId){
+    libraryService.addLibraryToUser(userId).then(function(res){
       getLibraryList();
     });
   };

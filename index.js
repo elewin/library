@@ -40,8 +40,12 @@ app.delete('/api/users/:id', userCtrl.deleteUser);
 //library
 // ****move this to within each user instead of its own thing? eg /api/users/id/library
 //also, library needs to be added when new user is created. see todo
-app.get('/api/library/:id', libraryCtrl.getLibrary);
-app.get('/api/library/', libraryCtrl.getAllLibraries);
+//app.get('/api/library/:id', libraryCtrl.getLibrary);
+
+// app.post('/api/user/:id/library', libraryCtrl.addLibraryToUser); //?????
+
+app.get('/api/library/', libraryCtrl.getAllLibraries); //should be removed later
+app.get('/api/library/:id', libraryCtrl.getUserLibrary);
 app.post('/api/library', libraryCtrl.addLibrary);
 app.put('/api/library/:id', libraryCtrl.editLibrary);
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary);
