@@ -63,7 +63,6 @@ module.exports = {
   addBookToLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
-      console.log('server libraryCtrl addLibraryToUser books:', books);
       books.push(req.body.books);
       return library.save().then(function(theLibrary){
         return res.json(theLibrary);
@@ -72,6 +71,21 @@ module.exports = {
       return res.status(508).json(err);
     });
   },
+
+  removeBookFromLibrary: function(req, res){
+    Library.findById(req.params.id).exec().then(function(library){
+      var books = library.books;
+      console.log('remove from library:', req.params.id, req.body.books);
+      var bookToRemoveIndex = books.indexOf(req.body.books);
+      books.splice(bookToRemoveIndex, 1);
+      return library.save().then(function(theLibrary){
+       return res.json(theLibrary);    
+      });
+    }).catch(function(err){
+      return res.status(500).json(err);
+    });
+  },
+
 
   editLibrary: function(req, res){
     Library.findByIdAndUpdate(req.params.id, req.body, function(err, result){

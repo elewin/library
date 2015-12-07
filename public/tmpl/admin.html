@@ -64,7 +64,7 @@ Books:
 Users:
 <ul>
   <li ng-repeat="user in users">
-    name: {{user.name}} (_.id: {{user._id}})
+    name: {{user.name}}
 
     &#187;
     <a href="" ng-click="deleteConfirm=true">
@@ -100,15 +100,20 @@ Users:
      </form>
 
     </div>
+    <br>
+    user id: {{user._id}}
+    <br>
+    library id: {{user.library}}
+    <br>
+    books: {{userLibrary.books}}
 
-    <br>
-    users library (library id: {{user.library}}):
-    <br>
-    <!-- books: {{userLibrary.books}} -->
-    <div ng-init="getUserLibrary(user.library)"></div>  <!-- this is buggy -->
-    <div ng-repeat="book in userLibrary.books">
-      {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
-    </div>
+
+    <!-- <div ng-init="getUserLibrary(user.library)"></div>-->
+    <ul>
+      <li ng-repeat="book in userLibrary.books">
+        {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
+      </li>
+    </ul>
 
     <form name="addBookForm">
       <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
@@ -193,11 +198,13 @@ Libraries:
     </form> -->
 
   <!-- books: {{library.books}} -->
-  <div ng-repeat="book in library.books">
-    {{book.title}} by {{book.author}} (isbn: {{book.isbn}})
+    <ul>
+      <li ng-repeat="book in library.books">
+        {{book.title}} by {{book.author}} (isbn: {{book.isbn}}) - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>
 
-  </div>
-  <br>
+      </li>
+    </ul>
+    <br>
   </li>
 </ul>
 

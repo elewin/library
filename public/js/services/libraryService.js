@@ -55,11 +55,24 @@ angular.module('library').service('libraryService', function($stateParams, $http
   //   })
   // };
 
-  this.addToLibrary = function(libraryId, bookId){ //right now userId is actually being passed libraryId
+  this.addToLibrary = function(libraryId, bookId){
     console.log('adding bookId:', bookId, 'to libraryId:', libraryId);
     return $http({
       method: 'PUT',
-      url: '/api/library/' + libraryId, //??
+      url: '/api/library/' + libraryId + '/add', //??
+      data: {
+        books: bookId,
+      },
+    }).then(function(res) {
+      return res.data;
+    });
+  };
+
+  this.removeFromLibrary = function(libraryId, bookId){
+    console.log('removing bookId:', bookId, 'from libraryId:', libraryId);
+    return $http({
+      method: 'PUT',
+      url: '/api/library/' + libraryId + '/remove', //??
       data: {
         books: bookId,
       },

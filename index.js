@@ -38,18 +38,13 @@ app.put('/api/users/:id', userCtrl.editUser);
 app.delete('/api/users/:id', userCtrl.deleteUser);
 
 //library
-// ****move this to within each user instead of its own thing? eg /api/users/id/library
-//also, library needs to be added when new user is created. see todo
-//app.get('/api/library/:id', libraryCtrl.getLibrary);
-
-// app.post('/api/user/:id/library', libraryCtrl.addLibraryToUser); //?????
-
-app.get('/api/library/', libraryCtrl.getAllLibraries); //should be removed later
-app.get('/api/library/:id', libraryCtrl.getUserLibrary);
-app.post('/api/library', libraryCtrl.addLibrary);
-//app.put('/api/library/:id', libraryCtrl.editLibrary);
-app.put('/api/library/:id', libraryCtrl.addBookToLibrary);
-app.delete('/api/library/:id', libraryCtrl.deleteLibrary);
+app.get('/api/library/', libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
+app.get('/api/library/:id', libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId
+app.post('/api/library', libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user
+app.put('/api/library/:id', libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array
+app.put('/api/library/:id/add', libraryCtrl.addBookToLibrary); //adds a book to the library
+app.put('/api/library/:id/remove', libraryCtrl.removeBookFromLibrary); //removes a book from the library
+app.delete('/api/library/:id', libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
 //server start-up:
 //connect to db

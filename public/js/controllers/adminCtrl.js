@@ -26,6 +26,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.deleteBook = function(id){
     bookService.deleteBook(id).then(function(res){
       getBooks();
+      getLibraryList()
     });
   };
 
@@ -35,12 +36,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     $scope.newBookAuthor = "";
     $scope.newBookIsbn = "";
     getBooks();
+    getLibraryList()
 
   };
 
   $scope.editBook = function(id, key, val){
     bookService.editBook(id, key, val).then(function(res){
       getBooks();
+      getLibraryList()
     });
   };
 
@@ -65,6 +68,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.addUser = function(name){
     userService.addUser(name).then(function(res){
       getUsers();
+      getLibraryList()
     });
   };
 
@@ -82,18 +86,18 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.editUser = function(id, key, val){
     userService.editUser(id, key, val).then(function(res){
       getUsers();
+      getLibraryList()
     });
   };
 
   //library
 
-
-    $scope.libraryOptions = [ //keys for editBook
-  		{
-  			name: 'tempThing',
-  			value: 'tempThing',
-  		},
-  	];
+  $scope.libraryOptions = [ //keys for editLibrary
+		{
+			name: 'tempThing',
+			value: 'tempThing',
+		},
+	];
 
   var refreshUserLibrary = function(libraryId){
     libraryService.getUserLibrary(libraryId).then(function(userLibrary){
@@ -137,7 +141,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
   $scope.deleteLibrary = function(id){
     libraryService.deleteLibrary(id).then(function(res){
-      //getLibraryList();
+      getLibraryList();
     });
   };
 
@@ -150,11 +154,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
   $scope.addToLibrary = function(userId, bookId){
     libraryService.addToLibrary(userId, bookId).then(function(res){
-    //  getLibraryList();
+      getLibraryList();
     });
   };
 
-
-
+  $scope.removeFromLibrary = function(libraryId, bookId){
+    libraryService.removeFromLibrary(libraryId, bookId).then(function(res){
+      getLibraryList();
+    });
+  };
 
 });
