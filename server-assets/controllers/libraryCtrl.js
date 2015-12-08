@@ -76,9 +76,14 @@ module.exports = {
 
   removeBookFromLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
+      // console.log('---------------------------------');
       var books = library.books;
-      console.log('remove from library:', req.params.id, req.body.books);
+      // console.log('books:', books)
+      // console.log('req.params.id', req.params.id);
+      // console.log('req.body.books', req.body.books);
+      // console.log('remove from library:', req.params.id, req.body.books);
       var bookToRemoveIndex = books.indexOf(req.body.books);
+      // console.log(bookToRemoveIndex);
       books.splice(bookToRemoveIndex, 1);
       return library.save().then(function(theLibrary){
        return res.json(theLibrary);
@@ -86,6 +91,32 @@ module.exports = {
     }).catch(function(err){
       return res.status(500).json(err);
     });
+  },
+
+  removeBookFromAllLibraries: function(req, res){
+    console.log(req.params.id);
+    var bookId = req.body.books;
+    console.log(bookId);
+
+    Library.find(bookId).exec().then(function(results){
+      console.log('results: ',results);
+    });
+
+    // Library.find(bookId).exec().then(function(library){
+    //   console.log('found in library', library );
+    // });
+    // Library.findById(req.params.id).exec().then(function(library){
+    //   var books = library.books;
+    //   console.log('remove from library:', req.params.id, req.body.books);
+    //   var bookToRemoveIndex = books.indexOf(req.body.books);
+    //   books.splice(bookToRemoveIndex, 1);
+    //   return library.save().then(function(theLibrary){
+    //   return res.json(theLibrary);
+    //  });
+    // }).catch(function(err){
+    //   return res.status(500).json(err);
+    // });
+    return res.status(200).json();
   },
 
 

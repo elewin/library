@@ -116,6 +116,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   var getLibraryList = function(){
     libraryService.getLibraryList().then(function (libraryList){
       $scope.libraryList = libraryList.data;
+      console.log(libraryList.data[0]);
     });
   };
   getLibraryList();

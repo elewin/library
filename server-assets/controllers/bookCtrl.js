@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-  Book = require('../models/bookSchema');
+  Book = require('../models/bookSchema'),
+  Library = require('../models/librarySchema');
 
 module.exports = {
   addBook: function(req, res) {
@@ -42,6 +43,20 @@ module.exports = {
       if(err){
         res.status(400).json(err);
       } else {
+        console.log('id:',req.params.id);
+        Library.find({'books.book.bookData': req.params.id}).exec().then(function(docs) {
+          //loop through the libraries that contain this book and splice it out
+          for (var i = 0; i < docs.length; i++){
+            for(var j = 0; j< docs[i].books.length; j++){
+              console.log('id:',req.params.id, 'bookData', docs[i].books[j].book.bookData);
+              if (docs[i].books[j].book.bookData == req.params.id){
+                console.log('if statement to be deleted:', docs[i]);
+                docs[i].books.splice(j,1);
+              }
+              docs[i].save();
+            }
+         }
+        });
         res.json(result);
       };
     });

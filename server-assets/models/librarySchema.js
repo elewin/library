@@ -3,7 +3,7 @@ var bookSchema = require('./bookSchema');
 var Book = mongoose.model('Book', bookSchema);
 
 var librarySchema = new mongoose.Schema({
-  tempThing: { type: String, default: "stuff"},
+  ownerName: { type: String, default: ""},
   testArr: {type: []},
   //books: [{type: mongoose.Schema.Types.ObjectId, ref: 'Book' }], //this works
   books:[{

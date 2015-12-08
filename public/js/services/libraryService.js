@@ -59,7 +59,7 @@ angular.module('library').service('libraryService', function($stateParams, $http
     console.log('adding bookId:', bookId, 'to libraryId:', libraryId);
     return $http({
       method: 'PUT',
-      url: '/api/library/' + libraryId + '/add', //??
+      url: '/api/library/' + libraryId + '/add',
       // data: {
       //   books: bookId, //this is the old way that works
       // },
@@ -77,10 +77,7 @@ angular.module('library').service('libraryService', function($stateParams, $http
     console.log('removing bookId:', bookId, 'from libraryId:', libraryId);
     return $http({
       method: 'PUT',
-      url: '/api/library/' + libraryId + '/remove', //??
-      // data: {
-      //   books: bookId,
-      // },
+      url: '/api/library/' + libraryId + '/remove',
       data: {
         books: {
           book: {bookData: bookId},

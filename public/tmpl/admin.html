@@ -156,8 +156,7 @@ Libraries:
 <div ng-repeat="library in libraryList">
   <div ng-repeat="level2 in library.books">
     <div ng-repeat="level3 in level2.book">
-      {{level3.title}} by {{level3.author}} (isbn:{{level3.isbn}})
-      {{level3.dateAdded}} 
+      {{level3.title}} by {{level3.author}} (isbn:{{level3.isbn}}) added on: {{level3.dateAdded}}
     </div>
   </div>
 </div>
@@ -166,9 +165,19 @@ Libraries:
 
 <br> ***** <br>
 
+<!-- key,value repeat:<br>
+<div ng-repeat="(key, value) in libraryList">
+  <b>key</b>: {{key}}
+  <br>
+  <b>value</b>: {{value}}
+  <br><br>
+
+</div>
+key,value end<br>
+
+<ul> -->
 
 
-<ul>
   <li ng-repeat="library in libraryList">
 
     library._id: {{library._id}}
@@ -215,14 +224,10 @@ Libraries:
       </button>
     </form> -->
 
+
+
   books: {{library.books}}
-<br>
-  <div ng-repeat="book in library">
-    ** {{book}}
-  </div>
-    <hr>
-  <br>
-  bookdata: {{library.books.bookData}}
+
     <ul>
       <li ng-repeat="book in library.books">
         {{book.bookData.title}} by {{book.author}} (isbn: {{book.isbn}}) - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>
