@@ -60,8 +60,13 @@ angular.module('library').service('libraryService', function($stateParams, $http
     return $http({
       method: 'PUT',
       url: '/api/library/' + libraryId + '/add', //??
+      // data: {
+      //   books: bookId, //this is the old way that works
+      // },
       data: {
-        books: bookId,
+        books: {
+          book: {bookData: bookId},
+        }
       },
     }).then(function(res) {
       return res.data;
@@ -73,8 +78,13 @@ angular.module('library').service('libraryService', function($stateParams, $http
     return $http({
       method: 'PUT',
       url: '/api/library/' + libraryId + '/remove', //??
+      // data: {
+      //   books: bookId,
+      // },
       data: {
-        books: bookId,
+        books: {
+          book: {bookData: bookId},
+        }
       },
     }).then(function(res) {
       return res.data;

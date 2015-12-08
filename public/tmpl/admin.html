@@ -150,6 +150,24 @@ Users:
 
 
 Libraries:
+
+<!-- library.books.book -->
+<br> ***** <br>
+<div ng-repeat="library in libraryList">
+  <div ng-repeat="level2 in library.books">
+    <div ng-repeat="level3 in level2.book">
+      {{level3.title}} by {{level3.author}} (isbn:{{level3.isbn}})
+      {{level3.dateAdded}} 
+    </div>
+  </div>
+</div>
+
+
+
+<br> ***** <br>
+
+
+
 <ul>
   <li ng-repeat="library in libraryList">
 
@@ -197,10 +215,17 @@ Libraries:
       </button>
     </form> -->
 
-  <!-- books: {{library.books}} -->
+  books: {{library.books}}
+<br>
+  <div ng-repeat="book in library">
+    ** {{book}}
+  </div>
+    <hr>
+  <br>
+  bookdata: {{library.books.bookData}}
     <ul>
       <li ng-repeat="book in library.books">
-        {{book.title}} by {{book.author}} (isbn: {{book.isbn}}) - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>
+        {{book.bookData.title}} by {{book.author}} (isbn: {{book.isbn}}) - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>
 
       </li>
     </ul>

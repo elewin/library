@@ -16,7 +16,8 @@ module.exports = {
 
 
   getUserLibrary: function(req, res){
-    Library.findById(req.params.id).populate('books').exec(function(err, result){
+  //  Library.findById(req.params.id).populate('books').exec(function(err, result){
+  Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
       if (err){
         res.status(505).send(err);
       }
@@ -28,7 +29,8 @@ module.exports = {
  ///this should be removed later since we dont need to see every users library
   getAllLibraries: function(req, res){
     //console.log('getAllLibraries');
-    Library.find(req.query).populate('books').exec(function(err, result){
+    // Library.find(req.query).populate('books').exec(function(err, result){ //wors w old schema
+    Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
       if (err){
         res.status(506).send(err);
       }
@@ -79,7 +81,7 @@ module.exports = {
       var bookToRemoveIndex = books.indexOf(req.body.books);
       books.splice(bookToRemoveIndex, 1);
       return library.save().then(function(theLibrary){
-       return res.json(theLibrary);    
+       return res.json(theLibrary);
       });
     }).catch(function(err){
       return res.status(500).json(err);
