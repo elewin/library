@@ -8,7 +8,7 @@ var bookSchema = new mongoose.Schema({
   editor: {type: String},
   date: {type: Date},
   length: {type: String,},
-  isbn: {type: Number, required: true, unique: true, index: true},
+  isbn: {type: String, required: true, unique: true, index: true},
   publisher: {type: String,},
   tags: {type: []}, //genre etc
   coverArtUrl: {type: String, default: ''},

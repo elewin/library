@@ -5,13 +5,13 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');  //for the mongodb database
 var bcrypt = require('bcrypt-nodejs');  //for encrypting passwords
-var request = require('request'); //for making http requests
+//var request = require('request-promise'); //for making http requests
 
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
 var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
-var requestCtrl = require('./server-assets/controllers/requestCtrl');
+//var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
 
 //schema:
 // var Book = require('./server-assets/models/bookSchema');
@@ -51,9 +51,6 @@ app.put('/api/library/:id/add', libraryCtrl.addBookToLibrary); //adds a book to 
 app.put('/api/library/:id/remove', libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
-
-
-requestCtrl.lookUpIsbn('1416590870')
 
 //server start-up:
 //connect to db
