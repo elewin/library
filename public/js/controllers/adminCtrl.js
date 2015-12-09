@@ -60,7 +60,6 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   var getUsers = function(){
     userService.getUsers().then(function (users){
       $scope.users = users.data;
-      //console.log($scope.users);
     });
   };
   getUsers();
@@ -108,6 +107,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.getUserLibrary = function(libraryId){
     libraryService.getUserLibrary(libraryId).then(function(userLibrary){
       $scope.userLibrary = userLibrary.data;
+      console.log('userLibrary:', userLibrary.data);
 
     });
   }
@@ -116,29 +116,11 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   var getLibraryList = function(){
     libraryService.getLibraryList().then(function (libraryList){
       $scope.libraryList = libraryList.data;
-      console.log(libraryList.data[0]);
     });
   };
   getLibraryList();
 
-  // var getLibrary = function(id){
-  //   libraryService.getLibrary(id).then(function (library){
-  //       $scope.library = library.data;
-  //   });
-  //   console.log($scope.library);
-  // };
 
-  // $scope.addLibrary = function(){
-  //   libraryService.addLibrary().then(function(res){
-  //     //getLibraryList();
-  //   });
-  // };
-
-  // $scope.addLibraryToUser = function(userId){
-  //   libraryService.addLibraryToUser(userId).then(function(res){
-  //     //getLibraryList();
-  //   });
-  // };
 
   $scope.deleteLibrary = function(id){
     libraryService.deleteLibrary(id).then(function(res){

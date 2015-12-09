@@ -3,17 +3,6 @@ var User = require('../models/userSchema');
 
 
 module.exports = {
-  // getLibrary: function(req, res){
-  //   console.log('getLibrary');
-  //   Library.findById(req.params.id).populate('books').exec(function(err, result){
-  //     if (err){
-  //       res.status(500).send(err);
-  //     }
-  //     console.log(result);
-  //     res.send(result);
-  //   });
-  // },
-
 
   getUserLibrary: function(req, res){
   //  Library.findById(req.params.id).populate('books').exec(function(err, result){
@@ -21,20 +10,17 @@ module.exports = {
       if (err){
         res.status(505).send(err);
       }
-    //  console.log(result);
       res.send(result);
     });
   },
 
  ///this should be removed later since we dont need to see every users library
   getAllLibraries: function(req, res){
-    //console.log('getAllLibraries');
     // Library.find(req.query).populate('books').exec(function(err, result){ //wors w old schema
     Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
       if (err){
         res.status(506).send(err);
       }
-      //console.log(result);
       res.send(result);
     });
   },
@@ -50,18 +36,6 @@ module.exports = {
     });
   },
 
-  // addLibraryToUser: function(req, res){
-  //   var newLibrary = new Library(req.body);
-  //   newLibrary.save(function(err, result){
-  //     if(err){
-  //       res.status(500).json(err);
-  //     } else {
-  //       res.json(result);
-  //     };
-  //   });
-  // },
-
-
   addBookToLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
@@ -76,14 +50,8 @@ module.exports = {
 
   removeBookFromLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
-      // console.log('---------------------------------');
       var books = library.books;
-      // console.log('books:', books)
-      // console.log('req.params.id', req.params.id);
-      // console.log('req.body.books', req.body.books);
-      // console.log('remove from library:', req.params.id, req.body.books);
       var bookToRemoveIndex = books.indexOf(req.body.books);
-      // console.log(bookToRemoveIndex);
       books.splice(bookToRemoveIndex, 1);
       return library.save().then(function(theLibrary){
        return res.json(theLibrary);
@@ -92,33 +60,6 @@ module.exports = {
       return res.status(500).json(err);
     });
   },
-
-  removeBookFromAllLibraries: function(req, res){
-    console.log(req.params.id);
-    var bookId = req.body.books;
-    console.log(bookId);
-
-    Library.find(bookId).exec().then(function(results){
-      console.log('results: ',results);
-    });
-
-    // Library.find(bookId).exec().then(function(library){
-    //   console.log('found in library', library );
-    // });
-    // Library.findById(req.params.id).exec().then(function(library){
-    //   var books = library.books;
-    //   console.log('remove from library:', req.params.id, req.body.books);
-    //   var bookToRemoveIndex = books.indexOf(req.body.books);
-    //   books.splice(bookToRemoveIndex, 1);
-    //   return library.save().then(function(theLibrary){
-    //   return res.json(theLibrary);
-    //  });
-    // }).catch(function(err){
-    //   return res.status(500).json(err);
-    // });
-    return res.status(200).json();
-  },
-
 
   editLibrary: function(req, res){
     Library.findByIdAndUpdate(req.params.id, req.body, function(err, result){
@@ -138,15 +79,4 @@ module.exports = {
       };
     });
   },
-  // addBook: function(req, res){
-  //   var library = getLibrary(req.params.id).then(function (library) {
-  //     library.books.push(req.body);
-  //     library.save().then(function (results) {
-  //       console.log('results from library update', results);
-  //       res.status(200).send(results);
-  //     });
-  //   });
-  // },
-
-
 }
