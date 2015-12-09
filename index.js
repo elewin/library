@@ -3,15 +3,20 @@ var express = require('express');
 var app = express();
 var cors = require('cors');
 var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+var mongoose = require('mongoose');  //for the mongodb database
+var bcrypt = require('bcrypt-nodejs');  //for encrypting passwords
+var request = require('request'); //for making http requests
 
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
 var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
+var requestCtrl = require('./server-assets/controllers/requestCtrl');
 
 //schema:
-var Book = require('./server-assets/models/bookSchema');
+// var Book = require('./server-assets/models/bookSchema');
+// var Library = require('./server-assets/models/librarySchema');
+// var User = require('./server-assets/models/userSchema');
 
 //addresses and ports:
 var serverPort = 8080;
@@ -28,7 +33,7 @@ app.get('/api/books', bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
 app.post('/api/books', bookCtrl.addBook);
 app.put('/api/books/:id', bookCtrl.editBook);
-app.delete('/api/books/:id', bookCtrl.deleteBook);
+app.delete('/api/books/:id', bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users
 app.get('/api/users', userCtrl.getUsers);
@@ -46,17 +51,22 @@ app.put('/api/library/:id/add', libraryCtrl.addBookToLibrary); //adds a book to 
 app.put('/api/library/:id/remove', libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
+
+
+requestCtrl.lookUpIsbn('1416590870')
+
 //server start-up:
 //connect to db
 mongoose.connect(dbUri, function(err){
   if(err){
     console.log('Unable to connect to '+dbUri);
-    console.log(err.message);
+    console.log('Error:', err.message);
   };
 });
 mongoose.connection.once('open', function(){
   console.log('database connected to ' + dbUri);
 })
+
 //start server
 app.listen(serverPort, function(){
   console.log('Library server listening to port '+serverPort);

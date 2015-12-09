@@ -59,14 +59,4 @@ module.exports = {
     });
   }
 
-  // archiveBook:  function(req, res) {
-  //   Book.findById(req.params.id).exec().then(function(doc) {
-  //     doc.status = 'archived';
-  //     return doc.save().then(function(resu) {
-  //       return res.json(resu);
-  //     });
-  //   }).catch(function(err) {
-  //     return res.status(500).json(err);
-  //   });
-  // },
 };

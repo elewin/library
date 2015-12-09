@@ -14,6 +14,14 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     })
   };
 
+  // this.lookUpIsbn = function(isbn){
+  //   console.log('looking up info for ISBN: ' + isbn );
+  //   return $http({
+  //     method: 'GET',
+  //     url: 'https://www.googleapis.com/books/v1/volumes?q=isbn:'+isbn,
+  //   })
+  // };
+
   this.deleteBook = function(id){
     console.log('Deleting book id:', id);
     return $http({
@@ -35,6 +43,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
 
   this.addBook = function(title, author, isbn){
     console.log('adding ' + title + ' by ' + author + ', ISBN: '+isbn);
+
     return $http({
       method: 'POST',
       url: '/api/books',
