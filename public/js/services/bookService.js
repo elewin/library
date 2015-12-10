@@ -41,8 +41,8 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     })
   };
 
-  this.addBook = function(title, author, isbn){
-    console.log('adding ' + title + ' by ' + author + ', ISBN: '+isbn);
+  this.addBook = function(title, author){
+    console.log('adding ' + title + ' by ' + author);
 
     return $http({
       method: 'POST',
@@ -50,6 +50,18 @@ angular.module('library').service('bookService', function($stateParams, $http) {
       data: JSON.stringify({
         title: title,
         author: author,
+        isbn: 0,
+      }),
+    })
+  };
+
+  this.addBookByIsbn = function(isbn){
+    console.log('adding ISBN:', isbn);
+
+    return $http({
+      method: 'POST',
+      url: '/api/books',
+      data: JSON.stringify({
         isbn: isbn,
       }),
     })

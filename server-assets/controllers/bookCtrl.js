@@ -8,20 +8,25 @@ module.exports = {
     var newBook = new Book(req.body);
 
     //check if we have a valid ISBN:
-    if (newBook.isbn.length >= 3 && !isNaN(newBook.isbn)){
-      //check total items > 0
-      requestCtrl.updateFromGoogleBooks(newBook);
+    if (newBook.isbn.length >= 2 && !isNaN(newBook.isbn)){
+      googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){
+        newBook = book;
+        newBook.save().then(function(doc) {
+          return res.json(doc);
+        }).catch(function(err) {
+          console.log(err);
+          return res.status(400).json(err);
+        });
+      });
+    }else{
+      newBook.save().then(function(doc) {
+        return res.json(doc);
+      }).catch(function(err) {
+        console.log(err);
+        return res.status(400).json(err);
+      });
     }
-
-    newBook.save().then(function(doc) {
-      return res.json(doc);
-    }).catch(function(err) {
-      console.log(err);
-      return res.status(400).json(err);
-    });
   },
-
-
 
   getBooks:  function(req, res) {
     Book.find(req.query).exec().then(function(docs) {

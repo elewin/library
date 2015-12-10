@@ -4,7 +4,7 @@ var app = express();
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');  //for the mongodb database
-var bcrypt = require('bcrypt-nodejs');  //for encrypting passwords
+//var bcrypt = require('bcrypt-nodejs');  //for encrypting passwords
 //var request = require('request-promise'); //for making http requests
 
 //controllers:

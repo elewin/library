@@ -30,14 +30,19 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     });
   };
 
-  $scope.addBook = function(title, author, isbn){
-    bookService.addBook(title, author, isbn);
+  $scope.addBook = function(title, author){
+    bookService.addBook(title, author);
     $scope.newBookTitle = "";
     $scope.newBookAuthor = "";
+    getBooks();
+    getLibraryList()
+  };
+
+  $scope.addBookByIsbn = function(isbn){
+    bookService.addBookByIsbn(isbn);
     $scope.newBookIsbn = "";
     getBooks();
     getLibraryList()
-
   };
 
   $scope.editBook = function(id, key, val){

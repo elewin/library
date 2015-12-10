@@ -48,13 +48,17 @@ Books:
     <a href="" ng-click="showNewBookForm=false">X</a>
     <form name="newBookForm">
       <input type="text" ng-model="newBookTitle" placeholder="New book title" required/>
-      <br>
       <input type="text" ng-model="newBookAuthor" placeholder="New book author" required/>
       <br>
+      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor)">
+        Add Book
+      </button>
+    </form>
+    <form name="newBookIsbnForm">
       <input type="text" ng-model="newBookIsbn" placeholder="New book ISBN" required/>
       <br>
-      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor, newBookIsbn)">
-        Add Book
+      <button ng-disabled="newBookIsbnForm.$invalid" ng-click="addBookByIsbn(newBookIsbn)">
+        Add Book by ISBN
       </button>
     </form>
   </div>
