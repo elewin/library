@@ -12,11 +12,11 @@ var bookSchema = new mongoose.Schema({
   publisher: {type: String,},
   tags: {type: []}, //genre etc
   coverArtUrl: {type: String, default: ''},
-  summary: {type: String, default: 'No summary'},
+  description: {type: String, default: 'No description'},
   lang: {type: String},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},
-  googBooksUrl: {type: String},
+  googBooksUrl: {type: String, default: ""},
 });
 
 module.exports = mongoose.model('Book',bookSchema);

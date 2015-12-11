@@ -1,17 +1,22 @@
 //dependencies:
+var config = require("./config.json"); // config file
 var express = require('express');
-var app = express();
+var session = require('express-session');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');  //for the mongodb database
-//var bcrypt = require('bcrypt-nodejs');  //for encrypting passwords
+var passport = require('passport'); //for OAuth
+var FacebookStrategy = require('passport-facebook'); //for oauth via facebook
 //var request = require('request-promise'); //for making http requests
 
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
 var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
+var authCtrl = require('./server-assets/controllers/authCtrl');
 //var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
+//var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
+//var goodreadsCtrl = require('./server-assets/controllers/goodreadsCtrl');
 
 //schema:
 // var Book = require('./server-assets/models/bookSchema');
@@ -19,15 +24,48 @@ var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 // var User = require('./server-assets/models/userSchema');
 
 //addresses and ports:
-var serverPort = 8080;
-var dbPort = 27017;
-var dbUri = 'mongodb://localhost:'+dbPort+'/library';
+var serverPort = 8080; //port for server to listen to
+var dbPort = 27017; //database port
+var dbUri = 'mongodb://localhost:'+dbPort+'/library'; //URI for database
+
+var app = express();
 
 mongoose.Promise = require('q').Promise; //replace mongo promises w/ q library
+
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
 
+//sessions for OAuth:
+app.use(session({
+  secret: config.session,
+  resave: false,
+  saveUninitialized: false,
+}));
+
+//OAuth via facebook using passport:
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new FacebookStrategy({
+  clientID: config.api.facebook.clientID,
+  clientSecret: config.api.facebook.clientSecret,
+  callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
+}, function(token, refreshToken, profile, done){
+  return done(null, profile);
+}));
+passport.serializeUser(function(user, done){
+  done(null, user);
+});
+passport.deserializeUser(function(obj, done){
+  done(null, obj);
+});
+
 //API endpoints:
+//OAuth
+
+app.get('/api/auth/fb', authCtrl.authenticate);
+app.get('/api/auth/fb/cb', authCtrl.callback);
+app.get('/api/auth/fb/profile', authCtrl.getProfile);
+
 //books
 app.get('/api/books', bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
@@ -51,18 +89,17 @@ app.put('/api/library/:id/add', libraryCtrl.addBookToLibrary); //adds a book to 
 app.put('/api/library/:id/remove', libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
-
 //server start-up:
 //connect to db
 mongoose.connect(dbUri, function(err){
   if(err){
     console.log('Unable to connect to '+dbUri);
     console.log('Error:', err.message);
-  };
+  }
 });
 mongoose.connection.once('open', function(){
   console.log('database connected to ' + dbUri);
-})
+});
 
 //start server
 app.listen(serverPort, function(){

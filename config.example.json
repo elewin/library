@@ -1,0 +1,15 @@
+{
+  "session" : "i am a key",
+  "api" : {
+    "google" : {
+      "key" : "stuff"
+    },
+    "facebok" : {
+      "key" : "this is the key",
+      "secret" : "this is the secret key"
+    },
+    "amazon" : {
+      "key" : "key goes here"
+    }
+  }
+}

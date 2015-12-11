@@ -9,7 +9,7 @@ module.exports = {
 
   // get book info by ISBN and return a promise.
   // usage ex:
-  // googBooksCtrl.lookUpIsbn('1416590870')
+  // googBooksCtrl.lookUpIsbn('9780300119794')
   //   .then(function(body){
   //     var result = JSON.parse(body); //body is the json result, parse it to use it as an object
   //   }).catch(function(err){
@@ -36,10 +36,11 @@ module.exports = {
         if (queryObj.totalItems > 0){
           var i = 0; //for now we'll just go with the first hit if it returns more than one result, thus [0]. Maybe I'll change this later to handle multiple results if it becomes necessary
           book.title = queryObj.items[i].volumeInfo.title;
+          book.subtitle = queryObj.items[i].volumeInfo.subtitle;
           book.author = queryObj.items[i].volumeInfo.authors[0]; //later i will make book.authors an array but for now its a string, so ill just grab the first one
           book.date = queryObj.items[i].volumeInfo.publishedDate;
           book.publisher = queryObj.items[i].volumeInfo.publisher;
-          book.summary = queryObj.items[i].volumeInfo.description;
+          book.description = queryObj.items[i].volumeInfo.description;
           book.length = queryObj.items[i].volumeInfo.pageCount;
           book.lang = queryObj.items[i].volumeInfo.language;
           book.tags = queryObj.items[i].volumeInfo.categories;
