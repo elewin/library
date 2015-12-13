@@ -1,0 +1,59 @@
+body
+{
+    min-width: 480px;
+}
+
+.header
+{
+    height: 44px;
+    background-color: #8BA9D2;
+    box-shadow: 0px 2px 2px #B3B3B3;
+}
+
+.header a
+{
+    text-decoration: none;
+    color: #FFFFFF;
+}
+
+#title
+{
+    font-size: 26px;
+    display: inline-block;
+}
+
+#login
+{
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    font-size: 26px;
+}
+
+.header a:hover
+{
+    color: #D6D7D9;
+}
+
+.splash div
+{
+    font-size: 61px;
+    color: #FFFFFF;
+    position: absolute;
+    right: 13px;
+    bottom: 1px;
+    font-family:'News Cycle', sans-serif;;
+    font-weight: normal;
+}
+
+.splash
+{
+    height: 1220px;
+    overflow: hidden;
+    box-shadow: 0px 2px 2px #B3B3B3;
+    height: 350px;
+    min-width: 320px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/bookshelf.jpg);
+    background-size: cover;
+    position: relative;
+}
