@@ -4,14 +4,14 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     return $http({
       method: 'GET',
       url: '/api/books'
-    })
+    });
   };
 
   this.getBook = function(id){
     return $http({
       method: 'GET',
       url: '/api/books'+id,
-    })
+    });
   };
 
   // this.lookUpIsbn = function(isbn){
@@ -27,7 +27,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     return $http({
       method: 'DELETE',
       url: '/api/books/'+id,
-    })
+    });
   };
 
   this.editBook = function(id, key, newVal){
@@ -38,7 +38,16 @@ angular.module('library').service('bookService', function($stateParams, $http) {
       method: 'PUT',
       url: '/api/books/'+id,
       data: JSON.stringify(dataObj),
-    })
+    });
+  };
+
+  this.azUpdate = function(id){
+    console.log(id);
+    var dataObj = {};
+    return$http({
+      method: 'GET',
+      url: '/api/books/'+id+'/azUpdate',
+    });
   };
 
   this.addBook = function(title, author){
@@ -52,7 +61,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
         author: author,
         isbn: 0,
       }),
-    })
+    });
   };
 
   this.addBookByIsbn = function(isbn){
@@ -64,7 +73,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
       data: JSON.stringify({
         isbn: isbn,
       }),
-    })
+    });
   };
 
 });

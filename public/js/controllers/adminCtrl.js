@@ -26,7 +26,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.deleteBook = function(id){
     bookService.deleteBook(id).then(function(res){
       getBooks();
-      getLibraryList()
+      getLibraryList();
     });
   };
 
@@ -35,20 +35,27 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     $scope.newBookTitle = "";
     $scope.newBookAuthor = "";
     getBooks();
-    getLibraryList()
+    getLibraryList();
   };
 
   $scope.addBookByIsbn = function(isbn){
     bookService.addBookByIsbn(isbn);
     $scope.newBookIsbn = "";
     getBooks();
-    getLibraryList()
+    getLibraryList();
   };
 
   $scope.editBook = function(id, key, val){
     bookService.editBook(id, key, val).then(function(res){
       getBooks();
-      getLibraryList()
+      getLibraryList();
+    });
+  };
+
+  $scope.updateFromAmazon = function(id){
+    bookService.updateFromAmazon(id).then(function(res){
+      getBooks();
+      getLibraryList();
     });
   };
 
@@ -72,14 +79,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.addUser = function(name){
     userService.addUser(name).then(function(res){
       getUsers();
-      getLibraryList()
+      getLibraryList();
     });
   };
 
   $scope.deleteUser = function(userId, libraryId){
     libraryService.deleteLibrary(libraryId)
     .then(function(res){
-      userService.deleteUser(userId)
+      userService.deleteUser(userId);
     })
     .then(function(res){
       getUsers();
@@ -90,7 +97,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.editUser = function(id, key, val){
     userService.editUser(id, key, val).then(function(res){
       getUsers();
-      getLibraryList()
+      getLibraryList();
     });
   };
 
@@ -115,7 +122,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
       console.log('userLibrary:', userLibrary.data);
 
     });
-  }
+  };
 
 
   var getLibraryList = function(){

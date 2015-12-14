@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Book = require('../models/bookSchema');
 var Library = require('../models/librarySchema');
 var googBooksCtrl = require('./googBooksCtrl');
+var amazonCtrl = require('./amazonCtrl');
 
 module.exports = {
   addBook: function(req, res) {
@@ -26,6 +27,16 @@ module.exports = {
         return res.status(400).json(err);
       });
     }
+  },
+
+  azUpdate : function(req, res){
+    Book.findByIdAndUpdate(req.params.id, req.body, {new: true}).exec().then(function(doc) {
+      console.log(doc);
+      return res.json(doc);
+    }).catch(function(err) {
+      console.log(err);
+      return res.status(400).json(err);
+    });
   },
 
   getBooks:  function(req, res) {
@@ -70,7 +81,7 @@ module.exports = {
           }
         });
         res.json(result);
-      };
+      }
     });
   }
 

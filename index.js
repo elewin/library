@@ -8,6 +8,7 @@ var mongoose = require('mongoose');  //for the mongodb database
 var passport = require('passport'); //for OAuth
 var FacebookStrategy = require('passport-facebook'); //for oauth via facebook
 //var request = require('request-promise'); //for making http requests
+// var amazon = require('amazon-product-api');
 
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
@@ -15,7 +16,7 @@ var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 var authCtrl = require('./server-assets/controllers/authCtrl');
 //var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
-//var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
+var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
 //var goodreadsCtrl = require('./server-assets/controllers/goodreadsCtrl');
 
 //schema:
@@ -71,6 +72,7 @@ app.get('/api/books', bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
 app.post('/api/books', bookCtrl.addBook);
 app.put('/api/books/:id', bookCtrl.editBook);
+app.get('/api/books/:id/azUpdate', bookCtrl.azUpdate); //update from Amazon API
 app.delete('/api/books/:id', bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users
@@ -88,6 +90,9 @@ app.put('/api/library/:id', libraryCtrl.editLibrary); //edits the library, to be
 app.put('/api/library/:id/add', libraryCtrl.addBookToLibrary); //adds a book to the library
 app.put('/api/library/:id/remove', libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
+
+
+//amazonCtrl.searchByIsbn('9780804139038');
 
 //server start-up:
 //connect to db

@@ -23,7 +23,7 @@ module.exports = {
     function(err, res, body){
       if (res.statusCode !== 200){
         console.log('*** googBooksCtrl.lookUpIsbn:',this.method,'request for', this.uri.href, 'returned status code:', res.statusCode);
-      };
+      }
     });
   },
 

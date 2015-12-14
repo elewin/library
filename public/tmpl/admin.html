@@ -4,7 +4,7 @@
 <hr>
 Books:
 <ul>
-
+  <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
       <img src="{{book.coverArtUrl}}" />
       {{book.title}} by {{book.author}}

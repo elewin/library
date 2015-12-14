@@ -17,6 +17,7 @@ var bookSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},
   googBooksUrl: {type: String, default: ""},
+  amazonUrl : {type: String, default: ""},
   thread: {type: []}, //discussion thread for this book
 });
 

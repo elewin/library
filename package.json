@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amazon-product-api": "^0.3.5",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.1",
     "cors": "^2.7.1",

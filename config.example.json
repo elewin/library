@@ -4,12 +4,13 @@
     "google" : {
       "key" : "stuff"
     },
-    "facebok" : {
+    "facebook" : {
       "key" : "this is the key",
       "secret" : "this is the secret key"
     },
     "amazon" : {
-      "key" : "key goes here"
+      "key" : "key goes here",
+      "secret": "secret goes here"
     }
   }
 }
