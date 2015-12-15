@@ -1,17 +1,37 @@
-angular.module('library').service('userService', function($stateParams, $http) {
+angular.module('library').service('userService', function($stateParams, $http, $q) {
 
   this.getUsers =  function(){
     return $http({
       method: 'GET',
       url: '/api/users'
-    })
+    });
+  };
+
+
+  var user;
+
+  this.getCurrentUser = function() {
+    var defer = $q.defer();
+    if (user) {
+      defer.resolve(user);
+    }
+    else {
+      $http({
+        method: "GET",
+        url: "/api/users/profile"
+      }).then(function(response) {
+        user = response.data;
+        defer.resolve(response.data);
+      });
+    }
+    return defer.promise;
   };
 
   this.getUser = function(id){
     return $http({
       method: 'GET',
       url: '/api/users'+id,
-    })
+    });
   };
 
   this.deleteUser = function(id){
@@ -19,7 +39,7 @@ angular.module('library').service('userService', function($stateParams, $http) {
     return $http({
       method: 'DELETE',
       url: '/api/users/'+id,
-    })
+    });
   };
 
   this.editUser = function(id, key, newVal){
@@ -30,7 +50,7 @@ angular.module('library').service('userService', function($stateParams, $http) {
       method: 'PUT',
       url: '/api/users/'+id,
       data: JSON.stringify(dataObj),
-    })
+    });
   };
 
   this.addUser = function(name){
@@ -39,9 +59,21 @@ angular.module('library').service('userService', function($stateParams, $http) {
       method: 'POST',
       url: '/api/users',
       data: JSON.stringify({
-        name: name,        
+        name: name,
       }),
-    })
+    });
   };
+
+  this.logout = function() {
+		user = null;
+		var defer = $q.defer();
+		$http({
+				method: "GET",
+				url: "/api/auth/fb/logout"
+			}).then(function(response) {
+				defer.resolve(response.data);
+			});
+		return defer.promise;
+	};
 
 });

@@ -5,6 +5,21 @@ var bookSchema = require('../models/bookSchema');
 var Book = mongoose.model('Book', bookSchema);
 
 module.exports = {
+
+  getProfile: function(req, res, next){
+    if(!req.isAuthenticated()){
+      console.log('user profile: need to login');
+
+      res.status(401).send('Unauthorized');
+    }else{
+      console.log('this is the user profile');
+      console.log (req.user);
+      return res.json(req.user);
+      //res.status(200).send(req.user);
+      //next();
+    }
+  },
+
   getUsers: function(req, res){
     User.find(req.query).exec(function(err, result){
       if(err) {
@@ -14,6 +29,7 @@ module.exports = {
       }
     });
   },
+
   getUser: function(req, res){
     User.findById(req.params.id, function(err, theUser){
       if(err) {
@@ -33,6 +49,7 @@ module.exports = {
       }
     });
   },
+
   addUser: function(req, res){
     var newUser = new User(req.body);
     newUser.library = new Library(); //instead of here
@@ -46,6 +63,7 @@ module.exports = {
       }
     });
   },
+
   editUser: function(req, res){
     User.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if(err){
@@ -55,6 +73,7 @@ module.exports = {
       }
     });
   },
+
   deleteUser: function(req, res) {
     User.findByIdAndRemove(req.params.id, function(err, result){
       if(err){
