@@ -12,7 +12,8 @@ var bookSchema = new mongoose.Schema({
   publisher: {type: String,},
   tags: {type: []}, //genre etc
   coverArtUrl: {type: String, default: ''},
-  description: {type: String, default: 'No description'},
+  googDescription: {type: String, default: 'No description'}, //google books description
+  azDescription: {type: String, default: 'No description'}, //amazon description
   lang: {type: String},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},

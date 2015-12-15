@@ -10,11 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "amazon-product-api": "^0.3.5",
-    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.1",
     "cors": "^2.7.1",
     "express": "^4.13.3",
     "express-session": "^1.12.1",
+    "jquery": "^2.1.4",
     "mongoose": "^4.2.9",
     "passport": "^0.3.2",
     "passport-facebook": "^2.0.0",

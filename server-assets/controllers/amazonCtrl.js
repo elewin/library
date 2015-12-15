@@ -1,5 +1,7 @@
 var config = require("../../config.json"); // config file
 var amazon = require('amazon-product-api');
+var q = require('q'); //promises library
+//var $ = require('jquery')(window); //jQuery
 
 //this controller handles requests made to the Amazon Product API
 
@@ -13,6 +15,7 @@ var client = amazon.createClient({
 
 module.exports = {
 
+  //for testing
   searchTest: function(){
     client.itemSearch({
       director: 'Quentin Tarantino',
@@ -25,10 +28,9 @@ module.exports = {
     }).catch(function(err){
       console.log(err);
     });
-
-
   },
 
+  //for testing
   searchByIsbn : function(isbn){
     client.itemLookup({
     idType: 'ISBN',
@@ -43,29 +45,38 @@ module.exports = {
     });
   },
 
-  //takes a book object and updates its properties with data from the Amazon Products API and returns the book
-  updateFromAmazonIsbn : function(book){
-    var i = 0; //in a future version I'll add support for multiple results. for now we will just use the first result.
-    client.itemLookup({
-    idType: 'ISBN',
-    itemId: book.isbn,
-    responseGroup: 'ItemAttributes,Images,EditorialReview'
-    }).then(function(results) {
-      book.title = results[i].ItemAttributes[0].Title[0];
-      book.author = results[i].ItemAttributes[0].Author[0];
-      book.date = results[i].ItemAttributes[0].PublicationDate[0];
-      book.publisher = results[i].ItemAttributes[0].Publisher[0];
-      book.description = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
-      book.length = results[i].ItemAttributes[0].NumberOfPages[0];
-    //  book.tags =
-      book.coverArtUrl = results[i].ImageSets[0].ImageSet[0].LargeImage[0].URL[0];
-      book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
-      book.amazonUrl = results[i].DetailPageURL[0];
-      console.log(book);
-      return book;
-    }).catch(function(err) {
-      console.log(err);
+  //takes a book object and updates its properties with data from the Amazon Products API and returns a promise
+  updateFromAmazon : function(book){
+    return q.Promise(function(resolve, reject){
+      var i = 0; //in a future version I'll add support for multiple results. for now we will just use the first result.
+      client.itemLookup({
+      idType: 'ISBN',
+      itemId: book.isbn,
+      responseGroup: 'ItemAttributes,Images,EditorialReview'
+      }).then(function(results) {
+      //  console.log(JSON.stringify(results[i]));
+
+        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty
+          book.title = results[i].ItemAttributes[0].Title[0];
+        }
+        book.author = results[i].ItemAttributes[0].Author[0];
+        book.date = results[i].ItemAttributes[0].PublicationDate[0];
+        book.publisher = results[i].ItemAttributes[0].Publisher[0];
+        book.azDescription = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
+        // book.azDescription = $(results[i].EditorialReviews[0].EditorialReview[0].Content[0]).text(); //amazon likes to include HTML tags in their decsriptions, here we strip them out. This does not work.
+        book.length = results[i].ItemAttributes[0].NumberOfPages[0];
+      //  book.tags = //it doesn't look like amazon provides categories?
+        book.coverArtUrl = results[i].LargeImage[0].URL[0];
+        book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
+        book.amazonUrl = results[i].DetailPageURL[0];
+        resolve(book);
+      }).catch(function(err) {
+        console.log('updateFromAmazon error:', err);
+        reject(book);
+      });
+
     });
+
   }
 
 };

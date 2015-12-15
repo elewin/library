@@ -41,10 +41,10 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
-  this.azUpdate = function(id){
+  this.updateFromAmazon = function(id){
     console.log(id);
     var dataObj = {};
-    return$http({
+    return $http({
       method: 'GET',
       url: '/api/books/'+id+'/azUpdate',
     });

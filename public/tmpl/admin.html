@@ -3,24 +3,49 @@
 <h2>Admin:</h2>
 <hr>
 Books:
+<div>
+  <a href="" ng-click="showNewBookForm=true">Add book</a>
+  <div ng-show="showNewBookForm">
+    <a href="" ng-click="showNewBookForm=false">X</a>
+    <form name="newBookForm">
+      <input type="text" ng-model="newBookTitle" placeholder="New book title" required/>
+      <input type="text" ng-model="newBookAuthor" placeholder="New book author" required/>
+      <br>
+      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor)">
+        Add Book
+      </button>
+    </form>
+    <form name="newBookIsbnForm">
+      <input type="text" ng-model="newBookIsbn" placeholder="New book ISBN" required/>
+      <br>
+      <button ng-disabled="newBookIsbnForm.$invalid" ng-click="addBookByIsbn(newBookIsbn)">
+        Add Book by ISBN
+      </button>
+    </form>
+  </div>
+</div>
 <ul>
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
       <img src="{{book.coverArtUrl}}" />
       {{book.title}} by {{book.author}}
       <br>
-      <a href="" ng-click="moreInfo=false">
-        more info
-      </a>
-      <span ng-show="moreInfo"> »</span>
+      <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info &#9660;</a></span>
+      <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info&#9654;  </a></span>
       <div ng-hide="moreInfo">
-        <a href="" ng-click="moreInfo=true">X</a>
-        <br>
-        {{book.subtitle}}: {{book.length}} pages, published {{book.date}} by {{book.publisher}}
+        {{book.subtitle}} {{book.length}} pages, published {{book.date}} by {{book.publisher}}
         <br>
         {{book.tags}}
         <br>
-        <i>{{book.description}}</i>
+        <span ng-hide="showDesc"><a href="" ng-click="showDesc=true">Description &#9654;</a></span>
+        <span ng-show="showDesc"><a href="" ng-click="showDesc=false">Description &#9660;</a></span>
+        <div ng-show="showDesc">
+          Google Books:<br>
+          <i>{{book.googDescription}}</i>
+          <br>
+          Amazon: <br>
+          <i>{{book.azDescription}}</i>
+        </div>
       </div>
 
 
@@ -56,32 +81,17 @@ Books:
             Edit {{editOption}}
           </button>
         </form>
+        <br>
+        <button ng-click="updateFromAmazon(book._id)">
+          Update from Amazon
+        </button>
+
 
       </div>
       <hr length="30">
   </li>
 </ul>
-<div>
-  <a href="" ng-click="showNewBookForm=true">Add book</a>
-  <div ng-show="showNewBookForm">
-    <a href="" ng-click="showNewBookForm=false">X</a>
-    <form name="newBookForm">
-      <input type="text" ng-model="newBookTitle" placeholder="New book title" required/>
-      <input type="text" ng-model="newBookAuthor" placeholder="New book author" required/>
-      <br>
-      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor)">
-        Add Book
-      </button>
-    </form>
-    <form name="newBookIsbnForm">
-      <input type="text" ng-model="newBookIsbn" placeholder="New book ISBN" required/>
-      <br>
-      <button ng-disabled="newBookIsbnForm.$invalid" ng-click="addBookByIsbn(newBookIsbn)">
-        Add Book by ISBN
-      </button>
-    </form>
-  </div>
-</div>
+
 
 <hr>
 Users:

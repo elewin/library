@@ -1,5 +1,5 @@
-var request = require('request-promise');
-var q = require('q');
+var request = require('request-promise'); //http request promises
+var q = require('q'); //promises library
 
 //this controller handles requests made to the Google Books API
 
@@ -40,7 +40,7 @@ module.exports = {
           book.author = queryObj.items[i].volumeInfo.authors[0]; //later i will make book.authors an array but for now its a string, so ill just grab the first one
           book.date = queryObj.items[i].volumeInfo.publishedDate;
           book.publisher = queryObj.items[i].volumeInfo.publisher;
-          book.description = queryObj.items[i].volumeInfo.description;
+          book.googDescription = queryObj.items[i].volumeInfo.description;
           book.length = queryObj.items[i].volumeInfo.pageCount;
           book.lang = queryObj.items[i].volumeInfo.language;
           book.tags = queryObj.items[i].volumeInfo.categories;
