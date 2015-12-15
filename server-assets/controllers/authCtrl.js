@@ -8,7 +8,7 @@ module.exports = {
   authenticate: passport.authenticate('facebook'),
 
   callback: passport.authenticate('facebook',{
-    successRedirect: '/api/users/profile',
+    successRedirect: '/',
     //failureRedirect: '/api/auth/fb/login',
     failureRedirect: '/'
   }),
@@ -16,7 +16,7 @@ module.exports = {
   logout : function(req, res){
     console.log('logging out');
     req.logout();
-    
+
     return res.status(200).end();
   }
 

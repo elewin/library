@@ -27,6 +27,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     return {
       responseError: function(res) {
         if (res.status === 401) {
+          console.log('intercepted!');
         	document.location = '/#/';
         	//$state.go('login');
         }

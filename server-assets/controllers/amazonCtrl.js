@@ -1,7 +1,6 @@
 var config = require("../../config.json"); // config file
 var amazon = require('amazon-product-api');
 var q = require('q'); //promises library
-//var $ = require('jquery')(window); //jQuery
 
 //this controller handles requests made to the Amazon Product API
 
@@ -63,7 +62,6 @@ module.exports = {
         book.date = results[i].ItemAttributes[0].PublicationDate[0];
         book.publisher = results[i].ItemAttributes[0].Publisher[0];
         book.azDescription = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
-        // book.azDescription = $(results[i].EditorialReviews[0].EditorialReview[0].Content[0]).text(); //amazon likes to include HTML tags in their decsriptions, here we strip them out. This does not work.
         book.length = results[i].ItemAttributes[0].NumberOfPages[0];
       //  book.tags = //it doesn't look like amazon provides categories?
         book.coverArtUrl = results[i].LargeImage[0].URL[0];
