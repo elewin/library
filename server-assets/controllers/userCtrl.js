@@ -51,6 +51,7 @@ module.exports = {
     });
   },
 
+  //deprecated, findUserAndLogin should add users automatically
   addUser: function(req, res){
     var newUser = new User(req.body);
     newUser.library = new Library(); //instead of here
@@ -65,8 +66,8 @@ module.exports = {
     });
   },
 
-  //when a user logs in, search to see if their facebook id is already in the user database. if so, login as that user. if not, create a new user for them. Returns a promise.
-  loginFindUser : function(token, profile){ //add refreshToken later if its needed
+  //when a user logs in, search to see if their facebook id is already in the user database. if so, login as that user. if not, create a new user and library for them. Returns a promise.
+  findUserAndLogin : function(token, profile){ //add refreshToken later if its needed
     return q.Promise(function(resolve, reject){
       User.findOne({'fb.id' : profile.id}).exec()
       .then(function(user){
@@ -75,7 +76,7 @@ module.exports = {
 
         //if this facebook user id is not found in the user database, make a new user with it:
         if(!user){
-          console.log('making new user', profile.displayName, profile.id);
+          // console.log('making new user', profile.displayName, profile.id);
           newUser = new User({
             name: profile.displayName,
             fb: {
@@ -83,14 +84,30 @@ module.exports = {
               token: token,
             },
           });
+          //create a library for this user and then save it
+          newUser.library = new Library();
+          newUser.library.save();
+
+          //save the user
           newUser.save().then(function(){
-            resolve(newUser);
+            resolve(newUser); //this is what the promise will return
           });
         }
         else{
-          console.log('found user', user.name, user.fb.id);
-          //logic to check for token updates
-          resolve(user);
+          // console.log('found user', user.name, user.fb.id);
+          //check if we need to update the token, and if so update it:
+          if (token !== user.fb.token){
+            User.update({_id: user._id}, {
+              fb: {
+                token: token,
+              }
+            }).then(function(){
+              resolve(user);
+            });
+          }
+          else {
+            resolve(user);
+          }
         }
       });
     });

@@ -55,14 +55,12 @@ passport.use(new FacebookStrategy({
   clientSecret: config.api.facebook.clientSecret,
   callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
 }, function(token, refreshToken, profile, done){
-  console.log('****',profile.id);
-  userCtrl.loginFindUser(token, profile)
+  userCtrl.findUserAndLogin(token, profile)
   .then(function(user){
     return done(null, user);
   });
-  //console.log(user);
-  //return done(null, profile);
 }));
+
 passport.serializeUser(function(user, done){
   done(null, user);
 });
