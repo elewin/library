@@ -134,6 +134,8 @@ Users:
 
     </div>
     <br>
+    fb id: {{user.fb.id}}
+    <br>
     user id: {{user._id}}
     <br>
     library id: {{user.library}}
@@ -153,7 +155,7 @@ Users:
   </li>
 </ul>
 
-<div>
+<!-- <div>
   <a href="" ng-click="showNewUserForm=true">Add User</a>
   <div ng-show="showNewUserForm">
     <a href="" ng-click="showNewUserForm=false">X</a>
@@ -165,14 +167,15 @@ Users:
       </button>
     </form>
   </div>
-</div>
+</div> -->
 <hr>
 
 
 Libraries:
 
   <li ng-repeat="library in libraryList">
-
+    owner id: {{library.ownerId}}
+    /
     library._id: {{library._id}}
     &#187;
     <a href="" ng-click="deleteConfirm=true">
@@ -188,6 +191,7 @@ Libraries:
         </a>
       </span>
     <ul>
+
       <li ng-repeat="book in library.books">
 
         {{book.book.bookData.title}} by {{book.book.bookData.author}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>

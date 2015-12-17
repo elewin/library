@@ -32,9 +32,8 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 // var User = require('./server-assets/models/userSchema');
 
 //addresses and ports:
-var serverPort = 8080; //port for server to listen to
-var dbPort = 27017; //database port
-var dbUri = 'mongodb://localhost:'+dbPort+'/library'; //URI for database
+var serverPort = config.serverPort; //port for server to listen to
+var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
 
 var app = express();
 app.use(express.static(__dirname+"/public"));
@@ -54,6 +53,7 @@ passport.use(new FacebookStrategy({
   clientID: config.api.facebook.clientID,
   clientSecret: config.api.facebook.clientSecret,
   callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
+  enableProof: true,
 }, function(token, refreshToken, profile, done){
   userCtrl.findUserAndLogin(token, profile)
   .then(function(user){

@@ -69,14 +69,13 @@ module.exports = {
   //when a user logs in, search to see if their facebook id is already in the user database. if so, login as that user. if not, create a new user and library for them. Returns a promise.
   findUserAndLogin : function(token, profile){ //add refreshToken later if its needed
     return q.Promise(function(resolve, reject){
+      console.log('searching for', profile.id);
       User.findOne({'fb.id' : profile.id}).exec()
       .then(function(user){
-        // console.log('id:', profile.id);
-        // console.log(user);
 
         //if this facebook user id is not found in the user database, make a new user with it:
         if(!user){
-          // console.log('making new user', profile.displayName, profile.id);
+          console.log('making new user', profile.displayName, 'id:', profile.id);
           newUser = new User({
             name: profile.displayName,
             fb: {
@@ -86,6 +85,8 @@ module.exports = {
           });
           //create a library for this user and then save it
           newUser.library = new Library();
+          newUser.library.ownerId = newUser.id;
+          newUser.library.ownerFbId = newUser.fb.id;
           newUser.library.save();
 
           //save the user
@@ -93,22 +94,26 @@ module.exports = {
             resolve(newUser); //this is what the promise will return
           });
         }
-        else{
-          // console.log('found user', user.name, user.fb.id);
+        else{ //if we found the user:
+          console.log('found user', user.name, 'id:', user.fb.id, user._id);
           //check if we need to update the token, and if so update it:
           if (token !== user.fb.token){
             User.update({_id: user._id}, {
               fb: {
+                id: user.fb.id,
                 token: token,
               }
             }).then(function(){
               resolve(user);
             });
           }
-          else {
+          else { //the token is good
             resolve(user);
           }
         }
+      }).catch(function(err) {
+        console.log('findUserAndLogin error:', err);
+        reject(user);
       });
     });
   },

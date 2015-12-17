@@ -14,6 +14,16 @@ module.exports = {
     });
   },
 
+  //INCOMPLETE
+  //given a user id, return the library with a matching ownerId field:
+  getUserLibraryByUserId: function(req, res){
+    console.log(req.query);
+    Library.findOne({'ownerId' : req.query}).populate('books.book.bookData').exec()
+    .then(function(library){
+
+    });
+  },
+
  ///this should be removed later since we dont need to see every users library
   getAllLibraries: function(req, res){
     // Library.find(req.query).populate('books').exec(function(err, result){ //wors w old schema
