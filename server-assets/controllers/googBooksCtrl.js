@@ -46,6 +46,21 @@ module.exports = {
           book.tags = queryObj.items[i].volumeInfo.categories;
           book.coverArtUrl = queryObj.items[i].volumeInfo.imageLinks.thumbnail;
           book.googBooksUrl = queryObj.items[i].selfLink;
+
+          //get alternate ISBNs:
+          var isbn13; //we need to use this because book.isbn13 is undefined until the save method is run at the end. In the meantime we'll copy it to this variable so we can use it elsewhere before the save method is ran.
+          for (var j = 0; j < queryObj.items[i].volumeInfo.industryIdentifiers.length; j++){
+            if (queryObj.items[i].volumeInfo.industryIdentifiers[j].type === "ISBN_13"){
+              isbn13 = queryObj.items[i].volumeInfo.industryIdentifiers[j].identifier;
+              book.isbn13 = isbn13;
+            }
+            if (queryObj.items[i].volumeInfo.industryIdentifiers[j].type === "ISBN_10"){
+              book.isbn10 = queryObj.items[i].volumeInfo.industryIdentifiers[j].identifier;
+            }
+          }
+          if (isbn13){
+            book.isbn = book.isbn13; //set the primary book isbn to the isbn13 value
+          }
         }
         resolve(book); //return the updated book
       }).catch(function(err){
