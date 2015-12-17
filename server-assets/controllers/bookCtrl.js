@@ -18,7 +18,6 @@ module.exports = {
     }
     newBook.isbn = filteredIsbn;
     //make sure this is not a duplicate:
-    console.log('looking for', newBook.isbn);
     Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
     .then(function(foundBook){
       if(!foundBook){
@@ -30,7 +29,8 @@ module.exports = {
             //put amazon update here?
 
             newBook.save().then(function(theBook) { //save the book
-              return res.json(theBook); //return the book
+              return res.status(201).end;
+              //return res.json(theBook); //return the book
             }).catch(function(err) {
               console.log(err);
               return res.status(400).json(err);
@@ -44,7 +44,7 @@ module.exports = {
       }else {
         {
           console.log('Book already exists!:', foundBook.isbn10, foundBook.isbn13);
-          return res.status(400).json({error: "Book already exists!"});
+          return res.status(409).json({error: "Book already exists!"});
         }
       }
     });
@@ -105,9 +105,9 @@ module.exports = {
           for (var i = 0; i < docs.length; i++){
             for(var j = 0; j< docs[i].books.length; j++){
               if (docs[i].books[j].book.bookData == req.params.id){ // == instead of === is on purpose here!
-                docs[i].books.splice(j,1);
+                docs[i].books.splice(j,1); //remove 1 element at position j, which is the book we are deleting
               }
-              docs[i].save();
+              docs[i].save(); //save the library with our changes
             }
           }
         });

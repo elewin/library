@@ -9,14 +9,14 @@ var bookSchema = new mongoose.Schema({
   date: {type: String},
   length: {type: String,},
   isbn: {type: String, required: true, unique: true, index: true},
-  isbn13: {type: String, unique: true, index: true},
-  isbn10: {type: String, unique: true, index: true},
+  isbn13: {type: String,  default: "None", index: true},
+  isbn10: {type: String, default: "None", index: true},
   publisher: {type: String,},
   tags: {type: []}, //genre etc
   coverArtUrl: {type: String, default: ''},
   googDescription: {type: String, default: 'No description'}, //google books description
   azDescription: {type: String, default: 'No description'}, //amazon description
-  lang: {type: String},
+  lang: {type: String, default: "Not specified"},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},
   googBooksUrl: {type: String, default: ""},

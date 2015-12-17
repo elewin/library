@@ -9,12 +9,12 @@ module.exports = {
 
   getCurrentUser: function(req, res, next){
     if(!req.isAuthenticated()){
-      console.log('user profile: need to login');
+      console.log('user not logged in');
 
       res.status(401).send('Unauthorized');
     }else{
-      console.log('this is the currently logged in user');
-      console.log (req.user);
+      // console.log('this is the currently logged in user');
+      // console.log (req.user);
       return res.json(req.user);
       //res.status(200).send(req.user);
       //next();

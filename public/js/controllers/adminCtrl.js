@@ -1,4 +1,4 @@
-angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService) {
+angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q) {
 
   //books:
   $scope.bookOptions = [ //keys for editBook
@@ -10,11 +10,22 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 			name: 'Author',
 			value: 'author',
 		},
-		{
-			name: 'ISBN',
-			value: 'isbn',
-		}
+		// {
+		// 	name: 'ISBN',
+		// 	value: 'isbn',
+		// }
 	];
+
+  var getCurrentUser = function(){
+    return $q(function(resolve, reject) {
+      var currentUser = userService.getCurrentUser();
+      resolve(currentUser);
+    });
+  };
+
+  getCurrentUser().then(function(user){
+    $scope.currentUser = user;
+  });
 
   var getBooks = function(){
     bookService.getBooks().then(function (books){
@@ -62,7 +73,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
   //users
 
-  $scope.userOptions = [ //keys for editBook
+  $scope.userOptions = [ //keys for editUser
 		{
 			name: 'Name',
 			value: 'name',

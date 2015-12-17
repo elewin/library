@@ -1,5 +1,7 @@
 (admin.html)
 <br>
+Logged in as {{currentUser.name}}
+<br>
 <h2>Admin:</h2>
 <hr>
 Books:
@@ -33,9 +35,25 @@ Books:
       <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info &#9660;</a></span>
       <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info&#9654;  </a></span>
       <div ng-hide="moreInfo">
-        {{book.subtitle}} {{book.length}} pages, published {{book.date}} by {{book.publisher}}
+        {{book.subtitle}}
         <br>
-        {{book.tags}}
+        {{book.length}} pages
+        <br>
+        Published {{book.date}} by {{book.publisher}}
+        <br>
+        <span ng-repeat="tag in book.tags">
+          {{tag}}
+        </span>
+        <br>
+        ISBN-10: {{book.isbn10}}
+        <br>
+        ISBN-13: {{book.isbn13}}
+        <br>
+        Language: {{book.lang}}
+        <br>
+        Added: {{book.dateAdded}}
+        <br>
+        Updated: {{book.updatedAt}}
         <br>
         <span ng-hide="showDesc"><a href="" ng-click="showDesc=true">Description &#9654;</a></span>
         <span ng-show="showDesc"><a href="" ng-click="showDesc=false">Description &#9660;</a></span>

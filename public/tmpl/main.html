@@ -1,5 +1,8 @@
 (main.html)
 <br>
+<span ng-hide="currentUser">Not logged in!!</span>
+<span ng-show="currentUser">Logged in as {{currentUser.name}}</span>
+<br>
 Books:
 <ul>
   <li ng-repeat="book in books">

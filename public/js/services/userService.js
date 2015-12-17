@@ -10,15 +10,17 @@ angular.module('library').service('userService', function($stateParams, $http, $
 
   var user;
 
+  //returns the currently logged in user
   this.getCurrentUser = function() {
     var defer = $q.defer();
     if (user) {
+      console.log(user);
       defer.resolve(user);
     }
     else {
       $http({
         method: "GET",
-        url: "/api/users/profile"
+        url: "/api/users/me"
       }).then(function(response) {
         user = response.data;
         defer.resolve(response.data);
