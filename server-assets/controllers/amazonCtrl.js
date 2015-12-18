@@ -1,4 +1,4 @@
-var config = require("../../config.json"); // config file
+var config = require("../../config.js"); // config file
 var amazon = require('amazon-product-api');
 var q = require('q'); //promises library
 

@@ -44,7 +44,7 @@ app.use(bodyParser.json(), cors());
 
 //sessions for OAuth:
 app.use(session({
-  secret: process.env.MONGOLAB_URIconfig.session.secret,
+  secret: config.session.secret,
   resave: false,
   saveUninitialized: false,
 }));
