@@ -130,7 +130,7 @@ app.delete('/api/library/:id', requireAuth, libraryCtrl.deleteLibrary); //delete
 if (local) {
   console.log('Library server is running in local mode');
 }else{
-  console.log('**** Library server is not in local mode!!! Check config.js');
+  console.log('**** Library server is NOT in local mode');
 }
 
 //connect to db
@@ -145,6 +145,6 @@ mongoose.connection.once('open', function(){
 });
 
 //start server
-app.listen(serverPort, function(){
+app.listen(process.env.PORT || serverPort, function(){
   console.log('Library server listening to port '+serverPort);
 });
