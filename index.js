@@ -33,8 +33,8 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 
 //addresses and ports:
 var serverPort = config.serverPort; //port for server to listen to
-var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
-
+//var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
+var dbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
 var app = express();
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());

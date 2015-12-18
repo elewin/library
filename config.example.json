@@ -5,6 +5,13 @@
     "port" : 12345,
     "db" : "/library"
   },
+  "mongolab" : {
+    "dbuser" : "user",
+    "dbpassword": "password",
+    "uriRoot" : "mongodb://",
+    "uri" : "your uri",
+    "db" : "/your db name"
+  },
   "session" : {
     "secret" :"im a secret"
     },
