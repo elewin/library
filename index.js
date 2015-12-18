@@ -55,7 +55,8 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
   clientID: config.api.facebook.clientID,
   clientSecret: config.api.facebook.clientSecret,
-  callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
+//callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
+  callbackURL: 'https://bookcollectorapp.herokuapp.com' + '/api/auth/fb/cb',
   enableProof: true,
 }, function(token, refreshToken, profile, done){
   userCtrl.findUserAndLogin(token, profile)
