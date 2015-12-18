@@ -145,6 +145,6 @@ mongoose.connection.once('open', function(){
 });
 
 //start server
-app.listen(process.env.PORT || serverPort, function(){
+app.listen(serverPort, function(){
   console.log('Library server listening to port '+serverPort);
 });

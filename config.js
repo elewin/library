@@ -4,7 +4,7 @@ var config;
 if (local){
   config = require("./secrets.json"); // local config file
 }else{
-  config = require("./herokuConfig.json"); // config file with heroku environmental variables
+  config = require("./herokuConfig.js"); // config file with heroku environmental variables
 }
 
 module.exports = config;
