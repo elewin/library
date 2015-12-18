@@ -1,5 +1,5 @@
 //dependencies:
-var config = require("./config.json"); // config file
+var config = require("./config.js"); // config file
 var express = require('express');
 var session = require('express-session');
 var cors = require('cors');
@@ -34,10 +34,8 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 //addresses and ports:
 var serverPort = config.serverPort; //port for server to listen to
 //var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
-var localDbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
-// Here we find an appropriate database to connect to, defaulting to
-// localhost if we don't find one.
-var dbUri = config.mongolab.herokuUri || localDbUri;
+var dbUri = process.env.MONGOLAB_URI || config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
+
 
 mongoose.connect(dbUri);
 var app = express();
@@ -46,7 +44,7 @@ app.use(bodyParser.json(), cors());
 
 //sessions for OAuth:
 app.use(session({
-  secret: config.session.secret,
+  secret: process.env.MONGOLAB_URIconfig.session.secret,
   resave: false,
   saveUninitialized: false,
 }));
@@ -126,6 +124,6 @@ mongoose.connection.once('open', function(){
 });
 
 //start server
-app.listen(process.env.PORT || serverPort, function(){
+app.listen(serverPort, function(){
   console.log('Library server listening to port '+serverPort);
 });
