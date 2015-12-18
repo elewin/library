@@ -1,5 +1,9 @@
+//settings:
+var config = require('./config'); //config file. Change the bool variable 'local' in this file to true for local developlemt, false for heroku deployment
+var local = config.local;
+var useMongolab = true; //use mongolab (true) or local db (false) (must be true for heroku deployment!)
+
 //dependencies:
-var config = require("./config.js"); // config file
 var express = require('express');
 var session = require('express-session');
 var cors = require('cors');
@@ -33,9 +37,20 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 
 //addresses and ports:
 var serverPort = config.serverPort; //port for server to listen to
-//var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
-var dbUri = process.env.MONGOLAB_URI || config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
 
+var dbUri;
+if (useMongolab){
+  dbUri = process.env.MONGOLAB_URI || config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
+} else {
+  dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for local database
+}
+
+var facebookCallbackURL;
+if (local){
+  facebookCallbackURL = 'http://localhost:'+serverPort+ '/api/auth/fb/cb'; //this is for local development
+}else{
+  facebookCallbackURL = 'https://bookcollectorapp.herokuapp.com/api/auth/fb/cb'; //this is for deployment to heroku
+}
 
 mongoose.connect(dbUri);
 var app = express();
@@ -55,8 +70,7 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
   clientID: config.api.facebook.clientID,
   clientSecret: config.api.facebook.clientSecret,
-//callbackURL: 'http://localhost:'+serverPort+ '/api/auth/fb/cb',
-  callbackURL: 'https://bookcollectorapp.herokuapp.com' + '/api/auth/fb/cb',
+  callbackURL: facebookCallbackURL,
   enableProof: true,
 }, function(token, refreshToken, profile, done){
   userCtrl.findUserAndLogin(token, profile)
@@ -113,6 +127,12 @@ app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrar
 app.delete('/api/library/:id', requireAuth, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
 //server start-up:
+if (local) {
+  console.log('Library server is running in local mode');
+}else{
+  console.log('**** Library server is not in local mode!!! Check config.js');
+}
+
 //connect to db
 mongoose.connect(dbUri, function(err){
   if(err){
