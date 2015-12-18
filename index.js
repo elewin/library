@@ -34,12 +34,12 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 //addresses and ports:
 var serverPort = config.serverPort; //port for server to listen to
 //var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
-var dbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
+var localDbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
 // Here we find an appropriate database to connect to, defaulting to
 // localhost if we don't find one.
-var uristring = process.env.MONGOLAB_URI || dbUri;
+var dbUri = config.mongolab.herokuUri || localDbUri;
 
-mongoose.connect(uristring);
+mongoose.connect(dbUri);
 var app = express();
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
@@ -113,10 +113,9 @@ app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //ad
 app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', requireAuth, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
-
 //server start-up:
 //connect to db
-mongoose.connect(uristring, function(err){
+mongoose.connect(dbUri, function(err){
   if(err){
     console.log('Unable to connect to '+dbUri);
     console.log('Error:', err.message);
