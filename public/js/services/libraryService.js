@@ -7,10 +7,18 @@ angular.module('library').service('libraryService', function($stateParams, $http
     });
   };
 
-  this.getUserLibrary = function(libraryId){
+  // deprecated:
+  // this.getUserLibrary = function(libraryId){
+  //   return $http({
+  //     method: 'GET',
+  //     url: '/api/library/'+libraryId,
+  //   });
+  // };
+
+  this.getUserLibrary = function(userId){
     return $http({
       method: 'GET',
-      url: '/api/library/'+libraryId,
+      url: '/api/library/user/'+userId,
     });
   };
 

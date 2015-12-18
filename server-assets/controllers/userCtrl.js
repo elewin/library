@@ -95,7 +95,7 @@ module.exports = {
           });
         }
         else{ //if we found the user:
-          console.log('found user', user.name, 'id:', user.fb.id, user._id);
+          console.log('found user', user.name, 'fb.id:', user.fb.id, '._id:', user._id);
           //check if we need to update the token, and if so update it:
           if (token !== user.fb.token){
             User.update({_id: user._id}, {

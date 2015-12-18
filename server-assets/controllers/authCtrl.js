@@ -14,9 +14,8 @@ module.exports = {
   }),
 
   logout : function(req, res){
-    console.log('logging out');
     req.logout();
-
+    console.log('user logged out');
     return res.status(200).end();
   }
 

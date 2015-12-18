@@ -7,14 +7,12 @@ angular.module('library').service('userService', function($stateParams, $http, $
     });
   };
 
-
   var user;
 
   //returns the currently logged in user
   this.getCurrentUser = function() {
     var defer = $q.defer();
     if (user) {
-      console.log(user);
       defer.resolve(user);
     }
     else {

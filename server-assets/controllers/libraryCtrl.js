@@ -14,13 +14,17 @@ module.exports = {
     });
   },
 
-  //INCOMPLETE
-  //given a user id, return the library with a matching ownerId field:
+  //given a user id, return the populated library with a matching ownerId field:
   getUserLibraryByUserId: function(req, res){
-    console.log(req.query);
-    Library.findOne({'ownerId' : req.query}).populate('books.book.bookData').exec()
+    Library.findOne({'ownerId' : req.params.id}).populate('books.book.bookData').exec()
     .then(function(library){
-
+      if(library){
+        res.send(library);
+      }else{
+        res.status(404).send({error: "library not found for user._id: " + req.params.id});
+      }
+    }).catch(function(err){
+      res.status(400).send(err);
     });
   },
 

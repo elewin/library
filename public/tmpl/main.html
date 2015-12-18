@@ -1,13 +1,16 @@
-(main.html)
-<br>
-<span ng-hide="currentUser">Not logged in!!</span>
-<span ng-show="currentUser">Logged in as {{currentUser.name}}</span>
-<br>
-Books:
-<ul>
-  <li ng-repeat="book in books">
-      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
-  </li>
-</ul>
+<div class="header">
+  <div id="title">
+    <span><a ui-sref='home'>Book Collector </a></span>
+  </div>
+  <div id="login">
+    <span ng-hide="currentUser">
+      <a href='/api/auth/fb/login'>Login</a>
+    </span>
 
-<a ui-sref='admin'>Admin</a>
+    <span ng-show="currentUser">
+      Hi,  {{currentUser.name}} | <a ui-sref="logout">Logout</a>
+    </span>
+
+  </div>
+</div>
+<div ui-view></div>

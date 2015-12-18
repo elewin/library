@@ -99,6 +99,7 @@ app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, userCtrl.deleteUser);
 
 //library
+app.get('/api/library/user/:id', libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
 app.get('/api/library/', requireAuth, libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
 app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId
 app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user

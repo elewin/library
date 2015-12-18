@@ -159,9 +159,9 @@ Users:
     library id: {{user.library}}
     <br>
     books:
-    <div ng-repeat="book in user.books">
-      stuff: {{book}}
-    </div>
+    <!-- <div ng-repeat="book in getUserLibrary(user._id).books">
+      Book: {{book}}
+    </div> -->
 
     <form name="addBookForm">
       <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
@@ -221,4 +221,4 @@ Libraries:
 
 <hr>
 
-<a ui-sref='main'>&#171; Main</a>
+<a ui-sref='main.home'>&#171; Home</a>

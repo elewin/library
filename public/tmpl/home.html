@@ -1,0 +1,16 @@
+<div class="splash">
+    <div>Book Collector</div>
+</div>
+(home.html)
+<br>
+<span ng-hide="currentUser">Not logged in!!</span>
+<span ng-show="currentUser">Logged in as {{currentUser.name}}</span>
+<br>
+Books:
+<ul>
+  <li ng-repeat="book in books">
+      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
+  </li>
+</ul>
+
+<a ui-sref='main.admin'>Admin</a>

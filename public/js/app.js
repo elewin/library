@@ -1,14 +1,20 @@
-var app = angular.module('library', ['ui.router']);
+var app = angular.module('library', ['ui.router', 'ngSanitize']);
 
 app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   $stateProvider
-	.state('main', {
+  .state('main', {
     url: '/',
-		controller: 'mainCtrl',
-		templateUrl: './tmpl/main.html',
+    abstract: true,
+    controller: 'mainCtrl',
+    templateUrl: './tmpl/main.html',
+  })
+	.state('main.home', {
+    url: '',
+		controller: 'homeCtrl',
+		templateUrl: './tmpl/home.html',
 	})
-  .state('admin', {
-    url: '/admin',
+  .state('main.admin', {
+    url: 'admin',
     controller: 'adminCtrl',
     templateUrl: './tmpl/admin.html',
   })
@@ -16,7 +22,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 		url: '/logout',
 		controller: function(userService, $state) {
 			userService.logout().then(function() {
-				$state.go('main');
+				$state.go('main.home');
 			});
 		}
 	});
@@ -29,7 +35,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
         if (res.status === 401) {
           console.log('intercepted!');
         	document.location = '/#/';
-        	//$state.go('login');
+        	// $state.go('main');
         }
         return $q.reject();
       }

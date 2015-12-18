@@ -11,7 +11,5 @@ angular.module('library').controller('mainCtrl', function($scope, bookService, u
     $scope.currentUser = user;
   });
 
-  bookService.getBooks().then(function (books){
-    $scope.books = books.data;
-  });
+
 });
