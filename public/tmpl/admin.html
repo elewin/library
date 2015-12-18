@@ -32,9 +32,9 @@ Books:
       <img src="{{book.coverArtUrl}}" />
       {{book.title}} by {{book.author}}
       <br>
-      <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info &#9660;</a></span>
-      <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info&#9654;  </a></span>
-      <div ng-hide="moreInfo">
+      <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info &#9654;</a></span>
+      <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info&#9660;  </a></span>
+      <div ng-show="moreInfo">
         {{book.subtitle}}
         <br>
         {{book.length}} pages
@@ -55,9 +55,9 @@ Books:
         <br>
         Updated: {{book.updatedAt}}
         <br>
-        <span ng-hide="showDesc"><a href="" ng-click="showDesc=true">Description &#9654;</a></span>
-        <span ng-show="showDesc"><a href="" ng-click="showDesc=false">Description &#9660;</a></span>
-        <div ng-show="showDesc">
+        <span ng-hide="showDesc"><a href="" ng-click="showDesc=true">Description &#9660;</a></span>
+        <span ng-show="showDesc"><a href="" ng-click="showDesc=false">Description &#9654;</a></span>
+        <div ng-hide="showDesc">
           Google Books:<br>
           <i>{{book.googDescription}}</i>
           <br>
@@ -159,9 +159,7 @@ Users:
     library id: {{user.library}}
     <br>
     books:
-    <!-- <div ng-repeat="book in getUserLibrary(user._id).books">
-      Book: {{book}}
-    </div> -->
+    <books-dir user="user" get-library="getUserLibrary(id)"></books-dir>
 
     <form name="addBookForm">
       <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>

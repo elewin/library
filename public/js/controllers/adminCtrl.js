@@ -138,11 +138,8 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   // };
 
   $scope.getUserLibrary = function(userId){
-    console.log('doing stuff');
-    libraryService.getUserLibrary(userId).then(function(userLibrary){
-      $scope.userLibrary = userLibrary.data;
-
-      console.log('userLibrary:', userLibrary.data.books);
+    return libraryService.getUserLibrary(userId).then(function(userLibrary){
+//      $scope.userLibrary = userLibrary.data;
       return userLibrary.data;
     });
   };
