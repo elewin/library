@@ -1,12 +1,12 @@
 {
-  "name": "library",
+  "name": "Book Collector",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full stack book collection manager",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Eric Lewin",
   "license": "ISC",
   "dependencies": {
     "amazon-product-api": "^0.3.5",

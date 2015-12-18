@@ -35,6 +35,11 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 var serverPort = config.serverPort; //port for server to listen to
 //var dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for database
 var dbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
+// Here we find an appropriate database to connect to, defaulting to
+// localhost if we don't find one.
+var uristring = process.env.MONGOLAB_URI || dbUri;
+
+mongoose.connect(uristring);
 var app = express();
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
@@ -111,7 +116,7 @@ app.delete('/api/library/:id', requireAuth, libraryCtrl.deleteLibrary); //delete
 
 //server start-up:
 //connect to db
-mongoose.connect(dbUri, function(err){
+mongoose.connect(uristring, function(err){
   if(err){
     console.log('Unable to connect to '+dbUri);
     console.log('Error:', err.message);
@@ -122,6 +127,6 @@ mongoose.connection.once('open', function(){
 });
 
 //start server
-app.listen(serverPort, function(){
+app.listen(process.env.PORT || serverPort, function(){
   console.log('Library server listening to port '+serverPort);
 });
