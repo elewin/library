@@ -1,6 +1,6 @@
 //settings:
 var config = require('./config'); //config file. ***** Change the bool variable 'local' in this file (config.js) to true for local developlemt, false for heroku deployment
-var useMongolab = false; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
+var useMongolab = true; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
 var local = config.local;
 
 //alert user to the current mode to asssit with debugging:
@@ -24,7 +24,7 @@ mongoose.Promise = require('q').Promise; //replace mongo promises w/ q library
 var passport = require('passport'); //for OAuth
 var FacebookStrategy = require('passport-facebook'); //for oauth via facebook
 
-//dependencies unused in index.js, listing for reference:
+//dependencies unused in index.js but used elsewhere, listing for reference:
 // var request = require('request-promise'); //for making http requests
 // var amazon = require('amazon-product-api');
 // var graph = require('fbgraph'); //Facebook Graph API
@@ -35,7 +35,7 @@ var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 var authCtrl = require('./server-assets/controllers/authCtrl');
 
-//controllers currently unused in index.js, listing here for reference:
+//controllers currently unused in index.js but used elsewhere, listing here for reference:
 //var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
 //var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
 //var goodreadsCtrl = require('./server-assets/controllers/goodreadsCtrl');
@@ -67,7 +67,7 @@ if (local){
   facebookCallbackURL = 'http://localhost:'+serverPort+ '/api/auth/fb/cb'; //this is for local development
 }
 else{
-  facebookCallbackURL = 'https://bookcollectorapp.herokuapp.com/api/auth/fb/cb'; //this is for deployment to heroku
+  facebookCallbackURL = config.api.fb.callbackURL; //this is for deployment to heroku
 }
 
 mongoose.connect(dbUri);
