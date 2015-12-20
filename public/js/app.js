@@ -16,7 +16,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   .state('main.admin', {
     url: 'admin',
     controller: 'adminCtrl',
-    templateUrl: './tmpl/admin.html',
+    templateUrl: './tmpl/secure/admin.html',
   })
   .state('logout', {
 		url: '/logout',

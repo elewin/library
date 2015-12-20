@@ -2,6 +2,7 @@
 module.exports = {
   local: false,
   serverPort: process.env.PORT,
+  //heroku will use its own mongolab settings
   mongodb : {
     uri : "",
     port: "",

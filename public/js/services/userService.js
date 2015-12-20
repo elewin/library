@@ -18,7 +18,7 @@ angular.module('library').service('userService', function($stateParams, $http, $
     else {
       $http({
         method: "GET",
-        url: "/api/users/me"
+        url: "/api/users/currentUser"
       }).then(function(response) {
         user = response.data;
         defer.resolve(response.data);

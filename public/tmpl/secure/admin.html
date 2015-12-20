@@ -32,8 +32,8 @@ Books:
       <img src="{{book.coverArtUrl}}" />
       {{book.title}} by {{book.author}}
       <br>
-      <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info &#9654;</a></span>
-      <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info&#9660;  </a></span>
+      <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info +</a></span>
+      <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info -  </a></span>
       <div ng-show="moreInfo">
         {{book.subtitle}}
         <br>
@@ -151,6 +151,8 @@ Users:
      </form>
 
     </div>
+    <br>
+    roles: <span ng-repeat="role in user.roles">{{role}}, </span>
     <br>
     fb id: {{user.fb.id}}
     <br>

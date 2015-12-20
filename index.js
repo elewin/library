@@ -1,7 +1,18 @@
 //settings:
-var config = require('./config'); //config file. Change the bool variable 'local' in this file to true for local developlemt, false for heroku deployment
+var config = require('./config'); //config file. ***** Change the bool variable 'local' in this file (config.js) to true for local developlemt, false for heroku deployment
+var useMongolab = false; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
 var local = config.local;
-var useMongolab = true; //use mongolab (true) or local db (false) (must be true for heroku deployment!)
+
+//alert user to the current mode to asssit with debugging:
+if (local) {
+  console.log('Library server is running in local mode');
+}
+else{
+  console.log('**** Library server is NOT in local mode');
+  if(!useMongolab){
+  console.log('**** Running local mongodb in non-local mode!'); //give a warning if the server is started in non-local mode (heroku deployment etc) but mongolab is disabled
+  }
+}
 
 //dependencies:
 var express = require('express');
@@ -14,7 +25,7 @@ var passport = require('passport'); //for OAuth
 var FacebookStrategy = require('passport-facebook'); //for oauth via facebook
 
 //dependencies unused in index.js, listing for reference:
-//var request = require('request-promise'); //for making http requests
+// var request = require('request-promise'); //for making http requests
 // var amazon = require('amazon-product-api');
 // var graph = require('fbgraph'); //Facebook Graph API
 
@@ -40,15 +51,22 @@ var serverPort = config.serverPort; //port for server to listen to
 
 var dbUri;
 if (useMongolab){
-  dbUri = process.env.MONGOLAB_URI || config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
-} else {
+  if (local){
+    dbUri = config.mongolab.uriRoot + config.mongolab.dbuser + ":" + config.mongolab.dbpassword + config.mongolab.uri + config.mongolab.db; //URI for mongolab
+  }
+  else{
+    dbUri = process.env.MONGOLAB_URI; //heroku URI for mongolab
+  }
+}
+else {
   dbUri = config.mongodb.uri + config.mongodb.port + config.mongodb.db; //URI for local database
 }
 
 var facebookCallbackURL;
 if (local){
   facebookCallbackURL = 'http://localhost:'+serverPort+ '/api/auth/fb/cb'; //this is for local development
-}else{
+}
+else{
   facebookCallbackURL = 'https://bookcollectorapp.herokuapp.com/api/auth/fb/cb'; //this is for deployment to heroku
 }
 
@@ -56,6 +74,7 @@ mongoose.connect(dbUri);
 var app = express();
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
+
 
 //sessions for OAuth:
 app.use(session({
@@ -86,6 +105,29 @@ passport.deserializeUser(function(obj, done){
   done(null, obj);
 });
 
+//BROKEN
+//this will lock down secure areas on the front end that require admin access:
+// app.use(function(req, res, next) {
+//   console.log('-----');
+// 	console.log(req.path);
+//   if (req.user){
+//     console.log(req.user.roles);
+//   }
+//   if(req.user === null && req.path.indexOf('/secure') === 0) //handle non-logged in users
+//   {
+//     console.log('lock down redirect, no user');
+//     return res.redirect('/#/');
+//   }
+//   if (req.user){ //if a user is logged in . . .
+//     if(req.user.roles.indexOf('admin') < 0){  //. . . then check if they have admin access and redirect if they don't
+//       console.log ('lock down redirect, user not admin');
+//       return res.redirect('/#/');
+//     }
+//   }
+//   next();
+// });
+
+
 var requireAuth = function(req, res, next) {
 	if (!req.isAuthenticated()) {
 		return res.status(401).end();
@@ -93,28 +135,45 @@ var requireAuth = function(req, res, next) {
 	next();
 };
 
+//given a user and a role, return true or false if that user has that role in their role array
+var userRole = function(user, role){
+  if (user.roles.indexOf(role) > -1) { //check if the necessary role is in the user's roles array
+    return true;
+  }
+  else{
+    return false;
+  }
+};
+
+var requireAdmin = function(req,res,next){
+  console.log('require admin req.user',req.user);
+  if (!userRole(req.user, 'admin')){
+    return res.status(403).end(); //if the user is not an admin, return status 403 forbidden
+  }
+  next();
+};
+
 //API endpoints:
 //OAuth
 app.get('/api/auth/fb/login', authCtrl.authenticate);
 app.get('/api/auth/fb/cb', authCtrl.callback);
-
 app.get('/api/auth/fb/logout', authCtrl.logout);
 
-//books
+//books (these apply to the main book roster, not a particluar user's library)
 app.get('/api/books',  bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
 app.post('/api/books', requireAuth, bookCtrl.addBook);
-app.put('/api/books/:id', requireAuth, bookCtrl.editBook);
+app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API
-app.delete('/api/books/:id', requireAuth, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
+app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users
-app.get('/api/users/me', requireAuth, userCtrl.getCurrentUser);
+app.get('/api/users/currentUser', requireAuth, userCtrl.getCurrentUser);
 app.get('/api/users', requireAuth, userCtrl.getUsers);
 app.get('/api/users/:id', userCtrl.getUser);
-app.post('/api/users', requireAuth, userCtrl.addUser);
+//app.post('/api/users', requireAuth, userCtrl.addUser);
 app.put('/api/users/:id', requireAuth, userCtrl.editUser);
-app.delete('/api/users/:id', requireAuth, userCtrl.deleteUser);
+app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);
 
 //library
 app.get('/api/library/user/:id', libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
@@ -124,27 +183,21 @@ app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library,
 app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array
 app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library
 app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrary); //removes a book from the library
-app.delete('/api/library/:id', requireAuth, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
+app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
-//server start-up:
-if (local) {
-  console.log('Library server is running in local mode');
-}else{
-  console.log('**** Library server is NOT in local mode');
-}
 
-//connect to db
-mongoose.connect(dbUri, function(err){
+//connect to database
+mongoose.createConnection(dbUri, function(err){
   if(err){
-    console.log('Unable to connect to '+dbUri);
+    console.log('Unable to connect to '+ dbUri);
     console.log('Error:', err.message);
   }
 });
 mongoose.connection.once('open', function(){
-  console.log('database connected to ' + dbUri);
+  console.log('Database connected to ' + dbUri);
 });
 
 //start server
 app.listen(serverPort, function(){
-  console.log('Library server listening to port '+serverPort);
+  console.log('Library server listening on port ' + serverPort);
 });

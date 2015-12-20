@@ -9,7 +9,11 @@ var userSchema = new mongoose.Schema({
     id: {type: String}, //facebook id
     token: {type: String},
   },
-  role: {type: String, enum: ['user', 'admin'], default: 'user'}, //level of access
+  roles: [{  //level of access
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  }],
 });
 
 module.exports = mongoose.model('User', userSchema);

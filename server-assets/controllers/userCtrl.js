@@ -52,19 +52,19 @@ module.exports = {
   },
 
   //deprecated, findUserAndLogin should add users automatically
-  addUser: function(req, res){
-    var newUser = new User(req.body);
-    newUser.library = new Library(); //instead of here
-    newUser.library.save();
-    newUser.save(function(err, result){
-      if(err){
-        res.status(400).json(err);
-      } else {
-        res.json(result);
-        //new librarty push here for multiple libraries later intead of stuff at top (call sep function)
-      }
-    });
-  },
+  // addUser: function(req, res){
+  //   var newUser = new User(req.body);
+  //   newUser.library = new Library(); //instead of here
+  //   newUser.library.save();
+  //   newUser.save(function(err, result){
+  //     if(err){
+  //       res.status(400).json(err);
+  //     } else {
+  //       res.json(result);
+  //       //new librarty push here for multiple libraries later intead of stuff at top (call sep function)
+  //     }
+  //   });
+  // },
 
   //when a user logs in, search to see if their facebook id is already in the user database. if so, login as that user. if not, create a new user and library for them. Returns a promise.
   findUserAndLogin : function(token, profile){ //add refreshToken later if its needed
@@ -82,6 +82,7 @@ module.exports = {
               id: profile.id,
               token: token,
             },
+            roles: ['user'],
           });
           //create a library for this user and then save it
           newUser.library = new Library();
