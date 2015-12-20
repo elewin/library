@@ -67,7 +67,7 @@ if (local){
   facebookCallbackURL = 'http://localhost:'+serverPort+ '/api/auth/fb/cb'; //this is for local development
 }
 else{
-  facebookCallbackURL = config.api.fb.callbackURL; //this is for deployment to heroku
+  facebookCallbackURL = config.api.facebook.callbackURL; //this is for deployment to heroku
 }
 
 mongoose.connect(dbUri);
