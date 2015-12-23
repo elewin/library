@@ -1,11 +1,17 @@
 //settings:
 var config = require('./config'); //config file. ***** Change the bool variable 'local' in this file (config.js) to true for local developlemt, false for heroku deployment
-var useMongolab = true; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
+var useMongolab = false; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
 var local = config.local;
 
 //alert user to the current mode to asssit with debugging:
 if (local) {
   console.log('Library server is running in local mode');
+  if (useMongolab){
+    console.log('Mongolab enabled');
+  }
+  else{
+    console.log('Using local mongodb');
+  }
 }
 else{
   console.log('**** Library server is NOT in local mode');
@@ -104,29 +110,6 @@ passport.serializeUser(function(user, done){
 passport.deserializeUser(function(obj, done){
   done(null, obj);
 });
-
-//BROKEN
-//this will lock down secure areas on the front end that require admin access:
-// app.use(function(req, res, next) {
-//   console.log('-----');
-// 	console.log(req.path);
-//   if (req.user){
-//     console.log(req.user.roles);
-//   }
-//   if(req.user === null && req.path.indexOf('/secure') === 0) //handle non-logged in users
-//   {
-//     console.log('lock down redirect, no user');
-//     return res.redirect('/#/');
-//   }
-//   if (req.user){ //if a user is logged in . . .
-//     if(req.user.roles.indexOf('admin') < 0){  //. . . then check if they have admin access and redirect if they don't
-//       console.log ('lock down redirect, user not admin');
-//       return res.redirect('/#/');
-//     }
-//   }
-//   next();
-// });
-
 
 var requireAuth = function(req, res, next) {
 	if (!req.isAuthenticated()) {
