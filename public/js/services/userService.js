@@ -9,18 +9,39 @@ angular.module('library').service('userService', function($stateParams, $http, $
 
   var user;
 
-  //returns the currently logged in user
+  //returns a promise that resolves true or false if a user is logged in
+  this.isUserLoggedIn = function(){
+    var defer = $q.defer();
+    $http({
+      method: "GET",
+      url: "/api/users/isUserLoggedIn"
+    }).then(function(response){
+      isUser = response.data;
+      //defer.resolve(isUser);
+
+      if(isUser){
+        defer.resolve(isUser);
+      }
+      else{
+        defer.reject(isUser);
+      }
+    });
+
+    return defer.promise;
+  };
+
+  //returns a promise that resolves the currently logged in user
   this.getCurrentUser = function() {
     var defer = $q.defer();
-    if (user) {
+    if (user) {  //if there is a user, resolve it
       defer.resolve(user);
     }
-    else {
+    else { //there wasn't a user. . .
       $http({
         method: "GET",
         url: "/api/users/currentUser"
       }).then(function(response) {
-        user = response.data;
+        user = response.data; //. . .but now there is
         defer.resolve(response.data);
       });
     }

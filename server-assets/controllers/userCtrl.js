@@ -7,11 +7,18 @@ var q = require('q'); //promises library
 
 module.exports = {
 
+  isUserLoggedIn : function(req, res){
+    if(req.isAuthenticated()){
+      return res.send(true);
+    }
+    return res.send(false);
+  },
+
   getCurrentUser: function(req, res, next){
     if(!req.isAuthenticated()){
-      console.log('user not logged in');
+      //console.log('user not logged in');
 
-      res.status(401).send('Unauthorized');
+      res.status(401).send('Unauthorized, not authenticated');
     }else{
       // console.log('this is the currently logged in user');
       // console.log (req.user);
@@ -31,25 +38,26 @@ module.exports = {
     });
   },
 
-  getUser: function(req, res){
-    User.findById(req.params.id, function(err, theUser){
-      if(err) {
-        res.status(400).json(err);
-      } else {
-          var options = {
-            path: 'library.books.book',
-            model: 'Book'
-          };
-          Book.populate(theUser, options, function(err, user){
-            if(err){
-              res.status(400).json(err);
-            } else {
-              res.json(user);
-            }
-          });
-      }
-    });
-  },
+  // deprecated, use getCurrentUser instead. May be useful for getting a single user for admin purposes later
+  // getUser: function(req, res){
+  //   User.findById(req.params.id, function(err, theUser){
+  //     if(err) {
+  //       res.status(400).json(err);
+  //     } else {
+  //         var options = {
+  //           path: 'library.books.book',
+  //           model: 'Book'
+  //         };
+  //         Book.populate(theUser, options, function(err, user){
+  //           if(err){
+  //             res.status(400).json(err);
+  //           } else {
+  //             res.json(user);
+  //           }
+  //         });
+  //     }
+  //   });
+  // },
 
   //deprecated, findUserAndLogin should add users automatically
   // addUser: function(req, res){

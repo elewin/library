@@ -151,9 +151,11 @@ app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update fro
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users
-app.get('/api/users/currentUser', requireAuth, userCtrl.getCurrentUser);
+app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn);
+app.get('/api/users/currentUser',  requireAuth, userCtrl.getCurrentUser);
 app.get('/api/users', requireAuth, userCtrl.getUsers);
-app.get('/api/users/:id', userCtrl.getUser);
+app.get('/api/users', requireAuth, userCtrl.getUsers);
+//app.get('/api/users/:id', userCtrl.getUser);
 //app.post('/api/users', requireAuth, userCtrl.addUser);
 app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);

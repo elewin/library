@@ -4,25 +4,6 @@ app.run(function (Permission, userService, $q) {
 
   Permission
     // Define user role calling back-end
-
-    //anon is incomplete
-    .defineRole('anon', function (stateParams) {
-      var deferred = $q.defer();
-
-      userService.getCurrentUser().then(function (data) {
-        console.log('data', data);
-        if (!data){
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-      }, function () {
-        // Error with request
-        deferred.reject();
-      });
-
-      return deferred.promise;
-    })
     .defineRole('user', function (stateParams) {
       var deferred = $q.defer();
 
@@ -39,12 +20,12 @@ app.run(function (Permission, userService, $q) {
 
       return deferred.promise;
     })
-    // A different example for admin
     .defineRole('admin', function (stateParams) {
       var deferred = $q.defer();
 
       userService.getCurrentUser().then(function (data) {
         if (data.roles.indexOf('admin') !== -1){
+          console.log('admin!');
           deferred.resolve();
         } else {
           deferred.reject();
@@ -78,12 +59,17 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     data:{
       permissions: {
         only: ['admin'],
-        redirectTo: 'main.test'
+        redirectTo: 'main.home'
       }
     }
   })
   .state('main.test', {
     url: 'test',
+    data:{
+      permissions: {
+        only: ['user'],
+      }
+    },
     templateUrl: './tmpl/test.html',
   })
   .state('logout', {
