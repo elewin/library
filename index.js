@@ -129,7 +129,6 @@ var userRole = function(user, role){
 };
 
 var requireAdmin = function(req,res,next){
-  console.log('require admin req.user',req.user);
   if (!userRole(req.user, 'admin')){
     return res.status(403).end(); //if the user is not an admin, return status 403 forbidden
   }
@@ -147,7 +146,7 @@ app.get('/api/books',  bookCtrl.getBooks);
 app.get('/api/books/:id', bookCtrl.getBook);
 app.post('/api/books', requireAuth, bookCtrl.addBook);
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
-app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API
+// app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API *** DEPRECATED, this is done automatically upon adding a book
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users

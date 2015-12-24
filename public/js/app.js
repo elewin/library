@@ -8,8 +8,12 @@ app.run(function (Permission, userService, $q) {
       var deferred = $q.defer();
 
       userService.getCurrentUser().then(function (data) {
-        if (data.roles.indexOf('user') > -1){
-          deferred.resolve();
+        if(data){ //ensure that a user is logged in (or else we'll get all kinds of errors if we proceed)
+          if (data.roles.indexOf('user') > -1){ //search for this role in their roles array
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
         } else {
           deferred.reject();
         }
@@ -17,16 +21,18 @@ app.run(function (Permission, userService, $q) {
         // Error with request
         deferred.reject();
       });
-
       return deferred.promise;
     })
     .defineRole('admin', function (stateParams) {
       var deferred = $q.defer();
 
       userService.getCurrentUser().then(function (data) {
-        if (data.roles.indexOf('admin') > -1){
-          console.log('admin!');
-          deferred.resolve();
+        if(data){
+          if (data.roles.indexOf('admin') > -1){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
         } else {
           deferred.reject();
         }
