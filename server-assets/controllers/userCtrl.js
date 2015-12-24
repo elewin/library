@@ -127,6 +127,7 @@ module.exports = {
     });
   },
 
+  //***later, secure this by checking if use is admin, and if not only allow this to go through if the logged in user id matches the user id to be edited
   editUser: function(req, res){
     User.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if(err){

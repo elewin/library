@@ -8,7 +8,7 @@ app.run(function (Permission, userService, $q) {
       var deferred = $q.defer();
 
       userService.getCurrentUser().then(function (data) {
-        if (data.roles.indexOf('user') !== -1){
+        if (data.roles.indexOf('user') > -1){
           deferred.resolve();
         } else {
           deferred.reject();
@@ -24,7 +24,7 @@ app.run(function (Permission, userService, $q) {
       var deferred = $q.defer();
 
       userService.getCurrentUser().then(function (data) {
-        if (data.roles.indexOf('admin') !== -1){
+        if (data.roles.indexOf('admin') > -1){
           console.log('admin!');
           deferred.resolve();
         } else {

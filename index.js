@@ -153,16 +153,15 @@ app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //
 //users
 app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn);
 app.get('/api/users/currentUser',  requireAuth, userCtrl.getCurrentUser);
-app.get('/api/users', requireAuth, userCtrl.getUsers);
-app.get('/api/users', requireAuth, userCtrl.getUsers);
+app.get('/api/users', requireAuth, requireAdmin, userCtrl.getUsers);
 //app.get('/api/users/:id', userCtrl.getUser);
 //app.post('/api/users', requireAuth, userCtrl.addUser);
 app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);
 
 //library
-app.get('/api/library/user/:id', libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
-app.get('/api/library/', requireAuth, libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
+app.get('/api/library/user/:id', requireAuth, libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
+app.get('/api/library/', requireAuth, requireAdmin, libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
 app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId
 app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user
 app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array

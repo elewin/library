@@ -12,6 +12,9 @@ Books:
       {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
   </li>
 </ul>
-<a ui-sref="main.admin">Admin</a>
+<span ng-if="hasAdminRole"><a ui-sref="main.admin">Admin</a></span>
 <br>
 <a ui-sref="main.test">test</a>
+<br>
+
+<span ng-if="hasUserRole">user: {{hasUserRole}}</span>

@@ -4,6 +4,7 @@ var User = require('../models/userSchema');
 
 module.exports = {
 
+  //***later, secure this by checking if use is admin, and if not only allow this to go through if the logged in user id/library id matches the library id to be edited
   getUserLibrary: function(req, res){
   //  Library.findById(req.params.id).populate('books').exec(function(err, result){
   Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
@@ -14,6 +15,7 @@ module.exports = {
     });
   },
 
+  //***later, secure this as above
   //given a user id, return the populated library with a matching ownerId field:
   getUserLibraryByUserId: function(req, res){
     Library.findOne({'ownerId' : req.params.id}).populate('books.book.bookData').exec()
@@ -50,6 +52,7 @@ module.exports = {
     });
   },
 
+  //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   addBookToLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
@@ -62,6 +65,7 @@ module.exports = {
     });
   },
 
+  //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   removeBookFromLibrary: function(req, res){
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
@@ -75,6 +79,7 @@ module.exports = {
     });
   },
 
+  //determine if this is deprecated
   editLibrary: function(req, res){
     Library.findByIdAndUpdate(req.params.id, req.body, function(err, result){
       if(err){
