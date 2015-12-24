@@ -74,6 +74,7 @@ angular.module('library').service('userService', function($stateParams, $http, $
     return defer.promise;
   };
 
+  // DEPRECATED
   // old version that did not check if there was a user logged in or not
   // //returns a promise that resolves the currently logged in user
   // this.getCurrentUser = function() {

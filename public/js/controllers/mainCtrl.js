@@ -21,6 +21,7 @@ angular.module('library').controller('mainCtrl', function($scope, bookService, u
     $scope.hasUserRole = result;
   });
 
+  //DEPRECATED
   //old version, from before getCurrentUser() also checked for a logged in user
   // userService.isUserLoggedIn().then(function(result){ //check if a user is logged in
   //   if(result){
