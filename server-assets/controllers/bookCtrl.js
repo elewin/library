@@ -4,6 +4,42 @@ var Library = require('../models/librarySchema');
 var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
 
+//tests if a given isbn number meets certain validity critera and returns a bool
+var checkIsbn = function(isbn){
+  //We need to check if we have a valid ISBN. ISBNs are either 9, 10, or 13 digit strings of numbers. Here we're just making sure its between 9 and 13 and only contains numbers, though it may have an X at the end. A more robust check could be added later but this should filter most bad data for now.
+
+  var goodIsbn = true;
+  var isbnLength = isbn.length; //calcualte the length once to save some time since we'll be calling it more than once
+  var trailingX = false; //this is to handle the special case of the final character in the ISBN being an 'X'
+
+  //check if the last character is an 'x'
+  if (isbn[isbnLength-1].toLowerCase() === 'x'){
+    trailingX = true;
+  }
+
+  //check length
+  if (isbnLength < 9 || isbnLength > 13){
+    goodIsbn = false;
+  }
+
+  //if there is an X at the end, we will tempoartily remove it for the numeric character check
+  if(trailingX){
+    isbn = isbn.slice(0, -1);
+  }
+
+  //check for non-numeric characters (trailing X has already been tempoarily removed if present). This may let decimals get by though.
+  if (isNaN(isbn)){
+    goodIsbn = false;
+  }
+
+  //if it had a trailing x, add it back now that our numeric check is complete
+  if(trailingX){
+    isbn+='x';
+  }
+  return goodIsbn; //return the result
+};
+
+
 module.exports = {
 
   //searches the Amazon Products API for the book given the paramters in req.query
@@ -11,58 +47,31 @@ module.exports = {
     amazonCtrl.searchForBook(req.query).then(function(results){
       return res.json(results);
     }).catch(function(err){
-      console.log('bookCtrl.searchAzForBook Error:', err);
-      return res.status(500).end();
+      if (err[0].Error[0].Code[0] === 'AWS.ECommerceService.NoExactMatches'){ //this is what returns if nothing is found
+        console.log('Amazon: ',err[0].Error[0].Message[0]);
+        return res.status(404).end();
+      }
+      else{
+        console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err)); //if something else went wrong
+        return res.status(500).end();
+      }
     });
   },
-
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
     var newBook = new Book(req.body); //req.body should be {isbn: <isbn number>}
 
-    //We need to check if we have a valid ISBN. ISBNs are either 9, 10, or 13 digit strings of numbers. Often they have dashes inserted for readability, so we need to strip those out. Here we're just making sure its at least 9 and only contains numbers, though may have an X at the end. A more robust check could be added later but this should filter most bad data for now.
-
-    //this whole part should probably be moved to its own function to reduce clutter
-
-    var goodIsbn = true;
-
-    //filter dashes from isbn and handle the special case of a trailing 'X':
-    var isbnLength = newBook.isbn.length; //calcualte the length once to save some time since we'll be calling it more than once
-    var trailingX = false;
+    //Often ISBNs have dashes inserted for readability, so we need to strip those out:
     var filteredIsbn ='';
-
-    //check if the last character is an 'x'
-    if (newBook.isbn[isbnLength-1].toLowerCase() === 'x'){
-      trailingX = true;
-    }
-
-    for (var i = 0; i < isbnLength; i++){
+    for (var i = 0; i < newBook.isbn.length; i++){
       if (newBook.isbn[i] !== '-'){
         filteredIsbn += newBook.isbn[i]; //filter out the dashes
       }
     }
     newBook.isbn = filteredIsbn;
-    isbnLength = newBook.isbn.length; //recalculate the length now that the dashes have been removed
 
-    //check length
-    if (isbnLength < 9 || isbnLength > 13){
-      goodIsbn = false;
-    }
-
-    if(trailingX){
-      newBook.isbn = newBook.isbn.slice(0, -1);
-    }
-
-    //check for non-numeric characters (trailing X has already been tempoartily removed if present)
-    if (isNaN(newBook.isbn)){
-      goodIsbn = false;
-    }
-
-    //add the trailing x back now that our checks are complete
-    if(trailingX){
-      newBook.isbn+='x';
-    }
+    var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
 
     //make sure this is not a duplicate:
     Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
