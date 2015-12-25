@@ -9,27 +9,44 @@ Books:
   <a href="" ng-click="showNewBookForm=true">Add book</a>
   <div ng-show="showNewBookForm">
     <a href="" ng-click="showNewBookForm=false">X</a>
-    <form name="newBookForm">
-      <input type="text" ng-model="newBookTitle" placeholder="New book title" required/>
-      <input type="text" ng-model="newBookAuthor" placeholder="New book author" required/>
-      <br>
-      <button ng-disabled="newBookForm.$invalid" ng-click="addBook(newBookTitle, newBookAuthor)">
-        Add Book
+    <br>
+
+    <form name="newBookTitleForm" style="display: inline-block">
+      <div id="searchBookSelectBox" style="display: inline-block">
+        <select id="searchBookOptionBox" ng-model="searchBookOption" ng-options="option.value as option.name for option in searchBookOptions" ng-init="searchBookOption = searchBookOptions[0].value">
+        </select>
+      </div>
+      <input type="text" ng-model="newBookTitle" placeholder="{{searchBookOption}}" required/>
+
+
+      <button ng-disabled="newBookTitleForm.$invalid" ng-click="searchAzForBook(searchBookOption, newBookTitle)">
+        Search for book by {{searchBookOption}}
       </button>
     </form>
+
+
     <form name="newBookIsbnForm">
       <input type="text" ng-model="newBookIsbn" placeholder="New book ISBN" required/>
-      <br>
+      
       <button ng-disabled="newBookIsbnForm.$invalid" ng-click="addBookByIsbn(newBookIsbn)">
         Add Book by ISBN
       </button>
     </form>
   </div>
 </div>
+
+<ul>
+  <li ng-repeat="result in searchResults">
+    <img src="{{result.SmallImage[0].URL[0]}}" />
+    {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})
+
+  </li>
+</ul>
+
 <ul>
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
-      <img src="{{book.coverArtUrl}}" />
+      <img src="{{book.coverArtUrl.medium}}" />
       {{book.title}} by {{book.author}}
       <br>
       <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info +</a></span>
@@ -80,7 +97,7 @@ Books:
             Cancel
           </a>
         </span>
-       -
+       <!-- -
       <a href="" ng-click="show=true">
         edit
       </a>
@@ -88,7 +105,7 @@ Books:
         <a href= "" ng-click="show=false">X</a>
 
         <div id="editBookSelectBox">
-          <select id="editBookOptionBox" ng-model="editBookOption" ng-options="option.value as option.name for option in bookOptions" ng-init="editBookOption = bookOptions[0].value">
+          <select id="editBookOptionBox" ng-model="editBookOption" ng-options="option.value as option.name for option in editBookOptions" ng-init="editBookOption = editBookOptions[0].value">
           </select>
         </div>
 
@@ -98,11 +115,9 @@ Books:
           <button ng-disabled="editedBookForm.$invalid" ng-click="editBook(book._id, editBookOption, editedBook)">
             Edit {{editOption}}
           </button>
-        </form>
-        <br>
-        <button ng-click="updateFromAmazon(book._id)">
-          Update from Amazon
-        </button>
+        </form> -->
+
+
 
 
       </div>

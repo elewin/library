@@ -1,20 +1,38 @@
 angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q) {
 
   //books:
-  $scope.bookOptions = [ //keys for editBook
-		{
-			name: 'Title',
-			value: 'title',
-		},
-		{
-			name: 'Author',
-			value: 'author',
-		},
-		// {
-		// 	name: 'ISBN',
-		// 	value: 'isbn',
-		// }
-	];
+
+  $scope.searchBookOptions = [ //search paramaters
+  	{
+  		name: 'Title',
+  		value: 'title',
+  	},
+  	{
+  		name: 'Author',
+  		value: 'author',
+  	},
+    {
+  		name: 'Keyword',
+  		value: 'keywords',
+  	},
+
+  ];
+
+  //this isn't used anymore
+  // $scope.editBookOptions = [ //keys for editBook
+	// 	{
+	// 		name: 'Title',
+	// 		value: 'title',
+	// 	},
+	// 	{
+	// 		name: 'Author',
+	// 		value: 'author',
+	// 	},
+	// 	// {
+	// 	// 	name: 'ISBN',
+	// 	// 	value: 'isbn',
+	// 	// }
+	// ];
 
   //refactor w out $q?
   var getCurrentUser = function(){
@@ -42,19 +60,29 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     });
   };
 
-  $scope.addBook = function(title, author){
-    bookService.addBook(title, author);
-    $scope.newBookTitle = "";
-    $scope.newBookAuthor = "";
-    getBooks();
-    getLibraryList();
-  };
+  // deprecated?
+  // $scope.addBook = function(title, author){
+  //   bookService.addBook(title, author);
+  //   $scope.newBookTitle = "";
+  //   $scope.newBookAuthor = "";
+  //   getBooks();
+  //   getLibraryList();
+  // };
 
   $scope.addBookByIsbn = function(isbn){
     bookService.addBookByIsbn(isbn);
     $scope.newBookIsbn = "";
     getBooks();
     getLibraryList();
+  };
+
+  $scope.searchAzForBook = function(searchParam, searchTerm){
+    bookService.searchAzForBook(searchParam, searchTerm).then(function(result){
+      $scope.searchResults = result.data;
+      console.log($scope.searchResults);
+    });
+    $scope.newBookTitle = "";
+
   };
 
   $scope.editBook = function(id, key, val){
@@ -64,12 +92,13 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     });
   };
 
-  $scope.updateFromAmazon = function(id){
-    bookService.updateFromAmazon(id).then(function(res){
-      getBooks();
-      getLibraryList();
-    });
-  };
+  // DEPRECATED
+  // $scope.updateFromAmazon = function(id){
+  //   bookService.updateFromAmazon(id).then(function(res){
+  //     getBooks();
+  //     getLibraryList();
+  //   });
+  // };
 
 
   //users

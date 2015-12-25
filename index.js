@@ -143,8 +143,9 @@ app.get('/api/auth/fb/logout', authCtrl.logout);
 
 //books (these apply to the main book roster, not a particluar user's library)
 app.get('/api/books',  bookCtrl.getBooks);
-app.get('/api/books/:id', bookCtrl.getBook);
-app.post('/api/books', requireAuth, bookCtrl.addBook);
+//app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
+app.get('/api/books/searchAzForBook', requireAuth, bookCtrl.searchAzForBook); //search the amazon API for a book given a search term and search paramter, eg: /api/books/searchAzForBook?Author=Homer
+app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 // app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API *** DEPRECATED, this is done automatically upon adding a book
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array

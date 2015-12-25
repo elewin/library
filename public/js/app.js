@@ -61,7 +61,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   .state('main.admin', {
     url: 'admin',
     controller: 'adminCtrl',
-    templateUrl: './tmpl/secure/admin.html',
+    templateUrl: './tmpl/admin.html',
     data:{
       permissions: {
         only: ['admin'],

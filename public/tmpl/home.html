@@ -9,6 +9,7 @@
 Books:
 <ul>
   <li ng-repeat="book in books">
+      <img src="{{book.coverArtUrl.small}}">
       {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
   </li>
 </ul>

@@ -1,5 +1,6 @@
 <ul>
   <li ng-repeat="book in userLibrary.books">
+    <img src="{{book.book.bookData.coverArtUrl.small}}">
     {{book.book.bookData.title}} by {{book.book.bookData.author}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}}
      - <a href="" ng-click="removeFromLibrary(user.library, book.book.bookData._id )">delete</a>
   </li>

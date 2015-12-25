@@ -13,7 +13,11 @@ var bookSchema = new mongoose.Schema({
   isbn10: {type: String, default: "None", index: true},
   publisher: {type: String,},
   tags: {type: []}, //genre etc
-  coverArtUrl: {type: String, default: ''},
+  coverArtUrl: {
+    large: {type: String, default: ''},
+    medium: {type: String, default: ''},
+    small: {type: String, default: ''},
+  },
   googDescription: {type: String, default: 'No description'}, //google books description
   azDescription: {type: String, default: 'No description'}, //amazon description
   lang: {type: String, default: "Not specified"},

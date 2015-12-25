@@ -44,7 +44,7 @@ module.exports = {
           book.length = queryObj.items[i].volumeInfo.pageCount;
           book.lang = queryObj.items[i].volumeInfo.language;
           book.tags = queryObj.items[i].volumeInfo.categories;
-          book.coverArtUrl = queryObj.items[i].volumeInfo.imageLinks.thumbnail;
+          book.coverArtUrl.large = queryObj.items[i].volumeInfo.imageLinks.thumbnail;
           book.googBooksUrl = queryObj.items[i].selfLink;
 
           //get alternate ISBNs:
