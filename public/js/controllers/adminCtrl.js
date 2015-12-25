@@ -1,6 +1,6 @@
 angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q) {
 
-  //books:
+  //books: **************************************************************
 
   $scope.searchBookOptions = [ //search paramaters
   	{
@@ -101,7 +101,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   // };
 
 
-  //users
+  //users ******************************************************************
 
   $scope.userOptions = [ //keys for editUser
 		{
@@ -142,20 +142,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     });
   };
 
-  //library
+  //library ******************************************************************
 
-  $scope.libraryOptions = [ //keys for editLibrary
-		{
-			name: 'tempThing',
-			value: 'tempThing',
-		},
-	];
-
-  var refreshUserLibrary = function(libraryId){
-    libraryService.getUserLibrary(libraryId).then(function(userLibrary){
-      $scope.userLibrary = userLibrary.data;
-    });
-  };
+  // unused, probably needs to be deleted
+  // var refreshUserLibrary = function(libraryId){
+  //   libraryService.getUserLibrary(libraryId).then(function(userLibrary){
+  //     $scope.userLibrary = userLibrary.data;
+  //   });
+  // };
 
   // deprecated
   // $scope.getUserLibrary = function(libraryId){
@@ -166,9 +160,9 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   //   });
   // };
 
+
   $scope.getUserLibrary = function(userId){
     return libraryService.getUserLibrary(userId).then(function(userLibrary){
-//      $scope.userLibrary = userLibrary.data;
       return userLibrary.data;
     });
   };
@@ -198,11 +192,12 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
   $scope.addToLibrary = function(userId, bookId){
     libraryService.addToLibrary(userId, bookId).then(function(res){
-      getLibraryList();
+      //getLibraryList();
     });
   };
 
   $scope.removeFromLibrary = function(libraryId, bookId){
+    console.log('bookid', bookId);
     libraryService.removeFromLibrary(libraryId, bookId).then(function(res){
       getLibraryList();
     });

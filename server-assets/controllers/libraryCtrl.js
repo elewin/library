@@ -65,11 +65,28 @@ module.exports = {
     });
   },
 
+  //BROKEN: indexOf is returning -1, so the method is just removing the last book of the array. bookId is not being passed correctly, or maybe it needs to populate first?
+
+  //ok, We can do this by either going by _id or by bookData. so we need to create an array of the bookData (or _id?) in order, then indexOf on that to find where the bookid we want resides. then we know which index to delete because indexof isnt looking into the key/value pairs in the object. i think! i think bookData is a better way to go, but delete on the library thing is returning _id so that needs to be looked into
+
   //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   removeBookFromLibrary: function(req, res){
+    //req.params.id is the library, req.body.books is the book -- is it?? no its re.body.books.book.bookData
+
+    var bookToDelete = req.body.books.book.bookData;
+    console.log('book to delete: ', bookToDelete);
+
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
-      var bookToRemoveIndex = books.indexOf(req.body.books);
+      console.log('books:');
+      console.log(books);
+
+      var bookToRemoveIndex = books.indexOf(bookToDelete);
+
+      if(bookToRemoveIndex === -1){
+        return res.status(404).json('Book', bookToDelete, 'not found!');
+      }
+      console.log('idx:', bookToRemoveIndex);
       books.splice(bookToRemoveIndex, 1);
       return library.save().then(function(theLibrary){
        return res.json(theLibrary);

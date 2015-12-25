@@ -15,6 +15,8 @@ angular.module('library').service('libraryService', function($stateParams, $http
   //   });
   // };
 
+  
+
   this.getUserLibrary = function(userId){
     return $http({
       method: 'GET',
