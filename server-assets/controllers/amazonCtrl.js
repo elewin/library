@@ -11,36 +11,25 @@ var client = amazon.createClient({
   awsTag: config.api.amazon.tag,
 });
 
-
 module.exports = {
 
-  // //for testing
-  // searchTest: function(){
-  //   client.itemSearch({
-  //     director: 'Quentin Tarantino',
-  //     actor: 'Samuel L. Jackson',
-  //     searchIndex: 'DVD',
-  //     audienceRating: 'R',
-  //     responseGroup: 'ItemAttributes,Offers,Images'
-  //   }).then(function(results){
-  //     console.log(results);
-  //   }).catch(function(err){
-  //     console.log(err);
-  //   });
-  // },
-
-  //returns a promise that resolves the results of a book search by title
+  //returns a promise that resolves the results of a book search based on the given serach paramater and search term
   searchForBook : function(searchParams){
-    //params can be author, title, keywords
+    //searchParams is an object containing the type of search to be done (param) and the term to search for (term): eg, { param: 'title', term: 'the iliad' }
+    //param can be: author, title, keywords (see http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemSearch.html)
 
+    //set up fixed search paramaters here:
+    searchObj = {
+      searchIndex : 'Books',
+      responseGroup : 'ItemAttributes,Images,EditorialReview',
+      Sort : 'relevancerank',
+    };
 
-    //set up search paramaters here: (see http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemSearch.html)
-    searchParams.searchIndex = 'Books';
-    searchParams.responseGroup = 'ItemAttributes,Images,EditorialReview';
-    searchParams.Sort = 'relevancerank';
+    //add the search parameters that were passed in:
+    searchObj[searchParams.param] = searchParams.term;
 
     var deferred = q.defer();
-    client.itemSearch(searchParams).then(function(results){
+    client.itemSearch(searchObj).then(function(results){ //search for results based on searchObj
       deferred.resolve(results); //results is an array of objects from the amazon api
     }).catch(function(err){
       console.log(err);
@@ -48,21 +37,6 @@ module.exports = {
     });
     return deferred.promise;
   },
-
-  // //for testing
-  // searchByIsbn : function(isbn){
-  //   client.itemLookup({
-  //   idType: 'ISBN',
-  //   itemId: isbn,
-  //   responseGroup: 'ItemAttributes,Images,EditorialReview'
-  //   }).then(function(results) {
-  //     console.log(JSON.stringify(results));
-  //     // console.log(results[0].ItemAttributes);
-  //     // console.log(results[0].ItemAttributes[0].Title[0]);
-  //   }).catch(function(err) {
-  //     console.log(err);
-  //   });
-  // },
 
   //takes a book object and updates its properties with data from the Amazon Products API and returns a promise
   updateFromAmazon : function(book){

@@ -79,7 +79,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   $scope.searchAzForBook = function(searchParam, searchTerm){
     bookService.searchAzForBook(searchParam, searchTerm).then(function(result){
       $scope.searchResults = result.data;
-      console.log($scope.searchResults);
+    });
+    $scope.newBookTitle = "";
+
+  };
+
+  $scope.searchForBook = function(searchParam, searchTerm){
+    bookService.searchForBook(searchParam, searchTerm).then(function(result){
+      $scope.searchResults = result.data;
     });
     $scope.newBookTitle = "";
 

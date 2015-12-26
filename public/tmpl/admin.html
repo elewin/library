@@ -5,24 +5,26 @@ Logged in as {{currentUser.name}}
 <h2>Admin:</h2>
 <hr>
 Books:
+<!-- add new book -->
 <div>
   <a href="" ng-click="showNewBookForm=true">Add book</a>
   <div ng-show="showNewBookForm">
     <a href="" ng-click="showNewBookForm=false">X</a>
     <br>
 
-    <form name="newBookTitleForm" style="display: inline-block">
+    <form name="newBookSearchForm" style="display: inline-block">
       <div id="searchBookSelectBox" style="display: inline-block">
         <select id="searchBookOptionBox" ng-model="searchBookOption" ng-options="option.value as option.name for option in searchBookOptions" ng-init="searchBookOption = searchBookOptions[0].value">
         </select>
       </div>
-      <input type="text" ng-model="newBookTitle" placeholder="{{searchBookOption}}" required/>
+      <input type="text" ng-model="newBookSearch" placeholder="{{searchBookOption}}" required/>
 
-
-      <button ng-disabled="newBookTitleForm.$invalid" ng-click="searchAzForBook(searchBookOption, newBookTitle)">
+     <!-- search fn is here -->
+      <button ng-disabled="newBookSearchForm.$invalid" ng-click="searchForBook(searchBookOption, newBookSearch); searchResults = true">
         Search for book by {{searchBookOption}}
       </button>
     </form>
+
 
 
     <form name="newBookIsbnForm">
@@ -35,14 +37,20 @@ Books:
   </div>
 </div>
 
+<!-- search results -->
+<div ng-if="searchResults">Results for {{searchBookOption}}: {{newBookSearch}}</div>
 <ul>
-  <li ng-repeat="result in searchResults">
-    <img src="{{result.SmallImage[0].URL[0]}}" />
-    {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})
+  <div ng-repeat="result in searchResults">
+    <span ng-if="result.ItemAttributes[0].ISBN[0]">
+      <img src="{{result.SmallImage[0].URL[0]}}" />
+      {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})
+      <a href="">Add</a>
+    </span>
 
-  </li>
+  </div>
 </ul>
 
+<!-- list books in book collection -->
 <ul>
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
@@ -83,8 +91,11 @@ Books:
         </div>
       </div>
 
+      <br> (ISBN: {{book.isbn}}) id: {{book._id}}
 
-      <br> (ISBN: {{book.isbn}}) id: {{book._id}} &#187;
+
+      <!-- delete prompt -->
+      &#187;
       <a href="" ng-click="deleteConfirm=true">
         delete
       </a>
@@ -125,7 +136,7 @@ Books:
   </li>
 </ul>
 
-
+<!-- list users -->
 <hr>
 Users:
 <ul>
@@ -133,6 +144,7 @@ Users:
     {{user.name}}
 
     &#187;
+    <!-- delete prompt -->
     <a href="" ng-click="deleteConfirm=true">
      delete
     </a>
@@ -152,11 +164,11 @@ Users:
     <div ng-show="show">
      <a href= "" ng-click="show=false">X</a>
 
+    <!-- edit user -->
      <div id="editUserSelectBox">
        <select id="editUserOptionBox" ng-model="editUserOption" ng-options="option.value as option.name for option in userOptions" ng-init="editUserOption = userOptions[0].value">
        </select>
      </div>
-
 
      <form name="editUserForm">
        <input type="text" ng-model="editedUser" placeholder="New {{editUserOption}}" required/>
@@ -164,8 +176,9 @@ Users:
          Edit {{editUserOption}}
        </button>
      </form>
-
     </div>
+
+    <!-- list user info -->
     <br>
     roles: <span ng-repeat="role in user.roles">{{role}}, </span>
     <br>
@@ -178,6 +191,8 @@ Users:
     books:
     <books-dir user="user" get-library="getUserLibrary(id)"></books-dir>
 
+
+  <!-- manually add book to library via book._id -->
     <form name="addBookForm">
       <input type="text" ng-model="addBookId" placeholder="id of book to add" required/>
       <button ng-disabled="addBookForm.$invalid" ng-click="addToLibrary(user.library, addBookId)">
@@ -206,6 +221,7 @@ Users:
 
 Libraries:
 
+  <!-- list libraries -->
   <li ng-repeat="library in libraryList">
     owner id: {{library.ownerId}}
     /
@@ -234,6 +250,7 @@ Libraries:
   </li>
 </ul>
 
+  <!-- manually remove a book from a library (should be dev only)-->
 Manual remove:<br>
 <button ng-click="manualRemoveLib = currentUser.library">my library</button>
 <form name="manualRemove" ng-init="manualRemoveLib=currentUser.library">

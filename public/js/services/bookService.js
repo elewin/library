@@ -72,8 +72,16 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     //use req.query instead?
     return $http({
       method: 'GET',
-      //url: '/api/books/searchAzForBook/'+searchTerm+'?'+searchParam,
-      url: '/api/books/searchAzForBook?'+searchParam+'='+searchTerm,
+      url: '/api/books/searchAzForBook?param='+searchParam+'&term='+searchTerm,
+    });
+  };
+
+  this.searchForBook = function(searchParam, searchTerm){
+    console.log('searching for '+searchParam+": " +searchTerm);
+    //use req.query instead?
+    return $http({
+      method: 'GET',      
+      url: '/api/books/search?param='+searchParam+'&term='+searchTerm,
     });
   };
 

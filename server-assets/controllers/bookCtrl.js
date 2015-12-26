@@ -1,8 +1,9 @@
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 var Book = require('../models/bookSchema');
 var Library = require('../models/librarySchema');
 var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
+var q = require('q'); //promises library
 
 //tests if a given isbn number meets certain validity critera and returns a bool
 var checkIsbn = function(isbn){
@@ -32,9 +33,9 @@ var checkIsbn = function(isbn){
     goodIsbn = false;
   }
 
-  //if it had a trailing x, add it back now that our numeric check is complete
+  //if it had a trailing X, add it back now that our numeric check is complete
   if(trailingX){
-    isbn+='x';
+    isbn+='X';
   }
   return goodIsbn; //return the result
 };
@@ -56,6 +57,69 @@ module.exports = {
         return res.status(500).end();
       }
     });
+  },
+
+  //search the db for a book given a search paramater (author, title, keyword) and search term. Returns a promise.
+  searchForBook: function(req, res){
+    var searchParams = req.query;
+    var deferred = q.defer();
+
+    var searchObj = {};
+
+    if(searchParams.param === 'title' || searchParams.param === 'author'){
+      searchObj[searchParams.param] = {
+        "$regex": searchParams.term,
+        "$options": "i"
+      };
+    }
+
+    //this is a more expensive search
+    if(searchParams.param === 'keywords'){
+      searchObj = {
+        $or:[
+          {
+            title: {
+              "$regex": searchParams.term,
+              "$options": "i"
+            }
+          },
+          {
+          author: {
+            "$regex": searchParams.term,
+            "$options": "i"
+            }
+          },
+          {
+          googDescription: {
+            "$regex": searchParams.term,
+            "$options": "i"
+            }
+          },
+          {
+          azDescription: {
+            "$regex": searchParams.term,
+            "$options": "i"
+            }
+          },
+          {
+          tags: {
+            "$regex": searchParams.term,
+            "$options": "i"
+            }
+          },
+        ]
+      };
+    }
+
+    Book.find(searchObj).exec().then(function(results){
+
+      console.log(results);
+    }).catch(function(err){
+      console.log(err);
+      return res.status(400).send(err);
+    });
+
+    return deferred.promise;
   },
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
