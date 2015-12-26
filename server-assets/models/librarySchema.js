@@ -8,6 +8,7 @@ var librarySchema = new mongoose.Schema({
   books:[{
     book: {
       bookData: {type: mongoose.Schema.Types.ObjectId, ref: 'Book', require: true, },
+      bookCollectionId: {type: String}, //this is a string of the _id of the book from the main book collection. This will be used for searching within a user's library without having to populate it every time.
       status: { type: String, enum: ['read', 'unread', 'reading'], default: 'unread' }, //has the user read this book?
       own: { type: Boolean, default: false }, //does the user own this book?
       rating: {type: Number, default: 0}, //allow the user to rate the book

@@ -227,7 +227,7 @@ Libraries:
 
       <li ng-repeat="book in library.books">
 
-        {{book.book.bookData.title}} by {{book.book.bookData.author}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book._id)">delete</a>
+        {{book.book.bookData.title}} by {{book.book.bookData.author}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book.book.bookData._id)">delete</a>
 
       </li>
     </ul>

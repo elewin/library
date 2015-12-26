@@ -54,41 +54,58 @@ module.exports = {
 
   //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   addBookToLibrary: function(req, res){
-    Library.findById(req.params.id).exec().then(function(library){
-      var books = library.books;
-      books.push(req.body.books);
-      return library.save().then(function(theLibrary){
+
+    var newBookObj = req.body.books; //this is the object of our new book, assigning it req.body.books will include bookData which is a ref to the book we are adding
+    newBookObj.book.bookCollectionId = req.body.books.book.bookData; //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
+
+    Library.findById(req.params.id).exec().then(function(library){ //find the target library
+      var books = library.books; //the array of books in the library
+      books.push(newBookObj); //add the new book to the array of books
+      return library.save().then(function(theLibrary){ //save the library with our new book in it
         return res.json(theLibrary);
       });
-    }).catch(function(err){
+    }).catch(function(err){ //uh-oh
       return res.status(400).json(err);
     });
   },
 
-  //BROKEN: indexOf is returning -1, so the method is just removing the last book of the array. bookId is not being passed correctly, or maybe it needs to populate first?
+  // old but working
+  // //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
+  // addBookToLibrary: function(req, res){
+  //   Library.findById(req.params.id).exec().then(function(library){
+  //     var books = library.books;
+  //     books.push(req.body.books);
+  //     return library.save().then(function(theLibrary){
+  //       return res.json(theLibrary);
+  //     });
+  //   }).catch(function(err){
+  //     return res.status(400).json(err);
+  //   });
+  // },
 
-  //ok, We can do this by either going by _id or by bookData. so we need to create an array of the bookData (or _id?) in order, then indexOf on that to find where the bookid we want resides. then we know which index to delete because indexof isnt looking into the key/value pairs in the object. i think! i think bookData is a better way to go, but delete on the library thing is returning _id so that needs to be looked into
 
   //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   removeBookFromLibrary: function(req, res){
-    //req.params.id is the library, req.body.books is the book -- is it?? no its re.body.books.book.bookData
 
     var bookToDelete = req.body.books.book.bookData;
-    console.log('book to delete: ', bookToDelete);
 
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
-      console.log('books:');
-      console.log(books);
 
-      var bookToRemoveIndex = books.indexOf(bookToDelete);
+      //Each book in a user's library effectivly has two different IDs -- it has an ._id which represents its unique mongodb entry in their specific library collection, and a book.bookData string which is the ._id of that book in the main boook roster collection. Because bookToDelete is the ._id of the book as it pertains to the main book collection, we have to find the book in the user's library whose bookData entry matches it. If we search for just the _id of each book within their library, we will not get a match. At first using indexOf() was considered, but because we are looking deep into the object at each element, instead here we will iterate through the array of books looking to evaluate book.bookData and compareit to bookToDelete:
+      var bookToRemoveIndex = -1; //the index of the book to delete. Default is -1 if no match is found.
+      for (var i = 0; i < books.length; i++){
+        if (books[i].book.bookCollectionId === bookToDelete){ //find where in the array the book is located
+          bookToRemoveIndex = i;
+        }
+      }
 
-      if(bookToRemoveIndex === -1){
+      if(bookToRemoveIndex === -1){ //error handling if no match is found
         return res.status(404).json('Book', bookToDelete, 'not found!');
       }
-      console.log('idx:', bookToRemoveIndex);
-      books.splice(bookToRemoveIndex, 1);
-      return library.save().then(function(theLibrary){
+
+      books.splice(bookToRemoveIndex, 1); //remove the book at the index where it was found
+      return library.save().then(function(theLibrary){ //save the result
        return res.json(theLibrary);
       });
     }).catch(function(err){
