@@ -76,19 +76,17 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     getLibraryList();
   };
 
-  $scope.searchAzForBook = function(searchParam, searchTerm){
-    bookService.searchAzForBook(searchParam, searchTerm).then(function(result){
-      $scope.searchResults = result.data;
+  $scope.azSearchForBook = function(searchParam, searchTerm){
+    bookService.azSearchForBook(searchParam, searchTerm).then(function(result){
+      $scope.azSearchResults = result.data;
     });
-    $scope.newBookTitle = "";
 
   };
 
-  $scope.searchForBook = function(searchParam, searchTerm){
-    bookService.searchForBook(searchParam, searchTerm).then(function(result){
-      $scope.searchResults = result.data;
+  $scope.dbSearchForBook = function(searchParam, searchTerm){
+    bookService.dbSearchForBook(searchParam, searchTerm).then(function(result){
+      $scope.dbSearchResults = result.data;
     });
-    $scope.newBookTitle = "";
 
   };
 

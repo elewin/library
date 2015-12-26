@@ -144,8 +144,8 @@ app.get('/api/auth/fb/logout', authCtrl.logout);
 //books (these apply to the main book roster, not a particluar user's library)
 app.get('/api/books',  bookCtrl.getBooks);
 //app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
-app.get('/api/books/searchAzForBook', requireAuth, bookCtrl.searchAzForBook); //search the amazon API for a book given a search term and search paramter, eg: /api/books/searchAzForBook?param=author&term=Homer,
-app.get('/api/books/search', requireAuth, bookCtrl.searchForBook); //search the book collection for a book, as well as the amazon API
+app.get('/api/books/azSearch', requireAuth, bookCtrl.azSearchForBook); //search the amazon API for a book given a search term and search paramter, eg: /api/books/azSearch?param=author&term=Homer,
+app.get('/api/books/dbSearch', requireAuth, bookCtrl.dbSearchForBook); //search the book collection in our database for a book eg: /api/books/dbSearch?param=author&term=Homer,
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 // app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API *** DEPRECATED, this is done automatically upon adding a book

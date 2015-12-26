@@ -67,21 +67,21 @@ angular.module('library').service('bookService', function($stateParams, $http) {
   //   });
   // };
 
-  this.searchAzForBook = function(searchParam, searchTerm){
-    console.log('searching for '+searchParam+": " +searchTerm);
-    //use req.query instead?
+  //searches the Amazon Products API for a book
+  this.azSearchForBook = function(searchParam, searchTerm){
+    console.log('searching amazon for '+searchParam+": " +searchTerm);
     return $http({
       method: 'GET',
-      url: '/api/books/searchAzForBook?param='+searchParam+'&term='+searchTerm,
+      url: '/api/books/azSearch?param='+searchParam+'&term='+searchTerm,
     });
   };
 
-  this.searchForBook = function(searchParam, searchTerm){
-    console.log('searching for '+searchParam+": " +searchTerm);
-    //use req.query instead?
+  //searches our database for a book
+  this.dbSearchForBook = function(searchParam, searchTerm){
+    console.log('searching db for '+searchParam+": " +searchTerm);
     return $http({
-      method: 'GET',      
-      url: '/api/books/search?param='+searchParam+'&term='+searchTerm,
+      method: 'GET',
+      url: '/api/books/dbSearch?param='+searchParam+'&term='+searchTerm,
     });
   };
 

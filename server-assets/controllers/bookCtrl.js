@@ -44,7 +44,7 @@ var checkIsbn = function(isbn){
 module.exports = {
 
   //searches the Amazon Products API for the book given the paramters in req.query
-  searchAzForBook: function(req, res){
+  azSearchForBook: function(req, res){
     amazonCtrl.searchForBook(req.query).then(function(results){
       return res.json(results);
     }).catch(function(err){
@@ -59,8 +59,8 @@ module.exports = {
     });
   },
 
-  //search the db for a book given a search paramater (author, title, keyword) and search term. Returns a promise.
-  searchForBook: function(req, res){
+  //search the db for a book given a search paramater (author, title, keyword) and search term
+  dbSearchForBook: function(req, res){
     var searchParams = req.query;
     var deferred = q.defer();
 
@@ -112,8 +112,8 @@ module.exports = {
     }
 
     Book.find(searchObj).exec().then(function(results){
+      return res.json(results);
 
-      console.log(results);
     }).catch(function(err){
       console.log(err);
       return res.status(400).send(err);

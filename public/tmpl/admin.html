@@ -17,10 +17,18 @@ Books:
         <select id="searchBookOptionBox" ng-model="searchBookOption" ng-options="option.value as option.name for option in searchBookOptions" ng-init="searchBookOption = searchBookOptions[0].value">
         </select>
       </div>
-      <input type="text" ng-model="newBookSearch" placeholder="{{searchBookOption}}" required/>
+      <input type="text" ng-model="searchTerm" placeholder="{{searchBookOption}}" required/>
 
      <!-- search fn is here -->
-      <button ng-disabled="newBookSearchForm.$invalid" ng-click="searchForBook(searchBookOption, newBookSearch); searchResults = true">
+      <button ng-disabled="newBookSearchForm.$invalid"
+      ng-click="
+        dbSearchForBook(searchBookOption, searchTerm);
+        azSearchForBook(searchBookOption, searchTerm);
+        searchResults = true;
+        resultsTerm = searchTerm;
+        resultsParam = searchBookOption;
+        searchTerm ='';
+      ">
         Search for book by {{searchBookOption}}
       </button>
     </form>
@@ -37,18 +45,33 @@ Books:
   </div>
 </div>
 
-<!-- search results -->
-<div ng-if="searchResults">Results for {{searchBookOption}}: {{newBookSearch}}</div>
-<ul>
-  <div ng-repeat="result in searchResults">
-    <span ng-if="result.ItemAttributes[0].ISBN[0]">
-      <img src="{{result.SmallImage[0].URL[0]}}" />
-      {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})
-      <a href="">Add</a>
-    </span>
+<!-- mongodb search results -->
+<div ng-if="searchResults">Results for {{resultsParam}}: {{resultsTerm}}
+  <ul>
+    <div ng-repeat="result in dbSearchResults">
 
-  </div>
-</ul>
+      <img src="{{result.coverArtUrl.small}}" />
+      {{result.title}} by {{result.author}}, {{result.date}} (ISBN: {{result.isbn}})
+      <a href="">Add</a>
+
+
+    </div>
+  </ul>
+
+  Amazon:
+  <!-- amazon search results -->
+  <ul>
+    <div ng-repeat="result in azSearchResults">
+      <span ng-if="result.ItemAttributes[0].ISBN[0]">
+        <img src="{{result.SmallImage[0].URL[0]}}" />
+        {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})
+        <a href="">Add</a>
+      </span>
+
+    </div>
+  </ul>
+</div>
+<hr>
 
 <!-- list books in book collection -->
 <ul>
