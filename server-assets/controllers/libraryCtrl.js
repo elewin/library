@@ -90,7 +90,7 @@ module.exports = {
       var bookObj = {
         book: {
           bookData: bookId, //bookData which is a ref to the book we are adding
-          bookCollectionId: bookId, //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
+          bookCollectionId: bookId, //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug, so establishing this here will be helpful)
         }
       };
       //now find the library we need to add the book to
