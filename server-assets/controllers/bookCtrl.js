@@ -1,12 +1,13 @@
 //var mongoose = require('mongoose');
 var Book = require('../models/bookSchema');
 var Library = require('../models/librarySchema');
+var libraryCtrl = require('./libraryCtrl');
 var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
 var q = require('q'); //promises library
 
 //tests if a given isbn number meets certain validity critera and returns a bool
-var checkIsbn = function(isbn){
+function checkIsbn(isbn){
   //We need to check if we have a valid ISBN. ISBNs are either 9, 10, or 13 digit strings of numbers. Here we're just making sure its between 9 and 13 and only contains numbers, though it may have an X at the end. A more robust check could be added later but this should filter most bad data for now.
 
   var goodIsbn = true;
@@ -38,10 +39,10 @@ var checkIsbn = function(isbn){
     isbn+='X';
   }
   return goodIsbn; //return the result
-};
+}
 
 //search the Amazon Products API for a book given a search paramater (author, title, keyword) and search term, returns a promise
-var azSearch = function(searchParam, searchTerm){
+function azSearch(searchParam, searchTerm){
   var deferred = q.defer();
 
   //set up our search paramaters object
@@ -64,19 +65,38 @@ var azSearch = function(searchParam, searchTerm){
     }
   });
   return deferred.promise;
-};
+}
 
 //search the db for a book given a search paramater (author, title, keyword) and search term, returns a promise
-var dbSearch = function(searchParam, searchTerm){
+function dbSearch(searchParam, searchTerm){
   var deferred = q.defer();
 
   var searchObj = {}; //this object will hold our search query data for the database
 
   //if we are searching for the title or author, search just those fields
-  if(searchParam === 'title' || searchParam === 'author'){
-    searchObj[searchParam] = {
+  if(searchParam === 'author'){
+    searchObj.author = {
       "$regex": searchTerm,
       "$options": "i"
+    };
+  }
+  //if this is a title search, search both title and subtitle
+  if (searchParam ==='title'){
+    searchObj = {
+      $or:[
+        {
+        title: {
+          "$regex": searchTerm,
+          "$options": "i"
+          }
+        },
+        {
+        subtitle: {
+          "$regex": searchTerm,
+          "$options": "i"
+          }
+        },
+      ]
     };
   }
 
@@ -132,10 +152,9 @@ var dbSearch = function(searchParam, searchTerm){
     deferred.reject();
   });
   return deferred.promise;
-};
+}
 
 module.exports = {
-
 
   //searches the Amazon Products API for the book given the paramters in req.query
   azSearchForBook: function(req, res){
@@ -276,9 +295,15 @@ module.exports = {
     });
   },
 
-
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
+
+    //see if a library was specified to add this book to after its been added to the main book collection:
+    var libraryAdd = false;
+    if (req.query.libraryId){
+      libraryAdd = true;
+    }
+
     var newBook = new Book(req.body); //req.body should be {isbn: <isbn number>}
 
     //Often ISBNs have dashes inserted for readability, so we need to strip those out:
@@ -303,14 +328,30 @@ module.exports = {
             amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
               newBook = azBook;
               newBook.save().then(function(theBook) { //save the book
-                return res.status(201).end;
+                console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
+
+                //if we are also going to add this book to a user's library:
+                if(libraryAdd){
+                  //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
+                  var reqObj = {
+                    params: {
+                      id: req.query.libraryId //the libraryId
+                    },
+                    query: {
+                      bookId: theBook._id //the _id of the book we just created
+                    }
+                  };
+                  libraryCtrl.addBookToLibrary(reqObj, res);
+                }
+
+                return res.status(201).end();
               });
             }).catch(function(err) {
               console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', JSON.stringify(err,null,2));
               return res.status(500).json(err);
             });
           }).catch(function(err){
-            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', JSON.stringify(err,null,2));          
+            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', JSON.stringify(err,null,2));
           });
         }else{
           //if the ISBN is invalid then return an error code
@@ -325,73 +366,6 @@ module.exports = {
       }
     });
   },
-
-  // *** Old version: does not automatically call amazon update
-  // addBook: function(req, res) {
-  //   var newBook = new Book(req.body);
-  //
-  //   //filter dashes from isbn
-  //   var filteredIsbn ='';
-  //   for (var i = 0; i < newBook.isbn.length; i++){
-  //     if (newBook.isbn[i] !== '-'){
-  //        filteredIsbn += newBook.isbn[i]; //filter out the dashes
-  //     }
-  //   }
-  //   newBook.isbn = filteredIsbn;
-  //   //make sure this is not a duplicate:
-  //   Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
-  //   .then(function(foundBook){
-  //     if(!foundBook){
-  //       //check if we have a valid ISBN: (ISBNs are either 9 or 13 digit strings of numbers. Here we're just making sure its at least 9 and only contains numbers. A more robust check could be added later but this should filter most bad data for now)
-  //       if (newBook.isbn.length >= 9 && !isNaN(newBook.isbn)){
-  //         googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){ //update properties form the Google Books API
-  //           newBook = book; //assign the book with the gathered google books info to the new book
-  //
-  //           //put amazon update here?
-  //
-  //           newBook.save().then(function(theBook) { //save the book
-  //             return res.status(201).end;
-  //             //return res.json(theBook); //return the book
-  //           }).catch(function(err) {
-  //             console.log(err);
-  //             return res.status(400).json(err);
-  //           });
-  //         });
-  //       }else{
-  //         //if the ISBN is invalid then return an error code
-  //         console.log('bad ISBN:', newBook.isbn);
-  //         return res.status(400).json();
-  //       }
-  //     }else {
-  //       {
-  //         console.log('Book already exists!:', foundBook.isbn10, foundBook.isbn13);
-  //         return res.status(409).json({error: "Book already exists!"});
-  //       }
-  //     }
-  //   });
-  // },
-
-
-  //DEPRECATED, this is now built in to the add book method and done automatically
-  // //this method will query the Amazon Products API to fill in book properties possibly missed by the Google Books API
-  // azUpdate : function(req, res){
-  //   Book.findByIdAndUpdate(req.params.id, req.body, {new: true}).exec()
-  //   .then(function(book) {
-  //     amazonCtrl.updateFromAmazon(book)
-  //     .then(function(azBook){
-  //       book = azBook;  //assign new properties gathered from the Amazon API to our book
-  //       book.save() //save the book to the database
-  //       .then(function(book){
-  //         return res.json(book);
-  //         }).catch(function(err){
-  //           console.log(err);
-  //       });
-  //     }).catch(function(err) {
-  //       console.log(err);
-  //       return res.status(400).json('azUpdate error:', err);
-  //     });
-  //   });
-  // },
 
   getBooks:  function(req, res) {
     Book.find(req.query).exec().then(function(docs) {

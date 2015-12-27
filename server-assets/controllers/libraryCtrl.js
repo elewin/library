@@ -100,11 +100,11 @@ module.exports = {
         return library.save().then(function(){ //save the library with our new book in it
           return res.status(201).end();
         }).catch(function(err){ //something broke
-          console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', JSON.stringify(err,null,2));
+          console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', err, JSON.stringify(err,null,2));
           return res.status(500).json(err);
         });
       }).catch(function(err){ //uh-oh
-        console.log('libraryCtrl.addBookToLibrary/addBook: ', JSON.stringify(err,null,2));
+        console.log('libraryCtrl.addBookToLibrary/addBook: ', err, JSON.stringify(err,null,2));
         return res.status(400).json(err);
       });
     };

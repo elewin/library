@@ -51,12 +51,12 @@ Books:
 
       <img src="{{result.coverArtUrl.small}}" />
       {{result.title}} by {{result.author}}, {{result.date}} (ISBN: {{result.isbn}})
-      <a href="">Add</a>
+      <a href="" ng-click="addToLibraryByIsbn(currentUser.library, result.isbn)">Add</a>
     </div>
     <div ng-repeat="result in unifiedSearchResults.az">
         <img src="{{result.SmallImage[0].URL[0]}}" />
         {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})*
-        <a href="">Add</a>
+        <a href="" ng-click="addBookByIsbnThenAddToLibrary(currentUser.library, result.ItemAttributes[0].ISBN[0])">Add</a>
 
     </div>
   </ul>

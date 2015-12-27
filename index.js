@@ -147,7 +147,7 @@ app.get('/api/books',  bookCtrl.getBooks);
 app.get('/api/books/azSearch', requireAuth, bookCtrl.azSearchForBook); //search the amazon API for a book given a search term and search paramter, eg: /api/books/azSearch?param=author&term=Homer *** deprecated, use unifiedSearch /api/books/search
 app.get('/api/books/dbSearch', requireAuth, bookCtrl.dbSearchForBook); //search the book collection in our database for a book eg: /api/books/dbSearch?param=author&term=Thucydides *** deprecated, use unifiedSearch /api/books/search
 app.get('/api/books/search', requireAuth, bookCtrl.unifiedSearch); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
-app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body
+app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 // app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API *** DEPRECATED, this is done automatically upon adding a book
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array

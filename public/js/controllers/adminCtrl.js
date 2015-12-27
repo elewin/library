@@ -66,16 +66,8 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     getLibraryList();
   };
 
-  var addBookThen = function(isbn){
-    return $q(function(resolve, reject){
-      bookService.addBookByIsbn(isbn);
-    });
-  };
-
   $scope.addBookByIsbnThenAddToLibrary = function(libraryId, isbn){
-    addBookThen(isbn).then(function(resolve, reject){
-      //add to library
-    });
+    bookService.comboAdd(libraryId, isbn);
   };
 
   //deprecated, use unified search

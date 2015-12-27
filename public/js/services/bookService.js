@@ -92,9 +92,20 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     return $http({
       method: 'GET',
       url: '/api/books/search?param='+searchParam+'&term='+searchTerm,
-  });
+    });
+  };
 
-};
+  this.comboAdd = function(libraryId, isbn){
+    console.log('adding ', isbn, 'to book collection and then to library', libraryId);
+    return $http({
+      method: 'POST',
+      url: '/api/books?libraryId='+libraryId,
+      data: JSON.stringify({
+        isbn: isbn,
+      }),
+    });
+  };
+
   this.addBookByIsbn = function(isbn){
     console.log('attempting to add ISBN:', isbn);
 
