@@ -46,24 +46,9 @@ module.exports = {
       itemId: book.isbn,
       responseGroup: 'ItemAttributes,Images,EditorialReview'
       }).then(function(results) {
-      //  console.log(JSON.stringify(results[i]));
+      console.log('RESULTS:', JSON.stringify(results[i],null,2));
 
-        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty
-          book.title = results[i].ItemAttributes[0].Title[0];
-        }
-        book.author = results[i].ItemAttributes[0].Author[0];
-        book.date = results[i].ItemAttributes[0].PublicationDate[0];
-        book.publisher = results[i].ItemAttributes[0].Publisher[0];
-        book.azDescription = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
-        book.length = results[i].ItemAttributes[0].NumberOfPages[0];
-      //  book.tags = //it doesn't look like amazon provides categories?
-        book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
-        book.coverArtUrl.medium = results[i].MediumImage[0].URL[0];
-        book.coverArtUrl.small = results[i].SmallImage[0].URL[0];
-        book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
-        book.amazonUrl = results[i].DetailPageURL[0];
-
-        //special case handling if the result from google books did not contain an ISBN10 or ISBN13 identifier, inwhich case we will just apply the ISBN we do have to whatever seems to fit:
+      //special case handling if the result from google books did not contain an ISBN10 or ISBN13 identifier, inwhich case we will just apply the ISBN we do have to whatever seems to fit:
         var isbnLength = book.isbn.length;
         if(book.isbn10 === 'None' && isbnLength === 10){
           book.isbn10 = book.isbn;
@@ -73,6 +58,21 @@ module.exports = {
             book.isbn13 = book.isbn;
           }
         }
+
+        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty
+          if (results[i].ItemAttributes[0].Title) book.title = results[i].ItemAttributes[0].Title[0];
+        }
+        if (results[i].ItemAttributes[0].Author) book.author = results[i].ItemAttributes[0].Author[0];
+        if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
+        if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
+        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
+        if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
+      //  book.tags = //it doesn't look like amazon provides categories?
+        if (results[i].LargeImage) book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
+        if (results[i].MediumImage) book.coverArtUrl.medium = results[i].MediumImage[0].URL[0];
+        if (results[i].SmallImage) book.coverArtUrl.small = results[i].SmallImage[0].URL[0];
+        if (results[i].ItemAttributes[0].Languages[0].Language[0].Name) book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
+        if (results[i].DetailPageURL) book.amazonUrl = results[i].DetailPageURL[0];
 
         resolve(book);
       }).catch(function(err) {

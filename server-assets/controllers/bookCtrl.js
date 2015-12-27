@@ -250,8 +250,13 @@ module.exports = {
     dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
       for (var j = 0; j < dbSearchResult.length; j++){
         //add these ISBNs to our isbnArr to compare against after we get the reuslts back from the amazon api search
-        isbnArr.push(dbSearchResult[j].isbn13);
-        isbnArr.push(dbSearchResult[j].isbn10);
+        if (dbSearchResult[j].isbn13 !== 'None'){
+          isbnArr.push(dbSearchResult[j].isbn13);
+        }
+        if (dbSearchResult[j].isbn10 !== 'None'){
+          isbnArr.push(dbSearchResult[j].isbn10);
+        }
+
       }
       return dbSearchResult;
     }).then(function(dbSearchResult){
@@ -347,11 +352,12 @@ module.exports = {
                 return res.status(201).end();
               });
             }).catch(function(err) {
-              console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', JSON.stringify(err,null,2));
+              newBook.save();
+              console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', err, JSON.stringify(err,null,2));
               return res.status(500).json(err);
             });
           }).catch(function(err){
-            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', JSON.stringify(err,null,2));
+            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', err, JSON.stringify(err,null,2));
           });
         }else{
           //if the ISBN is invalid then return an error code
