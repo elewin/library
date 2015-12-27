@@ -76,12 +76,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     getLibraryList();
   };
 
+  //deprecated, use unified search
   $scope.azSearchForBook = function(searchParam, searchTerm){
     bookService.azSearchForBook(searchParam, searchTerm).then(function(result){
       $scope.azSearchResults = result.data;
     });
   };
 
+  //deprecated, use unified search
   $scope.dbSearchForBook = function(searchParam, searchTerm){
     bookService.dbSearchForBook(searchParam, searchTerm).then(function(result){
       $scope.dbSearchResults = result.data;

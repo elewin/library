@@ -67,6 +67,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
   //   });
   // };
 
+  //deprecated, use unifiedSearch
   //searches the Amazon Products API for a book
   this.azSearchForBook = function(searchParam, searchTerm){
     console.log('searching amazon for '+searchParam+": " +searchTerm);
@@ -76,6 +77,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
+  //deprecated, use unifiedSearch
   //searches our database for a book
   this.dbSearchForBook = function(searchParam, searchTerm){
     console.log('searching db for '+searchParam+": " +searchTerm);
@@ -86,7 +88,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
   };
 
   this.unifiedSearchForBook = function(searchParam, searchTerm){
-    console.log('unified search for '+searchParam+": " +searchTerm);
+    console.log('searching for '+searchParam+": " +searchTerm);
     return $http({
       method: 'GET',
       url: '/api/books/search?param='+searchParam+'&term='+searchTerm,

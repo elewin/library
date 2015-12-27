@@ -80,7 +80,7 @@ var dbSearch = function(searchParam, searchTerm){
     };
   }
 
-  //this is a more expensive search, it searches through the title, author, description,and tags fields
+  //this is a more expensive search, it searches through the title, subtitle, author, description, and tags fields (all of which should be indexed however)
   if(searchParam === 'keywords'){
     searchObj = {
       $or:[
@@ -110,6 +110,12 @@ var dbSearch = function(searchParam, searchTerm){
         },
         {
         tags: {
+          "$regex": searchTerm,
+          "$options": "i"
+          }
+        },
+        {
+        subtitle: {
           "$regex": searchTerm,
           "$options": "i"
           }
