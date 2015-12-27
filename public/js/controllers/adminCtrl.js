@@ -34,17 +34,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 	// 	// }
 	// ];
 
-  //refactor w out $q?
-  var getCurrentUser = function(){
-    return $q(function(resolve, reject) {
-      var currentUser = userService.getCurrentUser();
-      resolve(currentUser);
-    });
-  };
 
-  getCurrentUser().then(function(user){
-    $scope.currentUser = user;
-  });
 
   var getBooks = function(){
     bookService.getBooks().then(function (books){
@@ -74,6 +64,18 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     $scope.newBookIsbn = "";
     getBooks();
     getLibraryList();
+  };
+
+  var addBookThen = function(isbn){
+    return $q(function(resolve, reject){
+      bookService.addBookByIsbn(isbn);
+    });
+  };
+
+  $scope.addBookByIsbnThenAddToLibrary = function(libraryId, isbn){
+    addBookThen(isbn).then(function(resolve, reject){
+      //add to library
+    });
   };
 
   //deprecated, use unified search
@@ -121,6 +123,18 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 			value: 'name',
 		},
 	];
+
+  //refactor w out $q?
+  var getCurrentUser = function(){
+    return $q(function(resolve, reject) {
+      var currentUser = userService.getCurrentUser();
+      resolve(currentUser);
+    });
+  };
+
+  getCurrentUser().then(function(user){
+    $scope.currentUser = user;
+  });
 
   var getUsers = function(){
     userService.getUsers().then(function (users){
@@ -202,8 +216,14 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     });
   };
 
-  $scope.addToLibrary = function(userId, bookId){
-    libraryService.addToLibrary(userId, bookId).then(function(res){
+  $scope.addToLibraryByBookId = function(libraryId, bookId){
+    libraryService.addToLibraryByBookId(libraryId, bookId).then(function(res){
+      //getLibraryList();
+    });
+  };
+
+  $scope.addToLibraryByIsbn = function(libraryId, isbn){
+    libraryService.addToLibraryByIsbn(libraryId, isbn).then(function(res){
       //getLibraryList();
     });
   };

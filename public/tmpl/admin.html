@@ -70,7 +70,9 @@ Books:
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
       <img src="{{book.coverArtUrl.medium}}" />
-      {{book.title}} by {{book.author}} - <a href="" ng-click="addToLibrary(currentUser.library, book._id)">Add this book to your library</a>
+      {{book.title}} by {{book.author}} - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
+      /
+      <a href="" ng-click="addToLibraryByIsbn(currentUser.library, book.isbn)">Add by ISBN</a>
       <br>
       <span ng-hide="moreInfo"><a href="" ng-click="moreInfo=true">More Info +</a></span>
       <span ng-show="moreInfo"><a href="" ng-click="moreInfo=false">More Info -  </a></span>

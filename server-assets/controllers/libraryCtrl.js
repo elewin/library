@@ -1,5 +1,6 @@
 var Library = require('../models/librarySchema');
 var User = require('../models/userSchema');
+var Book = require('../models/bookSchema');
 
 
 module.exports = {
@@ -52,22 +53,81 @@ module.exports = {
     });
   },
 
+  //DEPRECATED:
+  // // old method, took data object in the PUT request:
+  // // data: {
+  // //   books: {
+  // //     book: {bookData: bookId},
+  // //   }
+  // // },
+  // addBookToLibrary: function(req, res){
+  //
+  //   var newBookObj = req.body.books; //this is the object of our new book, assigning it req.body.books will include bookData which is a ref to the book we are adding
+  //   newBookObj.book.bookCollectionId = req.body.books.book.bookData; //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
+  //
+  //   console.log('newBookObj', newBookObj);
+  //
+  //   Library.findById(req.params.id).exec().then(function(library){ //find the target library
+  //     var books = library.books; //the array of books in the library
+  //     books.push(newBookObj); //add the new book to the array of books
+  //     return library.save().then(function(theLibrary){ //save the library with our new book in it
+  //       return res.json(theLibrary);
+  //     });
+  //   }).catch(function(err){ //uh-oh
+  //     return res.status(400).json(err);
+  //   });
+  // },
+
   //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
+  //this takes a query of either bookId or isbn and adds that book to the user's library. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
   addBookToLibrary: function(req, res){
+    var libraryId = req.params.id;
 
-    var newBookObj = req.body.books; //this is the object of our new book, assigning it req.body.books will include bookData which is a ref to the book we are adding
-    newBookObj.book.bookCollectionId = req.body.books.book.bookData; //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
+    // this function will add the book with bookId to the library passed in req.params.id
+    var addBook = function(bookId){
 
-    Library.findById(req.params.id).exec().then(function(library){ //find the target library
-      var books = library.books; //the array of books in the library
-      books.push(newBookObj); //add the new book to the array of books
-      return library.save().then(function(theLibrary){ //save the library with our new book in it
-        return res.json(theLibrary);
+      //this is the object of the book which we will add to our library
+      var bookObj = {
+        book: {
+          bookData: bookId, //bookData which is a ref to the book we are adding
+          bookCollectionId: bookId, //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
+        }
+      };
+      //now find the library we need to add the book to
+      Library.findById(libraryId).exec().then(function(library){
+        var books = library.books; //the array of books in the library that we will be adding to
+        books.push(bookObj); //add the new book to the array of books
+        return library.save().then(function(){ //save the library with our new book in it
+          return res.status(201).end();
+        }).catch(function(err){ //something broke
+          console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', JSON.stringify(err,null,2));
+          return res.status(500).json(err);
+        });
+      }).catch(function(err){ //uh-oh
+        console.log('libraryCtrl.addBookToLibrary/addBook: ', JSON.stringify(err,null,2));
+        return res.status(400).json(err);
       });
-    }).catch(function(err){ //uh-oh
-      return res.status(400).json(err);
-    });
+    };
+
+    //if we're passed an ISBN, then we will look up the book that corosponds to it and then add that book to the library
+    if (req.query.isbn){
+      var isbn = req.query.isbn;
+      Book.findOne({$or:[{'isbn10' : isbn}, {'isbn13' : isbn}, {'isbn' : isbn}]}).exec() //search for the ISBN
+      .then(function(book){ //return the book that matches it
+        addBook(book._id); //add the book
+      });
+    }
+    else{ //if we are passed a bookId, then we do not need to look anything up and go straight to adding that bookId to the library
+      if (req.query.bookId){
+        addBook(req.query.bookId);
+      }
+      else { //this should only happen if neither isbn nor bookId was passed in the query
+        console.log('Did you pass the query correctly?', req.query);
+        return res.status(400).end();
+      }
+    }
   },
+
 
   // old but working
   // //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id

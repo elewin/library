@@ -15,7 +15,7 @@ angular.module('library').service('libraryService', function($stateParams, $http
   //   });
   // };
 
-  
+
 
   this.getUserLibrary = function(userId){
     return $http({
@@ -51,16 +51,37 @@ angular.module('library').service('libraryService', function($stateParams, $http
     });
   };
 
-  this.addToLibrary = function(libraryId, bookId){
+  // deprecated, now takes a query  of either bookId or isbn
+  // this.addToLibrary = function(libraryId, bookId){
+  //   console.log('adding bookId:', bookId, 'to libraryId:', libraryId);
+  //   return $http({
+  //     method: 'PUT',
+  //     url: '/api/library/' + libraryId + '/add',
+  //     data: {
+  //       books: {
+  //         book: {bookData: bookId},
+  //       }
+  //     },
+  //   }).then(function(res) {
+  //     return res.data;
+  //   });
+  // };
+
+  this.addToLibraryByBookId = function(libraryId, bookId){
     console.log('adding bookId:', bookId, 'to libraryId:', libraryId);
     return $http({
       method: 'PUT',
-      url: '/api/library/' + libraryId + '/add',
-      data: {
-        books: {
-          book: {bookData: bookId},
-        }
-      },
+      url: '/api/library/' + libraryId + '/add?bookId='+bookId,
+    }).then(function(res) {
+      return res.data;
+    });
+  };
+
+  this.addToLibraryByIsbn = function(libraryId, isbn){
+    console.log('adding isbn:', isbn, 'to libraryId:', libraryId);
+    return $http({
+      method: 'PUT',
+      url: '/api/library/' + libraryId + '/add?isbn='+isbn,
     }).then(function(res) {
       return res.data;
     });

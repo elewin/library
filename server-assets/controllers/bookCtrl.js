@@ -55,11 +55,11 @@ var azSearch = function(searchParam, searchTerm){
   }).catch(function(err){
     console.log(JSON.stringify(err,null,2));
     if (err[0].Error[0].Code[0] === 'AWS.ECommerceService.NoExactMatches'){ //this is what returns if nothing is found
-      console.log('Amazon: ',err[0].Error[0].Message[0]);
+      console.log('bookCtrl.azSearch: ',err[0].Error[0].Message[0]);
       deferred.resolve([]); //still send back an empty array if there are no results
     }
     else{
-      console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err,null,2)); //if something else went wrong
+      console.log('bookCtrl.azSearch: ', req.query, 'Error:', JSON.stringify(err,null,2)); //if something else went wrong
       deferred.reject(err);
     }
   });
@@ -128,7 +128,7 @@ var dbSearch = function(searchParam, searchTerm){
     deferred.resolve(results); //resolve the results
 
   }).catch(function(err){
-    console.log(JSON.stringify(err,null,2));
+    console.log('bookCtrl.dbSearch: ', JSON.stringify(err,null,2));
     deferred.reject();
   });
   return deferred.promise;
@@ -147,7 +147,7 @@ module.exports = {
         return res.status(404).end();
       }
       else{
-        console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err)); //if something else went wrong
+        console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err,null,2)); //if something else went wrong
         return res.status(500).end();
       }
     });
@@ -267,11 +267,11 @@ module.exports = {
         return res.json(unifiedResult); //return the result
 
       }).catch(function(azErr){ //error handling for amazon search
-        console.log(JSON.stringify(azErr,null,2));
+        console.log('bookCtrl.unifiedSearch: ', JSON.stringify(azErr,null,2));
         return res.status(500).end();
       });
     }).catch(function(err){ //error handling
-      console.log(JSON.stringify(err,null,2));
+      console.log('bookCtrl.unifiedSearch: ', JSON.stringify(err,null,2));
       return res.status(500).end();
     });
   },
@@ -306,9 +306,11 @@ module.exports = {
                 return res.status(201).end;
               });
             }).catch(function(err) {
-              console.log('bookCtrl.addBookByIsbn:',err);
+              console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', JSON.stringify(err,null,2));
               return res.status(500).json(err);
             });
+          }).catch(function(err){
+            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', JSON.stringify(err,null,2));          
           });
         }else{
           //if the ISBN is invalid then return an error code

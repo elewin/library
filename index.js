@@ -1,6 +1,6 @@
 //settings:
 var config = require('./config'); //config file. ***** Change the bool variable 'local' in this file (config.js) to true for local developlemt, false for heroku deployment
-var useMongolab = true; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
+var useMongolab = false; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
 var local = config.local;
 
 //alert user to the current mode to asssit with debugging:
@@ -167,7 +167,7 @@ app.get('/api/library/', requireAuth, requireAdmin, libraryCtrl.getAllLibraries)
 app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId
 app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user
 app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array
-app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library
+app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library by either ISBN or bookId given a query. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
 app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
 
