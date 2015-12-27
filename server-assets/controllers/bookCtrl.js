@@ -40,11 +40,99 @@ var checkIsbn = function(isbn){
   return goodIsbn; //return the result
 };
 
+//search the Amazon Products API for a book given a search paramater (author, title, keyword) and search term, returns a promise
+var azSearch = function(searchParam, searchTerm){
+  var deferred = q.defer();
+
+  //set up our search paramaters object
+  var searchObj = {
+    param: searchParam, //should be 'title', 'author', or 'keywords'
+    term: searchTerm    //this is a string of we are searching for
+  };
+
+  amazonCtrl.searchForBook(searchObj).then(function(results){ //search results based on our search object
+    deferred.resolve(results); //resolve the results of the search
+  }).catch(function(err){
+    console.log(JSON.stringify(err,null,2));
+    if (err[0].Error[0].Code[0] === 'AWS.ECommerceService.NoExactMatches'){ //this is what returns if nothing is found
+      console.log('Amazon: ',err[0].Error[0].Message[0]);
+      deferred.resolve([]); //still send back an empty array if there are no results
+    }
+    else{
+      console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err,null,2)); //if something else went wrong
+      deferred.reject(err);
+    }
+  });
+  return deferred.promise;
+};
+
+//search the db for a book given a search paramater (author, title, keyword) and search term, returns a promise
+var dbSearch = function(searchParam, searchTerm){
+  var deferred = q.defer();
+
+  var searchObj = {}; //this object will hold our search query data for the database
+
+  //if we are searching for the title or author, search just those fields
+  if(searchParam === 'title' || searchParam === 'author'){
+    searchObj[searchParam] = {
+      "$regex": searchTerm,
+      "$options": "i"
+    };
+  }
+
+  //this is a more expensive search, it searches through the title, author, description,and tags fields
+  if(searchParam === 'keywords'){
+    searchObj = {
+      $or:[
+        {
+          title: {
+            "$regex": searchParam,
+            "$options": "i"
+          }
+        },
+        {
+        author: {
+          "$regex": searchParam,
+          "$options": "i"
+          }
+        },
+        {
+        googDescription: {
+          "$regex": searchParam,
+          "$options": "i"
+          }
+        },
+        {
+        azDescription: {
+          "$regex": searchParam,
+          "$options": "i"
+          }
+        },
+        {
+        tags: {
+          "$regex": searchParam,
+          "$options": "i"
+          }
+        },
+      ]
+    };
+  }
+
+  Book.find(searchObj).exec().then(function(results){ //search the book collection using the paramters of our searchObj object
+    deferred.resolve(results);
+  }).catch(function(err){
+    console.log(err);
+    deferred.reject();
+  });
+  return deferred.promise;
+};
 
 module.exports = {
 
+
   //searches the Amazon Products API for the book given the paramters in req.query
   azSearchForBook: function(req, res){
+    console.log(req.query);
     amazonCtrl.searchForBook(req.query).then(function(results){
       return res.json(results);
     }).catch(function(err){
@@ -61,11 +149,10 @@ module.exports = {
 
   //search the db for a book given a search paramater (author, title, keyword) and search term
   dbSearchForBook: function(req, res){
-    var searchParams = req.query;
-    var deferred = q.defer();
+    var searchParams = req.query; //what to search for
+    var searchObj = {}; //this object will hold our search query data for the database
 
-    var searchObj = {};
-
+    //if we are searching for the title or author, search just those fields
     if(searchParams.param === 'title' || searchParams.param === 'author'){
       searchObj[searchParams.param] = {
         "$regex": searchParams.term,
@@ -73,7 +160,7 @@ module.exports = {
       };
     }
 
-    //this is a more expensive search
+    //this is a more expensive search, it searches through the title, author, description,and tags fields
     if(searchParams.param === 'keywords'){
       searchObj = {
         $or:[
@@ -111,16 +198,69 @@ module.exports = {
       };
     }
 
-    Book.find(searchObj).exec().then(function(results){
+    Book.find(searchObj).exec().then(function(results){ //search the book collection using the paramters of our searchObj object
       return res.json(results);
-
     }).catch(function(err){
       console.log(err);
       return res.status(400).send(err);
     });
-
-    return deferred.promise;
   },
+
+  //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword)
+  unifiedSearch: function(req, res){
+    var searchParam = req.query.param; //our search paramater
+    var searchTerm = req.query.term;   //our search term
+    var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
+
+    //search our books collection
+    dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
+      for (var j = 0; j < dbSearchResult.length; j++){
+        //add these ISBNs to our isbnArr to compare against after we get the reuslts back from the amazon api search
+        isbnArr.push(dbSearchResult[j].isbn13);
+        isbnArr.push(dbSearchResult[j].isbn10);
+      }
+      return dbSearchResult;
+    }).then(function(dbSearchResult){
+      //search the amazon api
+      azSearch(searchParam, searchTerm).then(function(azSearchResult){
+
+        //clean up data:
+        var arrLength = azSearchResult.length;
+        for ( var i = arrLength-1; i >= 0; i--){
+          //remove results without an ISBN (our entire system is built around ISBN lookups so these books are not able to be added to our book collection, plus these are often garbage results of out of print/unavailable books or oddball editions anyway)
+          if(!azSearchResult[i].ItemAttributes[0].ISBN){ //if there is no ISBN. . .
+             azSearchResult.splice(i,1); //. . . then remove this element
+           }
+           else{ //if there is an ISBN present, check if we already returned that result from the db search. If so, remove it:
+             if(isbnArr.indexOf(azSearchResult[i].ItemAttributes[0].ISBN[0]) > -1){
+               azSearchResult.splice(i,1); //remove this element since it already exists in the db
+             }
+           }
+        }
+
+        //now that the data is cleaned up and we have filtered out duplicates, lets build our final results object:
+        var azCount = azSearchResult.length;
+        var dbCount = dbSearchResult.length;
+        var unifiedResult = {
+          db : dbSearchResult,
+          dbCount: dbCount,
+          az: azSearchResult,
+          azCount: azCount,
+          total:  dbCount+azCount,
+        };
+
+        return res.json(unifiedResult); //return the result
+
+      }).catch(function(azErr){ //error handling for amazon search
+        console.log(JSON.stringify(azErr,null,2));
+        return res.status(500).end();
+      });
+    }).catch(function(err){ //error handling
+      console.log(JSON.stringify(err,null,2));
+      return res.status(500).end();
+    });
+  },
+
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {

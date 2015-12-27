@@ -24,7 +24,6 @@ module.exports = {
       responseGroup : 'ItemAttributes,Images,EditorialReview',
       Sort : 'relevancerank',
     };
-
     //add the search parameters that were passed in:
     searchObj[searchParams.param] = searchParams.term;
 
@@ -32,7 +31,7 @@ module.exports = {
     client.itemSearch(searchObj).then(function(results){ //search for results based on searchObj
       deferred.resolve(results); //results is an array of objects from the amazon api
     }).catch(function(err){
-      console.log(err);
+      console.log(JSON.stringify(err,null,2));
       deferred.reject(err);
     });
     return deferred.promise;
