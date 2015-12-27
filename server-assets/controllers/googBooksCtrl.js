@@ -48,7 +48,7 @@ module.exports = {
           book.googBooksUrl = queryObj.items[i].selfLink;
 
           //get alternate ISBNs:
-          var isbn13; //we need to use this because book.isbn13 is undefined until the save method is run at the end. In the meantime we'll copy it to this variable so we can use it elsewhere before the save method is ran.
+          var isbn13; //we need to use this because book.isbn13 is undefined until the save method is run at the end. In the meantime we'll copy it to this variable so we can use it elsewhere before the save method is called.
           for (var j = 0; j < queryObj.items[i].volumeInfo.industryIdentifiers.length; j++){
             if (queryObj.items[i].volumeInfo.industryIdentifiers[j].type === "ISBN_13"){
               isbn13 = queryObj.items[i].volumeInfo.industryIdentifiers[j].identifier;
@@ -64,7 +64,7 @@ module.exports = {
         }
         resolve(book); //return the updated book
       }).catch(function(err){
-        console.log('updateFromGoogleBooks error');
+        console.log('updateFromGoogleBooks error', err);
          reject(book); //something bad happened
       });
     });

@@ -86,31 +86,31 @@ var dbSearch = function(searchParam, searchTerm){
       $or:[
         {
           title: {
-            "$regex": searchParam,
+            "$regex": searchTerm,
             "$options": "i"
           }
         },
         {
         author: {
-          "$regex": searchParam,
+          "$regex": searchTerm,
           "$options": "i"
           }
         },
         {
         googDescription: {
-          "$regex": searchParam,
+          "$regex": searchTerm,
           "$options": "i"
           }
         },
         {
         azDescription: {
-          "$regex": searchParam,
+          "$regex": searchTerm,
           "$options": "i"
           }
         },
         {
         tags: {
-          "$regex": searchParam,
+          "$regex": searchTerm,
           "$options": "i"
           }
         },
@@ -119,9 +119,10 @@ var dbSearch = function(searchParam, searchTerm){
   }
 
   Book.find(searchObj).exec().then(function(results){ //search the book collection using the paramters of our searchObj object
-    deferred.resolve(results);
+    deferred.resolve(results); //resolve the results
+
   }).catch(function(err){
-    console.log(err);
+    console.log(JSON.stringify(err,null,2));
     deferred.reject();
   });
   return deferred.promise;
@@ -132,7 +133,6 @@ module.exports = {
 
   //searches the Amazon Products API for the book given the paramters in req.query
   azSearchForBook: function(req, res){
-    console.log(req.query);
     amazonCtrl.searchForBook(req.query).then(function(results){
       return res.json(results);
     }).catch(function(err){

@@ -80,15 +80,20 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     bookService.azSearchForBook(searchParam, searchTerm).then(function(result){
       $scope.azSearchResults = result.data;
     });
-
   };
 
   $scope.dbSearchForBook = function(searchParam, searchTerm){
     bookService.dbSearchForBook(searchParam, searchTerm).then(function(result){
       $scope.dbSearchResults = result.data;
     });
-
   };
+
+  $scope.unifiedSearchForBook = function(searchParam, searchTerm){
+    bookService.unifiedSearchForBook(searchParam, searchTerm).then(function(result){
+      $scope.unifiedSearchResults = result.data;
+    });
+  };
+
 
   $scope.editBook = function(id, key, val){
     bookService.editBook(id, key, val).then(function(res){

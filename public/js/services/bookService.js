@@ -85,6 +85,14 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
+  this.unifiedSearchForBook = function(searchParam, searchTerm){
+    console.log('unified search for '+searchParam+": " +searchTerm);
+    return $http({
+      method: 'GET',
+      url: '/api/books/search?param='+searchParam+'&term='+searchTerm,
+  });
+
+};
   this.addBookByIsbn = function(isbn){
     console.log('attempting to add ISBN:', isbn);
 

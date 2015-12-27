@@ -62,6 +62,18 @@ module.exports = {
         book.coverArtUrl.small = results[i].SmallImage[0].URL[0];
         book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
         book.amazonUrl = results[i].DetailPageURL[0];
+
+        //special case handling if the result from google books did not contain an ISBN10 or ISBN13 identifier, inwhich case we will just apply the ISBN we do have to whatever seems to fit:
+        var isbnLength = book.isbn.length;
+        if(book.isbn10 === 'None' && isbnLength === 10){
+          book.isbn10 = book.isbn;
+        }
+        else{
+          if(book.isbn13 === 'None' && isbnLength === 13){
+            book.isbn13 = book.isbn;
+          }
+        }
+
         resolve(book);
       }).catch(function(err) {
         console.log('updateFromAmazon error:', err);
