@@ -218,6 +218,15 @@ module.exports = {
     var searchTerm = req.query.term;   //our search term
     var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
 
+    //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out. Here we just rebuild the string wtithout them:
+    var filtered ='';
+    for (var k = 0; k < searchTerm.length; k++){
+      if (searchTerm[k] !== "'"){
+        filtered += searchTerm[k];
+      }
+    }
+    searchTerm = filtered;
+
     //search our books collection
     dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
       for (var j = 0; j < dbSearchResult.length; j++){
