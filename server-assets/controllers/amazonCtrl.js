@@ -11,6 +11,24 @@ var client = amazon.createClient({
   awsTag: config.api.amazon.tag,
 });
 
+//strips HTML out of a string
+function stripHtml(str){
+  var filteredStr = '';
+  var ignore = false;
+  for (var i = 0; i < str.length; i++){
+    if (str[i] === '<'){ //if this is the start of an HTML tag, turn the filter on and ignore these characters
+      ignore = true;
+    }
+    if (!ignore){
+      filteredStr += str[i]; //if we are not inside an HTML tag, let the character pass the filter
+    }
+    if (str[i] === '>'){ //if we are at the end of an HTML tag, turn the filter back off
+      ignore = false;
+    }
+  }
+  return filteredStr;
+}
+
 module.exports = {
 
   //returns a promise that resolves the results of a book search based on the given serach paramater and search term
@@ -64,7 +82,7 @@ module.exports = {
         if (results[i].ItemAttributes[0].Author) book.author = results[i].ItemAttributes[0].Author[0];
         if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
         if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
-        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = results[i].EditorialReviews[0].EditorialReview[0].Content[0];
+        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]);
         if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
       //  book.tags = //it doesn't look like amazon provides categories?
         if (results[i].LargeImage) book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
