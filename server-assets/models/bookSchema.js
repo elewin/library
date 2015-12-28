@@ -6,15 +6,15 @@ var bookSchema = new mongoose.Schema({
   edition: {type: String},
   author: {type: String, default:'', index: true}, //change to array later for multiple authors
   editor: {type: String},
-  date: {type: String},
-  length: {type: String,},
+  date: {type: String, default: "No date given"},
+  length: {type: String, default: "Unknown"},
   isbn: {type: String, required: true, unique: true, index: true},
   isbn13: {type: String,  default: "None", index: true},
   isbn10: {type: String, default: "None", index: true},
-  publisher: {type: String,},
+  publisher: {type: String, default: "Unknown"},
   tags: {type: [], index: true}, //genre etc
   coverArtUrl: {
-    large: {type: String, default: ''},
+    large: {type: String, default: ''}, //later replace these defaults with a placeholder image
     medium: {type: String, default: ''},
     small: {type: String, default: ''},
   },

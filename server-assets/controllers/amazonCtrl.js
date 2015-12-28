@@ -46,7 +46,6 @@ module.exports = {
       itemId: book.isbn,
       responseGroup: 'ItemAttributes,Images,EditorialReview'
       }).then(function(results) {
-      console.log('RESULTS:', JSON.stringify(results[i],null,2));
 
       //special case handling if the result from google books did not contain an ISBN10 or ISBN13 identifier, inwhich case we will just apply the ISBN we do have to whatever seems to fit:
         var isbnLength = book.isbn.length;
