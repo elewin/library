@@ -47,6 +47,7 @@ module.exports = {
 
           if (result.details){
             if (result.details.number_of_pages) book.length = result.details.number_of_pages.toString();
+            if (result.details.title) book.title = result.details.title;
             if (result.details.subtitle) book.subtitle = result.details.subtitle;
             if (result.details.subjects){
               for (var i = 0; i < result.details.subjects.length; i++){
@@ -55,9 +56,9 @@ module.exports = {
                 }
               }
             }
-            if (result.details.publish_places){
-              for (var j = 0; j < result.details.publish_places.length; j++){
-                book.tags.push(result.details.publish_places[j]);
+            if (result.details.subject_places){
+              for (var j = 0; j < result.details.subject_places.length; j++){
+                book.tags.push(result.details.subject_places[j]);
               }
             }
             if (result.details.description) book.olDescription = result.details.description;

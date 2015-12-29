@@ -100,14 +100,18 @@ Books:
         <span ng-hide="showDesc"><a href="" ng-click="showDesc=true">Description &#9660;</a></span>
         <span ng-show="showDesc"><a href="" ng-click="showDesc=false">Description &#9654;</a></span>
         <div ng-hide="showDesc">
-          Google Books:<br>
-          <i>{{book.googDescription}}</i>
-          <br>
-          Amazon: <br>
-          <i>{{book.azDescription}}</i>
-          <br>
-          Open Library: <br>
-          <i>{{book.olDescription}}</i>
+          <div ng-if="book.googDescription">
+            Google Books: <br>
+            <i>{{book.googDescription}}</i>
+          </div>
+          <div ng-if="book.azDescription">
+            Amazon: <br>
+            <i>{{book.azDescription}}</i>
+          </div>
+          <div ng-if="book.olDescription">
+            Open Library: <br>
+            <i>{{book.olDescription}}</i>
+          </div>
         </div>
       </div>
 

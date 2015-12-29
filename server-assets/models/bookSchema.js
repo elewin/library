@@ -20,9 +20,9 @@ var bookSchema = new mongoose.Schema({
     medium: {type: String, default: ''},
     small: {type: String, default: ''},
   },
-  googDescription: {type: String, default: 'No description'}, //google books description
-  azDescription: {type: String, default: 'No description'}, //amazon description
-  olDescription: {type: String, default: 'No description'}, //open library description
+  googDescription: {type: String,}, //google books description
+  azDescription: {type: String,}, //amazon description
+  olDescription: {type: String,}, //open library description
   lang: {type: String, default: "Not specified"},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},

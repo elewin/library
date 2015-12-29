@@ -105,6 +105,7 @@ function dbSearch(searchParam, searchTerm){
         {authors: searchOptions},
         {googDescription: searchOptions},
         {azDescription: searchOptions},
+        {olDescription: searchOptions},
         {tags: searchOptions},
         {subtitle: searchOptions}
       ],
@@ -188,7 +189,6 @@ module.exports = {
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
-    console.log('addBookByIsbn');
     //see if a library was specified to add this book to after its been added to the main book collection:
     var libraryAdd = false;
     if (req.query.libraryId){
@@ -213,7 +213,7 @@ module.exports = {
               amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
                 newBook = azBook;
                 newBook.save().then(function(theBook) { //save the book
-                  console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
+                  //console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
 
                   //if we are also going to add this book to a user's library:
                   if(libraryAdd){
