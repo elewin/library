@@ -11,7 +11,7 @@ var client = amazon.createClient({
   awsTag: config.api.amazon.tag,
 });
 
-//strips HTML out of a string
+//strips HTML out of a string. This will break things if a string has a '<' that is not part of an HTML tag though! Basically it just rebuilds the string and ignores everything after a '<' until it sees a '>'. It is very simple but should work for our purposes.
 function stripHtml(str){
   var filteredStr = '';
   var ignore = false;
@@ -55,19 +55,19 @@ module.exports = {
     return deferred.promise;
   },
 
-  //takes a book object and updates its properties with data from the Amazon Products API and returns a promise
+  //takes a book object (that should have already been processed by the google books API) and updates its properties with data from the Amazon Products API and returns a promise
   updateFromAmazon : function(book){
     return q.Promise(function(resolve, reject){
-      var i = 0; //in a future version I'll add support for multiple results. for now we will just use the first result.
+      var i = 0; //in a future version I may add support for multiple results. for now we will just use the first result. However, in testing (so far) it appears that pretty much all results just have one element anyway
       client.itemLookup({
-      idType: 'ISBN',
-      itemId: book.isbn,
-      responseGroup: 'ItemAttributes,Images,EditorialReview'
+        idType: 'ISBN',
+        itemId: book.isbn,
+        responseGroup: 'ItemAttributes,Images,EditorialReview'
       }).then(function(results) {
 
       //special case handling if the result from google books did not contain an ISBN10 or ISBN13 identifier, inwhich case we will just apply the ISBN we do have to whatever seems to fit:
         var isbnLength = book.isbn.length;
-        if(book.isbn10 === 'None' && isbnLength === 10){
+        if(book.isbn10 === 'None' && (isbnLength === 9 || isbnLength === 10)){
           book.isbn10 = book.isbn;
         }
         else{
@@ -76,15 +76,17 @@ module.exports = {
           }
         }
 
-        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty
+        //the amazon api likes to wrap everything in arrays, but in testing i've yet to encounter anything with more than one element, thus all the [0]s hardcoded in here. This can be changed later to iterate through everything if that turns out to be a problem.
+
+        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty. This could possibly lead to duplicate titles and subtitles if a book had a subtitle but no title, but that seems unlikely so we're not too worried about that right now.
           if (results[i].ItemAttributes[0].Title) book.title = results[i].ItemAttributes[0].Title[0];
         }
         if (results[i].ItemAttributes[0].Author) book.author = results[i].ItemAttributes[0].Author[0];
         if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
         if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
-        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]);
+        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
         if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
-      //  book.tags = //it doesn't look like amazon provides categories?
+      //  book.tags = //it doesn't look like amazon provides categories in their API?
         if (results[i].LargeImage) book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
         if (results[i].MediumImage) book.coverArtUrl.medium = results[i].MediumImage[0].URL[0];
         if (results[i].SmallImage) book.coverArtUrl.small = results[i].SmallImage[0].URL[0];

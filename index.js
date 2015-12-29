@@ -45,7 +45,6 @@ var authCtrl = require('./server-assets/controllers/authCtrl');
 //var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
 //var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
 //var goodreadsCtrl = require('./server-assets/controllers/goodreadsCtrl');
-//var fbCtrl = require('./server-assets/controllers/fbCtrl');
 
 //schema: (unused in index.js, listing for reference)
 // var Book = require('./server-assets/models/bookSchema');
@@ -80,7 +79,6 @@ mongoose.connect(dbUri);
 var app = express();
 app.use(express.static(__dirname+"/public"));
 app.use(bodyParser.json(), cors());
-
 
 //sessions for OAuth:
 app.use(session({
@@ -141,16 +139,17 @@ app.get('/api/auth/fb/login', authCtrl.authenticate);
 app.get('/api/auth/fb/cb', authCtrl.callback);
 app.get('/api/auth/fb/logout', authCtrl.logout);
 
-//books (these apply to the main book roster, not a particluar user's library)
+//books (these apply to the main book collection, not a particluar user's library. See library endpoints for that)
 app.get('/api/books',  bookCtrl.getBooks);
-//app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
 app.get('/api/books/azSearch', requireAuth, bookCtrl.azSearchForBook); //search the amazon API for a book given a search term and search paramter, eg: /api/books/azSearch?param=author&term=Homer *** deprecated, use unifiedSearch /api/books/search
 app.get('/api/books/dbSearch', requireAuth, bookCtrl.dbSearchForBook); //search the book collection in our database for a book eg: /api/books/dbSearch?param=author&term=Thucydides *** deprecated, use unifiedSearch /api/books/search
 app.get('/api/books/search', requireAuth, bookCtrl.unifiedSearch); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
+//app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
-// app.get('/api/books/:id/azUpdate', requireAuth, bookCtrl.azUpdate); //update from Amazon API *** DEPRECATED, this is done automatically upon adding a book
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
+
+
 
 //users
 app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn);
