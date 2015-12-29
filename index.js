@@ -147,8 +147,6 @@ app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to th
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
-
-
 //users
 app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn);
 app.get('/api/users/currentUser',  requireAuth, userCtrl.getCurrentUser);

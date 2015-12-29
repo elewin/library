@@ -50,7 +50,7 @@ Books:
     <div ng-repeat="result in unifiedSearchResults.db">
 
       <img src="{{result.coverArtUrl.small}}" />
-      {{result.title}} by {{result.authors}}, {{result.date}} (ISBN: {{result.isbn}})
+      {{result.title}} by <span ng-repeat="author in result.authors">{{author}}{{$last ? '' : ', '}}</span>, {{result.date}} (ISBN: {{result.isbn}})
       <a href="" ng-click="addToLibraryByIsbn(currentUser.library, result.isbn)">Add</a>
     </div>
     <div ng-repeat="result in unifiedSearchResults.az">
@@ -70,7 +70,7 @@ Books:
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
       <img src="{{book.coverArtUrl.medium}}" />
-      {{book.title}} by {{book.authors}} - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
+      {{book.title}} by <span ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span> - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
       /
       <a href="" ng-click="addToLibraryByIsbn(currentUser.library, book.isbn)">Add by ISBN</a>
       <br>
@@ -81,10 +81,10 @@ Books:
         <br>
         {{book.length}} pages
         <br>
-        Published {{book.date}} by {{book.publisher}}
+        <span ng-if="book.copyrightDate">(C) {{book.copyrightDate}}, </span> Published {{book.publishDate}} by {{book.publisher}}<span ng-repeat="place in book.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span>
         <br>
         <span ng-repeat="tag in book.tags">
-          {{tag}}
+          {{tag}}{{$last ? '' : ', '}}
         </span>
         <br>
         ISBN-10: {{book.isbn10}}
@@ -105,6 +105,9 @@ Books:
           <br>
           Amazon: <br>
           <i>{{book.azDescription}}</i>
+          <br>
+          Open Library: <br>
+          <i>{{book.olDescription}}</i>
         </div>
       </div>
 
@@ -197,7 +200,7 @@ Users:
 
     <!-- list user info -->
     <br>
-    roles: <span ng-repeat="role in user.roles">{{role}}, </span>
+    roles: <span ng-repeat="role in user.roles">{{role}}{{$last ? '' : ', '}} </span>
     <br>
     fb id: {{user.fb.id}}
     <br>
@@ -260,7 +263,7 @@ Libraries:
 
       <li ng-repeat="book in library.books">
 
-        {{book.book.bookData.title}} by {{book.book.bookData.authors}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book.book.bookData._id)">delete</a>
+        {{book.book.bookData.title}} by <span ng-repeat="author in book.book.bookData.authors">{{author}}{{$last ? '' : ', '}}</span> (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book.book.bookData._id)">delete</a>
 
       </li>
     </ul>

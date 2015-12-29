@@ -84,7 +84,7 @@ module.exports = {
           }
 
           if (results[i].ItemAttributes[0].Author) book.authors = results[i].ItemAttributes[0].Author;
-          if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
+          if (results[i].ItemAttributes[0].PublicationDate) book.publishDate = results[i].ItemAttributes[0].PublicationDate[0];
           if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
           if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
           if (results[i].ItemAttributes[0].Languages){

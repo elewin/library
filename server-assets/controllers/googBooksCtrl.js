@@ -40,8 +40,8 @@ module.exports = {
           if (queryObj.items[i].volumeInfo){
             if (queryObj.items[i].volumeInfo.title) book.title = queryObj.items[i].volumeInfo.title;
             if (queryObj.items[i].volumeInfo.subtitle) book.subtitle = queryObj.items[i].volumeInfo.subtitle;
-            if (queryObj.items[i].volumeInfo.authors) book.authors = queryObj.items[i].volumeInfo.authors; 
-            if (queryObj.items[i].volumeInfo.publishedDate) book.date = queryObj.items[i].volumeInfo.publishedDate;
+            if (queryObj.items[i].volumeInfo.authors) book.authors = queryObj.items[i].volumeInfo.authors;
+            if (queryObj.items[i].volumeInfo.publishedDate) book.publishDate = queryObj.items[i].volumeInfo.publishedDate;
             if (queryObj.items[i].volumeInfo.publisher) book.publisher = queryObj.items[i].volumeInfo.publisher;
             if (queryObj.items[i].volumeInfo.description) book.googDescription = queryObj.items[i].volumeInfo.description;
             if (queryObj.items[i].volumeInfo.pageCount) book.length = queryObj.items[i].volumeInfo.pageCount;

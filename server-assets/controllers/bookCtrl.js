@@ -3,6 +3,7 @@ var Library = require('../models/librarySchema');
 var libraryCtrl = require('./libraryCtrl');
 var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
+var openLibraryCtrl = require('./openLibraryCtrl');
 var q = require('q'); //promises library
 
 //filters out a given character from a given string
@@ -23,12 +24,10 @@ function checkIsbn(isbn){
   var goodIsbn = true;
   var isbnLength = isbn.length; //calcualte the length once to save some time since we'll be calling it more than once
   var trailingX = false; //this is to handle the special case of the final character in the ISBN being an 'X'
-  var lastChar; //this is used in the case of a trailingX, we save the x here so that we can add it back on later. This way we can maintain the case that was passed.
 
   //check if the last character is an 'x'
-  if (isbn[isbnLength-1].toLowerCase() === 'x'){
+  if (isbn[isbnLength-1].toUpperCase() === 'X'){
     trailingX = true;
-    lastChar = isbn[isbnLength-1];
   }
   //check length
   if (isbnLength < 9 || isbnLength > 13){
@@ -44,7 +43,7 @@ function checkIsbn(isbn){
   }
   //if it had a trailing X, add it back now that our numeric check is complete
   if(trailingX){
-    isbn+=lastChar;
+    isbn+='X';
   }
 
   return goodIsbn; //return the bool result
@@ -200,6 +199,7 @@ module.exports = {
     newBook.isbn = filterString(newBook.isbn, '-'); //Often ISBNs have dashes inserted for readability, so we need to strip those out
     var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
 
+    // (this could be cleaned up)
     //make sure this is not a duplicate:
     Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
     .then(function(foundBook){
@@ -207,36 +207,40 @@ module.exports = {
         if (goodIsbn){
         //if (newBook.isbn.length >= 9 && !isNaN(newBook.isbn)){
           googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){ //update properties form the Google Books API
-            console.log('1');
             newBook = book; //assign the book with the gathered google books info to the new book
-            amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
-              console.log('2');
-              newBook = azBook;
-              newBook.save().then(function(theBook) { //save the book
-                console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
+            openLibraryCtrl.updateFromOpenLibrary(newBook).then(function(olBook){
+              newBook = olBook;
+              amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
+                newBook = azBook;
+                newBook.save().then(function(theBook) { //save the book
+                  console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
 
-                //if we are also going to add this book to a user's library:
-                if(libraryAdd){
-                  //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
-                  var reqObj = {
-                    params: {
-                      id: req.query.libraryId //the libraryId
-                    },
-                    query: {
-                      bookId: theBook._id //the _id of the book we just created
-                    }
-                  };
-                  libraryCtrl.addBookToLibrary(reqObj, res);
-                }
-
-                return res.status(201).end();
-              }).catch(function(err){
-                console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
-                return res.status(500).end();
+                  //if we are also going to add this book to a user's library:
+                  if(libraryAdd){
+                    //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
+                    var reqObj = {
+                      params: {
+                        id: req.query.libraryId //the libraryId
+                      },
+                      query: {
+                        bookId: theBook._id //the _id of the book we just created
+                      }
+                    };
+                    libraryCtrl.addBookToLibrary(reqObj, res);
+                  }
+                  return res.status(201).end(); //good to go
+                }).catch(function(err){
+                  console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
+                  return res.status(500).end();
+                });
+              }).catch(function(err) {
+                newBook.save();
+                console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', err, JSON.stringify(err,null,2));
+                return res.status(500).json(err);
               });
             }).catch(function(err) {
               newBook.save();
-              console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', err, JSON.stringify(err,null,2));
+              console.log('bookCtrl.addBookByIsbn: updateFromOpenLibrary(newBook)', err, JSON.stringify(err,null,2));
               return res.status(500).json(err);
             });
           }).catch(function(err){
