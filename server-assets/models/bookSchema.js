@@ -6,14 +6,15 @@ var bookSchema = new mongoose.Schema({
   edition: {type: String},
   authors: {type: [], index: true}, //change to array later for multiple authors
   editor: {type: String},
-  publishDate: {type: String, default: "No date given"},
+  publishDate: {type: String},
   publishPlaces: {type: []},
-  copyrightDate: {type: String},//, default: "No date given"},
-  length: {type: String, default: "Unknown"},
+  length: {type: String},
   isbn: {type: String, required: true, unique: true, index: true},
   isbn13: {type: String,  default: "None", index: true},
   isbn10: {type: String, default: "None", index: true},
-  publisher: {type: String, default: "Unknown"},
+  dewyDec: {type: []},
+  lcClass: {type: []},
+  publisher: {type: String},
   tags: {type: [], index: true}, //genre etc
   coverArtUrl: {
     large: {type: String, default: ''}, //later replace these defaults with a placeholder image
@@ -22,8 +23,7 @@ var bookSchema = new mongoose.Schema({
   },
   googDescription: {type: String,}, //google books description
   azDescription: {type: String,}, //amazon description
-  olDescription: {type: String,}, //open library description
-  lang: {type: String, default: "Not specified"},
+  lang: {type: String},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},
   googBooksUrl: {type: String, default: ""},
