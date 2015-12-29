@@ -10,7 +10,7 @@ Books:
 <ul>
   <li ng-repeat="book in books">
       <img src="{{book.coverArtUrl.small}}">
-      {{book.title}} by {{book.author}} (ISBN: {{book.isbn}})
+      {{book.title}} by {{book.authors}} (ISBN: {{book.isbn}})
   </li>
 </ul>
 <span ng-if="hasAdminRole"><a ui-sref="main.admin">Admin</a></span>

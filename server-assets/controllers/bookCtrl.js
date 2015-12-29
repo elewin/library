@@ -90,7 +90,7 @@ function dbSearch(searchParam, searchTerm){
 
   //if we are searching for the author, search just that field
   if(searchParam === 'author'){
-    searchObj.author = searchOptions;
+    searchObj.authors = searchOptions;
   }
   //if this is a title search, search both title and subtitle
   if (searchParam ==='title'){
@@ -98,12 +98,12 @@ function dbSearch(searchParam, searchTerm){
       $or:[{title: searchOptions}, {subtitle: searchOptions}]
     };
   }
-  //keywords search. This is a more expensive search, as it searches through the title, subtitle, author, description, and tags fields (all of which should be indexed however).
+  //keywords search. This is a more expensive search, as it searches through the title, subtitle, author, description, and tags fields (most of which should be indexed however. The descriptions are often too long to be indexed though, so if this becomes overly slow then we might have to exclude them).
   if(searchParam === 'keywords'){
     searchObj = {
       $or:[
         {title: searchOptions},
-        {author: searchOptions},
+        {authors: searchOptions},
         {googDescription: searchOptions},
         {azDescription: searchOptions},
         {tags: searchOptions},
@@ -189,7 +189,7 @@ module.exports = {
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
-
+    console.log('addBookByIsbn');
     //see if a library was specified to add this book to after its been added to the main book collection:
     var libraryAdd = false;
     if (req.query.libraryId){
@@ -207,8 +207,10 @@ module.exports = {
         if (goodIsbn){
         //if (newBook.isbn.length >= 9 && !isNaN(newBook.isbn)){
           googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){ //update properties form the Google Books API
+            console.log('1');
             newBook = book; //assign the book with the gathered google books info to the new book
             amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
+              console.log('2');
               newBook = azBook;
               newBook.save().then(function(theBook) { //save the book
                 console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
@@ -228,6 +230,9 @@ module.exports = {
                 }
 
                 return res.status(201).end();
+              }).catch(function(err){
+                console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
+                return res.status(500).end();
               });
             }).catch(function(err) {
               newBook.save();

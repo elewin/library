@@ -49,7 +49,7 @@ module.exports = {
     client.itemSearch(searchObj).then(function(results){ //search for results based on searchObj
       deferred.resolve(results); //results is an array of objects from the amazon api
     }).catch(function(err){
-      console.log('amazonCtrl.searchForBook: ', JSON.stringify(err,null,2));
+      console.log('amazonCtrl.searchForBook error: ', err, JSON.stringify(err,null,2));
       deferred.reject(err);
     });
     return deferred.promise;
@@ -76,26 +76,39 @@ module.exports = {
           }
         }
 
-        //the amazon api likes to wrap everything in arrays, but in testing i've yet to encounter anything with more than one element, thus all the [0]s hardcoded in here. This can be changed later to iterate through everything if that turns out to be a problem.
+        //the amazon api likes to wrap everything in arrays, but in testing i've yet to encounter anything with more than one element (aside from EditorialReviews), thus all the [0]s hardcoded in here. This can be changed later to iterate through everything if that turns out to be a problem. One side effect of this is that we have to test that the results actually returned an element for everything (thus all the if statements), or else we'll get errors saying that it cannot read property 0 of undefined
 
-        if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty. This could possibly lead to duplicate titles and subtitles if a book had a subtitle but no title, but that seems unlikely so we're not too worried about that right now.
-          if (results[i].ItemAttributes[0].Title) book.title = results[i].ItemAttributes[0].Title[0];
+        if(results[i].ItemAttributes){
+          if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty. This could possibly lead to duplicate titles and subtitles if a book had a subtitle but no title, but that seems unlikely so we're not too worried about that right now.
+            if (results[i].ItemAttributes[0].Title) book.title = results[i].ItemAttributes[0].Title[0];
+          }
+
+          if (results[i].ItemAttributes[0].Author) book.authors = results[i].ItemAttributes[0].Author;
+          if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
+          if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
+          if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
+          if (results[i].ItemAttributes[0].Languages){
+            if (results[i].ItemAttributes[0].Languages[0].Language){
+              if (results[i].ItemAttributes[0].Languages[0].Language[0].Name) book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
+            }
+          }
         }
-        if (results[i].ItemAttributes[0].Author) book.author = results[i].ItemAttributes[0].Author[0];
-        if (results[i].ItemAttributes[0].PublicationDate) book.date = results[i].ItemAttributes[0].PublicationDate[0];
-        if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
-        if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
-        if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
-      //  book.tags = //it doesn't look like amazon provides categories in their API?
+        if(results[i].EditorialReviews){
+          if (results[i].EditorialReviews[0].EditorialReview){
+            if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
+          }
+        }
         if (results[i].LargeImage) book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
         if (results[i].MediumImage) book.coverArtUrl.medium = results[i].MediumImage[0].URL[0];
         if (results[i].SmallImage) book.coverArtUrl.small = results[i].SmallImage[0].URL[0];
-        if (results[i].ItemAttributes[0].Languages[0].Language[0].Name) book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
+
         if (results[i].DetailPageURL) book.amazonUrl = results[i].DetailPageURL[0];
+
+        //  book.tags = //it doesn't look like amazon provides categories in their API?
 
         resolve(book);
       }).catch(function(err) {
-        console.log('amazonCtrl.searchForBook: ', JSON.stringify(err, null,2));
+        console.log('amazonCtrl.updateFromAmazon: ', err, JSON.stringify(err, null,2));
         reject(book);
       });
 

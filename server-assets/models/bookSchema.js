@@ -4,7 +4,7 @@ var bookSchema = new mongoose.Schema({
   title: { type: String, default:'', index: true },
   subtitle: {type: String, default: '', index: true},
   edition: {type: String},
-  author: {type: String, default:'', index: true}, //change to array later for multiple authors
+  authors: {type: [], index: true}, //change to array later for multiple authors
   editor: {type: String},
   date: {type: String, default: "No date given"},
   length: {type: String, default: "Unknown"},
@@ -18,8 +18,8 @@ var bookSchema = new mongoose.Schema({
     medium: {type: String, default: ''},
     small: {type: String, default: ''},
   },
-  googDescription: {type: String, default: 'No description', index: true}, //google books description
-  azDescription: {type: String, default: 'No description', index: true}, //amazon description
+  googDescription: {type: String, default: 'No description'}, //google books description
+  azDescription: {type: String, default: 'No description'}, //amazon description
   lang: {type: String, default: "Not specified"},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},

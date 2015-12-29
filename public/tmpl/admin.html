@@ -50,7 +50,7 @@ Books:
     <div ng-repeat="result in unifiedSearchResults.db">
 
       <img src="{{result.coverArtUrl.small}}" />
-      {{result.title}} by {{result.author}}, {{result.date}} (ISBN: {{result.isbn}})
+      {{result.title}} by {{result.authors}}, {{result.date}} (ISBN: {{result.isbn}})
       <a href="" ng-click="addToLibraryByIsbn(currentUser.library, result.isbn)">Add</a>
     </div>
     <div ng-repeat="result in unifiedSearchResults.az">
@@ -70,7 +70,7 @@ Books:
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
       <img src="{{book.coverArtUrl.medium}}" />
-      {{book.title}} by {{book.author}} - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
+      {{book.title}} by {{book.authors}} - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
       /
       <a href="" ng-click="addToLibraryByIsbn(currentUser.library, book.isbn)">Add by ISBN</a>
       <br>
@@ -260,7 +260,7 @@ Libraries:
 
       <li ng-repeat="book in library.books">
 
-        {{book.book.bookData.title}} by {{book.book.bookData.author}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book.book.bookData._id)">delete</a>
+        {{book.book.bookData.title}} by {{book.book.bookData.authors}} (ISBN: {{book.book.bookData.isbn}}) id: {{book.book.bookData._id}} - <a href="" ng-click="removeFromLibrary(library._id, book.book.bookData._id)">delete</a>
 
       </li>
     </ul>
