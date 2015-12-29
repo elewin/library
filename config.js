@@ -1,4 +1,4 @@
-var local = false; //use settings for local developlemt. ***** Change to false when deploying to heroku
+var local = true; //use settings for local developlemt. ***** Change to false when deploying to heroku
 
 var config;
 if (local){
