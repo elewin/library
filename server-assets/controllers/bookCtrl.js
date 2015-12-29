@@ -1,4 +1,3 @@
-//var mongoose = require('mongoose');
 var Book = require('../models/bookSchema');
 var Library = require('../models/librarySchema');
 var libraryCtrl = require('./libraryCtrl');
@@ -6,39 +5,49 @@ var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
 var q = require('q'); //promises library
 
-//tests if a given isbn number meets certain validity critera and returns a bool
+//filters out a given character from a given string
+function filterString(str, char){
+  var filteredStr =''; //this will be our output string
+  for (var i = 0; i < str.length; i++){
+    if (str[i] !== char){ //check if the current character is not what we are filtering out
+      filteredStr += str[i]; //if not, add it to the result
+    }
+  }
+  return filteredStr; //the final result should be str but with every instance of char removed
+}
+
+//tests if a given isbn number meets certain validity critera and returns a bool. This function assumes that the isbn has already had any dashes in it already filtered out, which can be done using the filterString() function
 function checkIsbn(isbn){
   //We need to check if we have a valid ISBN. ISBNs are either 9, 10, or 13 digit strings of numbers. Here we're just making sure its between 9 and 13 and only contains numbers, though it may have an X at the end. A more robust check could be added later but this should filter most bad data for now.
 
   var goodIsbn = true;
   var isbnLength = isbn.length; //calcualte the length once to save some time since we'll be calling it more than once
   var trailingX = false; //this is to handle the special case of the final character in the ISBN being an 'X'
+  var lastChar; //this is used in the case of a trailingX, we save the x here so that we can add it back on later. This way we can maintain the case that was passed.
 
   //check if the last character is an 'x'
   if (isbn[isbnLength-1].toLowerCase() === 'x'){
     trailingX = true;
+    lastChar = isbn[isbnLength-1];
   }
-
   //check length
   if (isbnLength < 9 || isbnLength > 13){
     goodIsbn = false;
   }
-
   //if there is an X at the end, we will tempoartily remove it for the numeric character check
   if(trailingX){
     isbn = isbn.slice(0, -1);
   }
-
   //check for non-numeric characters (trailing X has already been tempoarily removed if present). This may let decimals get by though.
   if (isNaN(isbn)){
     goodIsbn = false;
   }
-
   //if it had a trailing X, add it back now that our numeric check is complete
   if(trailingX){
-    isbn+='X';
+    isbn+=lastChar;
   }
-  return goodIsbn; //return the result
+
+  return goodIsbn; //return the bool result
 }
 
 //search the Amazon Products API for a book given a search paramater (author, title, keyword) and search term, returns a promise
@@ -72,164 +81,48 @@ function dbSearch(searchParam, searchTerm){
   var deferred = q.defer();
 
   var searchObj = {}; //this object will hold our search query data for the database
+  var searchOptions = { //what we are searching for in each field
+    "$regex": searchTerm,
+    "$options": "i"
+  };
 
-  //if we are searching for the title or author, search just those fields
+  //set up the type of search we are conducting based on searchParams. It should be either author, title, or keywords. These are the three paramaters that are searchable through the Amazon Products API, and to maintain consistency and have the search process appear seamless to the user, we will attempt to mimic that here:
+
+  //if we are searching for the author, search just that field
   if(searchParam === 'author'){
-    searchObj.author = {
-      "$regex": searchTerm,
-      "$options": "i"
-    };
+    searchObj.author = searchOptions;
   }
   //if this is a title search, search both title and subtitle
   if (searchParam ==='title'){
     searchObj = {
-      $or:[
-        {
-        title: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-        {
-        subtitle: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-      ]
+      $or:[{title: searchOptions}, {subtitle: searchOptions}]
     };
   }
-
-  //this is a more expensive search, it searches through the title, subtitle, author, description, and tags fields (all of which should be indexed however)
+  //keywords search. This is a more expensive search, as it searches through the title, subtitle, author, description, and tags fields (all of which should be indexed however).
   if(searchParam === 'keywords'){
     searchObj = {
       $or:[
-        {
-          title: {
-            "$regex": searchTerm,
-            "$options": "i"
-          }
-        },
-        {
-        author: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-        {
-        googDescription: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-        {
-        azDescription: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-        {
-        tags: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-        {
-        subtitle: {
-          "$regex": searchTerm,
-          "$options": "i"
-          }
-        },
-      ]
+        {title: searchOptions},
+        {author: searchOptions},
+        {googDescription: searchOptions},
+        {azDescription: searchOptions},
+        {tags: searchOptions},
+        {subtitle: searchOptions}
+      ],
     };
   }
 
   Book.find(searchObj).exec().then(function(results){ //search the book collection using the paramters of our searchObj object
     deferred.resolve(results); //resolve the results
-
   }).catch(function(err){
     console.log('bookCtrl.dbSearch: ', JSON.stringify(err,null,2));
     deferred.reject();
   });
+
   return deferred.promise;
 }
 
 module.exports = {
-
-  //searches the Amazon Products API for the book given the paramters in req.query
-  azSearchForBook: function(req, res){
-    amazonCtrl.searchForBook(req.query).then(function(results){
-      return res.json(results);
-    }).catch(function(err){
-      if (err[0].Error[0].Code[0] === 'AWS.ECommerceService.NoExactMatches'){ //this is what returns if nothing is found
-        console.log('Amazon: ',err[0].Error[0].Message[0]);
-        return res.status(404).end();
-      }
-      else{
-        console.log('bookCtrl.searchAzForBook error on', req.query, 'Error:', JSON.stringify(err,null,2)); //if something else went wrong
-        return res.status(500).end();
-      }
-    });
-  },
-
-  //search the db for a book given a search paramater (author, title, keyword) and search term
-  dbSearchForBook: function(req, res){
-    var searchParams = req.query; //what to search for
-    var searchObj = {}; //this object will hold our search query data for the database
-
-    //if we are searching for the title or author, search just those fields
-    if(searchParams.param === 'title' || searchParams.param === 'author'){
-      searchObj[searchParams.param] = {
-        "$regex": searchParams.term,
-        "$options": "i"
-      };
-    }
-
-    //this is a more expensive search, it searches through the title, author, description,and tags fields
-    if(searchParams.param === 'keywords'){
-      searchObj = {
-        $or:[
-          {
-            title: {
-              "$regex": searchParams.term,
-              "$options": "i"
-            }
-          },
-          {
-          author: {
-            "$regex": searchParams.term,
-            "$options": "i"
-            }
-          },
-          {
-          googDescription: {
-            "$regex": searchParams.term,
-            "$options": "i"
-            }
-          },
-          {
-          azDescription: {
-            "$regex": searchParams.term,
-            "$options": "i"
-            }
-          },
-          {
-          tags: {
-            "$regex": searchParams.term,
-            "$options": "i"
-            }
-          },
-        ]
-      };
-    }
-
-    Book.find(searchObj).exec().then(function(results){ //search the book collection using the paramters of our searchObj object
-      return res.json(results);
-    }).catch(function(err){
-      console.log(err);
-      return res.status(400).send(err);
-    });
-  },
 
   //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword)
   unifiedSearch: function(req, res){
@@ -237,14 +130,8 @@ module.exports = {
     var searchTerm = req.query.term;   //our search term
     var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
 
-    //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out. Here we just rebuild the string wtithout them:
-    var filtered ='';
-    for (var k = 0; k < searchTerm.length; k++){
-      if (searchTerm[k] !== "'"){
-        filtered += searchTerm[k];
-      }
-    }
-    searchTerm = filtered;
+    //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out
+    searchTerm = filterString(searchTerm, "'");
 
     //search our books collection
     dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
@@ -310,16 +197,7 @@ module.exports = {
     }
 
     var newBook = new Book(req.body); //req.body should be {isbn: <isbn number>}
-
-    //Often ISBNs have dashes inserted for readability, so we need to strip those out:
-    var filteredIsbn ='';
-    for (var i = 0; i < newBook.isbn.length; i++){
-      if (newBook.isbn[i] !== '-'){
-        filteredIsbn += newBook.isbn[i]; //filter out the dashes
-      }
-    }
-    newBook.isbn = filteredIsbn;
-
+    newBook.isbn = filterString(newBook.isbn, '-'); //Often ISBNs have dashes inserted for readability, so we need to strip those out
     var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
 
     //make sure this is not a duplicate:
