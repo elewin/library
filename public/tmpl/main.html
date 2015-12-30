@@ -1,10 +1,11 @@
 <div class="header">
   <div id="title">
-    <span><a ui-sref='main.home'>Book Collector </a></span>
+    <span ng-if="$state.includes('main.home') == false"><a ui-sref='main.home'>Book Collector </a></span>
+
   </div>
   <div id="login">
     <span ng-hide="currentUser">
-      <a href='/api/auth/fb/login'>Login</a>
+      <a href='/api/auth/fb/login'><img id="loginIcon" src="/img/fbLogin.png"/></a>
     </span>
 
     <span ng-show="currentUser">
@@ -13,4 +14,7 @@
 
   </div>
 </div>
-<div ui-view></div>
+
+<div class="pageContent">
+  <div ui-view></div>
+</div>

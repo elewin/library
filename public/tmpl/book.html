@@ -1,5 +1,22 @@
-(book.html)
-<br>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        <img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" />
+
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        stuff
+        <!--Body content-->
+      </div>
+    </div>
+  </div>
+
+
+
+
+<!--
+<hr>
 <img src="{{book.coverArtUrl.medium}}" />
 {{book.title}} by <span ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span>
 <br>
@@ -54,4 +71,4 @@
   </div>
 </div>
 
-<br> (ISBN: {{book.isbn}}) id: {{book._id}}
+<br> (ISBN: {{book.isbn}}) id: {{book._id}} -->

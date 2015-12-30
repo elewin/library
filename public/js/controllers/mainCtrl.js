@@ -1,4 +1,6 @@
-angular.module('library').controller('mainCtrl', function($scope, bookService, userService, $q) {
+angular.module('library').controller('mainCtrl', function($scope, bookService, userService, $q, $state) {
+
+  $scope.$state = $state;
 
   var getCurrentUser = function(){
     return $q(function(resolve, reject) {

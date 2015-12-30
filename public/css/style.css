@@ -1,13 +1,28 @@
 body
 {
-    min-width: 480px;
+    /*min-width: 480px;*/
 }
+
+div
+{
+    /*border: 1px red dotted;*/
+}
+
+/* header */
 
 .header
 {
     height: 44px;
     background-color: #8BA9D2;
     box-shadow: 0px 2px 2px #B3B3B3;
+}
+
+#headerBox
+{
+    position: absolute;
+    border: #3F3F3F 1px solid;
+    height: 500px;
+    top: 20px;
 }
 
 .header a
@@ -30,21 +45,35 @@ body
     font-size: 26px;
 }
 
+#loginIcon
+{
+    height: 44px;
+    position: absolute;
+    right: 0px;
+}
+
 .header a:hover
 {
     color: #D6D7D9;
 }
 
-.splash div
+.pageContent
 {
-    font-size: 61px;
+    position: relative;
+    top: 5px;
+}
+
+
+/* front page splash screen */
+
+.splash span
+{
+    font-size: 56px;
     color: #FFFFFF;
     position: absolute;
     right: 0px;
-    bottom: -30px;
+    bottom: -28px;
     font-family: 'News Cycle', sans-serif;
-    
-    font-weight: normal;
 }
 
 .splash
@@ -57,4 +86,13 @@ body
     background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/bookshelf.jpg);
     background-size: cover;
     position: relative;
+}
+
+
+/*book view*/
+
+#book-bookCover
+{
+    box-shadow: 2px 2px 10px #B3B3B3;
+    max-width: 275px;
 }
