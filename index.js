@@ -140,7 +140,8 @@ app.get('/api/auth/fb/cb', authCtrl.callback);
 app.get('/api/auth/fb/logout', authCtrl.logout);
 
 //books (these apply to the main book collection, not a particluar user's library. See library endpoints for that)
-app.get('/api/books',  bookCtrl.getBooks);
+app.get('/api/books/all',  bookCtrl.getAllBooks);
+app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn>
 app.get('/api/books/search', requireAuth, bookCtrl.unifiedSearch); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
 //app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc

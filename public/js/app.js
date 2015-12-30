@@ -47,17 +47,20 @@ app.run(function (Permission, userService, $q) {
 
 app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   $stateProvider
+  //this is the header at the top of the page
   .state('main', {
     url: '/',
     abstract: true,
     controller: 'mainCtrl',
     templateUrl: './tmpl/main.html',
   })
+  //front page of site, visible to all visitors:
 	.state('main.home', {
     url: '',
 		controller: 'homeCtrl',
 		templateUrl: './tmpl/home.html',
 	})
+  //admin page
   .state('main.admin', {
     url: 'admin',
     controller: 'adminCtrl',
@@ -67,6 +70,22 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
         only: ['admin'],
         redirectTo: 'main.home'
       }
+    },
+  })
+  //book view:
+  .state('main.book', {
+    url: 'book?:isbn',
+    controller: 'bookPageCtrl',
+    // data:{
+    //   permissions: {
+    //     only: ['user'],
+    //   }
+    // },
+    templateUrl: './tmpl/book.html',
+    resolve: {
+      bookRef: function(bookService, $stateParams){
+        return bookService.getBook($stateParams.isbn);
+      },
     }
   })
   .state('main.test', {

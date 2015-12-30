@@ -37,7 +37,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
 
   var getBooks = function(){
-    bookService.getBooks().then(function (books){
+    bookService.getAllBooks().then(function (books){
       $scope.books = books.data;
     });
   };

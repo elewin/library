@@ -40,9 +40,10 @@ body
     font-size: 61px;
     color: #FFFFFF;
     position: absolute;
-    right: 13px;
-    bottom: 1px;
-    font-family:'News Cycle', sans-serif;;
+    right: 0px;
+    bottom: -30px;
+    font-family: 'News Cycle', sans-serif;
+    
     font-weight: normal;
 }
 

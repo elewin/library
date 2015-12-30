@@ -1,9 +1,17 @@
 angular.module('library').service('bookService', function($stateParams, $http) {
 
-  this.getBooks =  function(){
+  this.getAllBooks =  function(){
     return $http({
       method: 'GET',
-      url: '/api/books'
+      url: '/api/books/all'
+    });
+  };
+
+  //need to refactor end point to use this
+  this.getBook = function(isbn){
+    return $http({
+      method: 'GET',
+      url: '/api/books?isbn='+isbn
     });
   };
 
@@ -42,50 +50,26 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
-  // DEPRECATED
-  // this.updateFromAmazon = function(id){
-  //   console.log(id);
-  //   var dataObj = {};
+
+  // //deprecated, use unifiedSearch
+  // //searches the Amazon Products API for a book
+  // this.azSearchForBook = function(searchParam, searchTerm){
+  //   console.log('searching amazon for '+searchParam+": " +searchTerm);
   //   return $http({
   //     method: 'GET',
-  //     url: '/api/books/'+id+'/azUpdate',
+  //     url: '/api/books/azSearch?param='+searchParam+'&term='+searchTerm,
   //   });
   // };
-
-  // DEPRECATED
-  // this.addBook = function(title, author){
-  //   console.log('adding ' + title + ' by ' + author);
   //
+  // //deprecated, use unifiedSearch
+  // //searches our database for a book
+  // this.dbSearchForBook = function(searchParam, searchTerm){
+  //   console.log('searching db for '+searchParam+": " +searchTerm);
   //   return $http({
-  //     method: 'POST',
-  //     url: '/api/books',
-  //     data: JSON.stringify({
-  //       title: title,
-  //       author: author,
-  //       isbn: 0,
-  //     }),
+  //     method: 'GET',
+  //     url: '/api/books/dbSearch?param='+searchParam+'&term='+searchTerm,
   //   });
   // };
-
-  //deprecated, use unifiedSearch
-  //searches the Amazon Products API for a book
-  this.azSearchForBook = function(searchParam, searchTerm){
-    console.log('searching amazon for '+searchParam+": " +searchTerm);
-    return $http({
-      method: 'GET',
-      url: '/api/books/azSearch?param='+searchParam+'&term='+searchTerm,
-    });
-  };
-
-  //deprecated, use unifiedSearch
-  //searches our database for a book
-  this.dbSearchForBook = function(searchParam, searchTerm){
-    console.log('searching db for '+searchParam+": " +searchTerm);
-    return $http({
-      method: 'GET',
-      url: '/api/books/dbSearch?param='+searchParam+'&term='+searchTerm,
-    });
-  };
 
   this.unifiedSearchForBook = function(searchParam, searchTerm){
     console.log('searching for '+searchParam+": " +searchTerm);

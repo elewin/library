@@ -260,11 +260,27 @@ module.exports = {
     });
   },
 
-  getBooks:  function(req, res) {
+  getAllBooks:  function(req, res) {
     Book.find(req.query).exec().then(function(docs) {
       return res.json(docs);
     }).catch(function(err) {
       return res.status(400).json(err);
+    });
+  },
+
+  //returns a book with a matching ISBN, takes a query eg ?isbn=1234567890
+  getBook:  function(req, res) {
+    var isbn = req.query.isbn;
+    //search for the book with this ISBN
+    Book.findOne({$or:[{'isbn10' : isbn}, {'isbn13' : isbn}, {'isbn' : isbn}]}).exec()
+    .then(function(foundBook){
+      if(foundBook){
+        return res.json(foundBook); //return it
+      }else{
+        return res.status(404).end(); //nothing was found
+      }
+    }).catch(function(err){
+      console.log('bookCtrl.getBook error:', err);
     });
   },
 

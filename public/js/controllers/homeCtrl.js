@@ -3,7 +3,7 @@ angular.module('library').controller('homeCtrl', function($scope, bookService, u
 
 
 
-  bookService.getBooks().then(function (books){
+  bookService.getAllBooks().then(function (books){
     $scope.books = books.data;
   });
 });
