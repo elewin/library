@@ -1,6 +1,6 @@
-angular.module('library').controller('homeCtrl', function($scope, bookService, userService, $q) {
+angular.module('library').controller('homeCtrl', function($scope, bookService, userService, $q, userRef) {
 
-
+ $scope.currentUser = userRef;
 
 
   bookService.getAllBooks().then(function (books){

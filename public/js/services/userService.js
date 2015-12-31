@@ -60,9 +60,8 @@ angular.module('library').service('userService', function($stateParams, $http, $
           $http({
             method: "GET",
             url: "/api/users/currentUser"
-          }).then(function(response) {
-            user = response.data; //. . .and if so get the user data and return it
-            defer.resolve(response.data);
+          }).then(function(response) {            
+            defer.resolve(response.data); //. . .and if so get the user data and return it
           });
         }
         else{ //but if no one is logged in then resolve false

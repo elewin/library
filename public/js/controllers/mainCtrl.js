@@ -1,19 +1,21 @@
-angular.module('library').controller('mainCtrl', function($scope, bookService, userService, $q, $state) {
+angular.module('library').controller('mainCtrl', function($scope, bookService, userService, $q, $state, userRef) {
 
   $scope.$state = $state;
+  $scope.currentUser = userRef;
 
-  var getCurrentUser = function(){
-    return $q(function(resolve, reject) {
-      var currentUser = userService.getCurrentUser();
-      resolve(currentUser);
-    });
-  };
-
-  getCurrentUser().then(function(user){
-    if (user){
-      $scope.currentUser = user;  //put the user on scope
-    }
-  });
+  // this is obsolete now that we're injecting userRef
+  // var getCurrentUser = function(){
+  //   return $q(function(resolve, reject) {
+  //     var currentUser = userService.getCurrentUser();
+  //     resolve(currentUser);
+  //   });
+  // };
+  //
+  // getCurrentUser().then(function(user){
+  //   if (user){
+  //     $scope.currentUser = user;  //put the user on scope
+  //   }
+  // });
 
   userService.doesUserHaveRole('admin').then(function(result){
     $scope.hasAdminRole = result;

@@ -141,7 +141,7 @@ app.get('/api/auth/fb/logout', authCtrl.logout);
 
 //books (these apply to the main book collection, not a particluar user's library. See library endpoints for that)
 app.get('/api/books/all',  bookCtrl.getAllBooks);
-app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn>
+app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn> //********secure this later!!! leaving it unsecured now for dev
 app.get('/api/books/search', requireAuth, bookCtrl.unifiedSearch); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
 //app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc
@@ -158,6 +158,7 @@ app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);
 
 //library
+app.get('/api/library/:id/bookCheck',  libraryCtrl.doesUserHaveBook); //checks if an isbn exists in the user's library, returns a bool *********** add requireAuth later!!
 app.get('/api/library/user/:id', requireAuth, libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
 app.get('/api/library/', requireAuth, requireAdmin, libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
 app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId

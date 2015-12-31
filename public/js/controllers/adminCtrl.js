@@ -1,4 +1,6 @@
-angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q) {
+angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q, userRef) {
+
+  $scope.currentUser = userRef;
 
   //books: **************************************************************
 

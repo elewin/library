@@ -15,6 +15,13 @@ angular.module('library').service('libraryService', function($stateParams, $http
   //   });
   // };
 
+  this.doesUserHaveBook = function(libraryId, isbn){
+    return $http({
+      method: 'GET',
+      url: '/api/library/'+libraryId+'/bookCheck?isbn='+isbn,
+    });
+  };
+
 
 
   this.getUserLibrary = function(userId){

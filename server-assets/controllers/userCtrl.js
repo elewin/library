@@ -14,7 +14,7 @@ module.exports = {
     return res.send(false);
   },
 
-  getCurrentUser: function(req, res, next){
+  getCurrentUser: function(req, res){
     if(!req.isAuthenticated()){
       //console.log('user not logged in');
 
@@ -23,8 +23,6 @@ module.exports = {
       // console.log('this is the currently logged in user');
       // console.log (req.user);
       return res.json(req.user);
-      //res.status(200).send(req.user);
-      //next();
     }
   },
 
@@ -127,15 +125,18 @@ module.exports = {
     });
   },
 
-  //***later, secure this by checking if use is admin, and if not only allow this to go through if the logged in user id matches the user id to be edited
+
   editUser: function(req, res){
-    User.findByIdAndUpdate(req.params.id, req.body, function(err, result){
-      if(err){
-        res.status(400).json(err);
-      } else {
-        res.json(result);
-      }
-    });
+    //make sure a user can only edit themself (unless they are admin)
+    if (req.user && (req.user._id === req.params.id || req.user.roles.indexOf('admin') >=0)){
+      User.findByIdAndUpdate(req.params.id, req.body, function(err, result){
+        if(err){
+          res.status(400).json(err);
+        } else {
+          res.json(result);
+        }
+      });
+    }
   },
 
   deleteUser: function(req, res) {

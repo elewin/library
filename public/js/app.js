@@ -53,12 +53,22 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     abstract: true,
     controller: 'mainCtrl',
     templateUrl: './tmpl/main.html',
+    resolve: {
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
+      },
+    },
   })
   //front page of site, visible to all visitors:
 	.state('main.home', {
     url: '',
 		controller: 'homeCtrl',
 		templateUrl: './tmpl/home.html',
+    resolve: {
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
+      },
+    }
 	})
   //admin page
   .state('main.admin', {
@@ -70,6 +80,11 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
         only: ['admin'],
         redirectTo: 'main.home'
       }
+    },
+    resolve: {
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
+      },
     },
   })
   //book view:
@@ -85,6 +100,9 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
     resolve: {
       bookRef: function(bookService, $stateParams){
         return bookService.getBook($stateParams.isbn);
+      },
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
       },
     }
   })
