@@ -22,7 +22,7 @@ var bookSchema = new mongoose.Schema({
     small: {type: String, default: ''},
   },
   googDescription: {type: String,}, //google books description
-  azDescription: {type: String,}, //amazon description
+  azDescription: {type: []}, //amazon description
   lang: {type: String},
   updatedAt: { type: Date, default: Date.now },
   dateAdded: { type: Date, default: Date.now},

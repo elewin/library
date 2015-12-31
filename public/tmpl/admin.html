@@ -117,9 +117,13 @@ Books:
             Google Books: <br>
             <i>{{book.googDescription}}</i>
           </div>
-          <div ng-if="book.azDescription">
+          <div ng-if="book.azDescription.length">
             Amazon: <br>
-            <i>{{book.azDescription}}</i>
+            <ul>
+              <li ng-repeat="review in book.azDescription">
+                <i>{{review}}</i>
+              </li>
+            </ul>
           </div>
 
         </div>

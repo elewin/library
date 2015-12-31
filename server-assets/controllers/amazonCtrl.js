@@ -95,7 +95,13 @@ module.exports = {
         }
         if(results[i].EditorialReviews){
           if (results[i].EditorialReviews[0].EditorialReview){
-            if (results[i].EditorialReviews[0].EditorialReview[0].Content) book.azDescription = stripHtml(results[i].EditorialReviews[0].EditorialReview[0].Content[0]); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
+            for (var k =0; k < results[i].EditorialReviews[0].EditorialReview.length; k++){
+              if (results[i].EditorialReviews[0].EditorialReview[k].Content){
+                if (results[i].EditorialReviews[0].EditorialReview[k].Content[0] !== book.googDescription){ //dont copy descriptions that are duplicates of the goolge books provided description
+                  book.azDescription.push(stripHtml(results[i].EditorialReviews[0].EditorialReview[k].Content[0])); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
+                }
+              }
+            }
           }
         }
         if (results[i].LargeImage) book.coverArtUrl.large = results[i].LargeImage[0].URL[0];
