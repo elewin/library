@@ -30,6 +30,10 @@ var bookSchema = new mongoose.Schema({
   amazonUrl : {type: String, default: ""},
   thread: {type: []}, //discussion thread for this book
   numOwners: {type: Number, default: 0}, //the number of people who have this book in their library
+  numRead: {type: Number, default: 0}, //the number of people who have read this book
+  numCurrentlyReading: {type: Number, default: 0}, //the number of people who have marked this book as being currently read
+  numReviews : {type: Number, default: 0}, //the number of reviews this book has gotten
+  totalScore : {type: Number, default: 0}, //total score based off of reviews
 });
 
 module.exports = mongoose.model('Book',bookSchema);
