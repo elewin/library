@@ -133,6 +133,15 @@ var requireAdmin = function(req,res,next){
   next();
 };
 
+//doesnt work yet, sends the user back to the login api endpoint instead of the page they were on before that
+// var returnUrl = function(req, res ,next){
+//   req.session.returnTo = req.url;
+//   console.log(req.originalUrl);
+//   console.log(req.route.path);
+//   console.log(req.session.returnTo);
+//   next();
+// };
+
 //API endpoints:
 //OAuth
 app.get('/api/auth/fb/login', authCtrl.authenticate);

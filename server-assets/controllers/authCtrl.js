@@ -4,13 +4,14 @@ var passport = require('passport'); //for OAuth
 
 module.exports = {
 
-
   authenticate: passport.authenticate('facebook'),
 
+
   callback: passport.authenticate('facebook',{
+    //successReturnToOrRedirect: '/',
     successRedirect: '/',
-    //failureRedirect: '/api/auth/fb/login',
-    failureRedirect: '/'
+    failureRedirect: '/',
+    //failureFlash : true
   }),
 
   logout : function(req, res){
