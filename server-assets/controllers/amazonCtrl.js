@@ -83,7 +83,7 @@ module.exports = {
         //the amazon api likes to wrap everything in arrays, but in testing i've yet to encounter anything with more than one element (aside from EditorialReviews), thus all the [0]s hardcoded in here. This can be changed later to iterate through everything if that turns out to be a problem. One side effect of this is that we have to test that the results actually returned an element for everything (thus all the if statements), or else we'll get errors saying that it cannot read property 0 of undefined
 
         if(results[i].ItemAttributes){
-          if (book.title === ''){ //amazon likes to combine title and subtitle, so stick with the google books title unless its empty. This could possibly lead to duplicate titles and subtitles if a book had a subtitle but no title, but that seems unlikely so we're not too worried about that right now.
+          if (book.subtitle === ''){ //amazon likes to combine title and subtitle, we'll keep the google books title unless there's no subtitle present
             if (results[i].ItemAttributes[0].Title) book.title = results[i].ItemAttributes[0].Title[0];
           }
 
