@@ -199,7 +199,7 @@ module.exports = {
     newBook.isbn = filterString(newBook.isbn, '-'); //Often ISBNs have dashes inserted for readability, so we need to strip those out
     var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
 
-    // (this could be cleaned up)
+    // (this could be cleaned up. need to go back and properly chain .then()s so its less callback-hellish)
     //make sure this is not a duplicate:
     Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
     .then(function(foundBook){
