@@ -49,8 +49,12 @@ module.exports = {
     client.itemSearch(searchObj).then(function(results){ //search for results based on searchObj
       deferred.resolve(results); //results is an array of objects from the amazon api
     }).catch(function(err){
-      console.log('amazonCtrl.searchForBook error: ', err, JSON.stringify(err,null,2));
-      deferred.reject(err);
+      if(err.Error[0].Code[0] === 'AWS.ECommerceService.NoExactMatches'){ //if nothing was found, the API will return this code
+        deferred.resolve(false); //return a false so we can elsewhere determine that there were no results
+      }else {
+        console.log('amazonCtrl.searchForBook error: ', err, JSON.stringify(err,null,2));
+        deferred.reject(err);
+      }
     });
     return deferred.promise;
   },
