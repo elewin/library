@@ -29,6 +29,7 @@ var bookSchema = new mongoose.Schema({
   googBooksUrl: {type: String, default: ""},
   amazonUrl : {type: String, default: ""},
   thread: {type: []}, //discussion thread for this book
+  numOwners: {type: Number, default: 0}, //the number of people who have this book in their library
 });
 
 module.exports = mongoose.model('Book',bookSchema);

@@ -103,7 +103,8 @@ Books:
         <span ng-if="book.dewyDec.length">Dewy Decimal Classication: <span ng-repeat="dec in book.dewyDec">{{dec}}{{$last ? '' : ', '}}</span><br></span>
 
         <span ng-if="book.lcClass.length">LC Classication: <span ng-repeat="lc in book.lcClass">{{lc}}{{$last ? '' : ', '}}</span><br></span>
-
+        Number of owners: {{book.numOwners}}
+        <br>
         Language: {{book.lang}}
         <br>
         Added: {{book.dateAdded}}

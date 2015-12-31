@@ -98,7 +98,16 @@ module.exports = {
         var books = library.books; //the array of books in the library that we will be adding to
         books.push(bookObj); //add the new book to the array of books
         return library.save().then(function(){ //save the library with our new book in it
-          return res.status(201).end();
+          Book.findById(bookId).exec().then(function(thisBook){
+            thisBook.numOwners++; //increment the number of owners of this book
+            thisBook.save().then(function(){
+              return res.status(201).end();
+            }).catch(function(err){
+              console.log('libraryCtrl.addBookToLibrary/addBook on thisBook.save():', err);
+            });
+          }).catch(function(err){
+            console.log('libraryCtrl.addBookToLibrary error finding book numOwners', err);
+          });
         }).catch(function(err){ //something broke
           console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', err, JSON.stringify(err,null,2));
           return res.status(500).json(err);
@@ -147,7 +156,7 @@ module.exports = {
   //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
   removeBookFromLibrary: function(req, res){
 
-    var bookToDelete = req.body.books.book.bookData;
+    var bookToDelete = req.body.books.book.bookData; // the ._id of the book as it pertains to the main book collection
 
     Library.findById(req.params.id).exec().then(function(library){
       var books = library.books;
@@ -166,10 +175,22 @@ module.exports = {
 
       books.splice(bookToRemoveIndex, 1); //remove the book at the index where it was found
       return library.save().then(function(theLibrary){ //save the result
-       return res.json(theLibrary);
+        Book.findById(bookToDelete).exec().then(function(theBook){
+          theBook.numOwners--; //update our counter
+          theBook.save().then(function(){
+            return res.status(204).end();
+          }).catch(function(err){
+            console.log('removeBookFromLibrary error while attempting to save book after update', err);
+          });
+        }).catch(function(err){
+          console.log('removeBookFromLibrary error searching for book to update', err);
+        });
+      }).catch(function(err){
+        console.log('removeBookFromLibrary error on library.save()', err);
       });
     }).catch(function(err){
-      return res.status(400).json(err);
+      console.log('removeBookFromLibrary error:', err);
+      return res.status(500).json(err);
     });
   },
 
