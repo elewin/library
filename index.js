@@ -40,6 +40,7 @@ var bookCtrl = require('./server-assets/controllers/bookCtrl');
 var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 var authCtrl = require('./server-assets/controllers/authCtrl');
+var adminCtrl = require('./server-assets/controllers/adminCtrl');
 
 //controllers currently unused in index.js but used elsewhere, listing here for reference:
 //var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
@@ -176,6 +177,10 @@ app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the l
 app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library by either ISBN or bookId given a query. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
 app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user
+
+//admin
+app.post('/api/admin/createDb', requireAuth, requireAdmin, adminCtrl.createAdminDb);
+
 
 
 //connect to database
