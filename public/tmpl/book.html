@@ -1,18 +1,96 @@
-
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 col-sm-6">
+<div class="book-pageContent" >
+  <div id="spacer10px"></div>
+  <div class="container" id="book-bookDisplay">
+    <div class="row" >
+      <div class="col-xs-12 col-sm-5">
         <img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" />
 
       </div>
-      <div class="col-xs-12 col-sm-6">
-        stuff
-        <!--Body content-->
-      </div>
-    </div>
+      <div class="col-xs-12 col-sm-7">
+        <div>
+          <div id="book-bookTitle">{{book.title}}</div>
+          <div id="book-bookSubtitle">{{book.subtitle}}</div>
+        </div>
+        <span id="book-authors" ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span>
+        <div id="spacerLine"></div>
+        <div id="book-stats">
+            <div ng-if="book.length">
+              {{book.length}} pages
+            </div>
+            <div>
+              Published {{book.publishDate}} by {{book.publisher}}<span ng-repeat="place in book.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span>
+            </div>
+            <div ng-if="book.lang">
+              Language: {{book.lang}}
+            </div>
+            <div ng-if="book.isbn10">
+              ISBN-10: {{book.isbn10}}
+            </div>
+            <div ng-if="book.isbn13">
+              ISBN-13: {{book.isbn13}}
+            </div>
+            <div ng-if="book.lcClass.length">
+              LCC: <span ng-repeat="lcc in book.lcClass">{{lcc}}{{$last ? '' : ', '}}</span>
+            </div>
+            <div ng-if="book.dewyDec.length">
+              DDC: <span ng-repeat="ddc in book.dewyDec">{{ddc}}{{$last ? '' : ', '}}</span>
+            </div>
+        </div>
+        <div id="spacerLine"></div>
+
+        <div>
+          <!-- stats -->
+        </div>
+
+        <div>
+          <!-- add this book to your library -->
+        </div>
+
+        <div>
+          <!-- tags -->
+        </div>
+      </div> <!-- end of 2nd col -->
+    </div> <!-- end of row -->
+
+    <!-- descriptions here  -->
+
   </div>
 
+<!-- --------------------------------------------------------------------------------------->
+  <div ng-if="hasAdminRole">
+    <hr>
+    Admin:
+    <br>
+    <div>
+      ISBN: {{book.isbn}}
+    </div>
+    <div>
+      ID: {{book._id}}
+    </div>
+    <div>
+      Added: {{book.dateAdded}}
+    </div>
+    <div>
+      Updated: {{book.updatedAt}}
+    </div>
+    <!-- delete prompt -->
+    &#187;
+    <a href="" ng-click="deleteConfirm=true">
+      delete book
+    </a>
+    <span ng-show="deleteConfirm">
+      Are you sure?
+      <a href="" ng-click="deleteBook(book._id); deleteConfirm=false; ">
+        Yes
+      </a> /
+      <a href="" ng-click="deleteConfirm=false">
+        Cancel
+      </a>
+    </span>
+    <!-- /delete prompt -->
+  </div>
 
+</div>
 
 
 <!--

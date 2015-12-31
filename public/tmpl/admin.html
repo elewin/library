@@ -55,8 +55,9 @@ Books:
     </div>
     <div ng-repeat="result in unifiedSearchResults.az">
         <img src="{{result.SmallImage[0].URL[0]}}" />
-        {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}})*
+        {{result.ItemAttributes[0].Title[0]}} by {{result.ItemAttributes[0].Author[0]}}, {{result.ItemAttributes[0].PublicationDate[0]}} (ISBN: {{result.ItemAttributes[0].ISBN[0]}}) {{result.ItemAttributes[0].Publisher[0]}}*
         <a href="" ng-click="addBookByIsbnThenAddToLibrary(currentUser.library, result.ItemAttributes[0].ISBN[0])">Add</a>
+        <br>{{result.ItemAttributes[0].Genre[0]}}
 
     </div>
   </ul>
@@ -69,7 +70,7 @@ Books:
 <ul>
   <div ng-init="mainPage=true"></div>
   <li ng-repeat="book in books"> <!-- ng-hide="deleted "> -->
-      <img src="{{book.coverArtUrl.medium}}" />
+      <a ui-sref="main.book({isbn:book.isbn})"><img src="{{book.coverArtUrl.medium}}" /></a>
       {{book.title}} by <span ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span> - <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add by bookId</a>
       /
       <a href="" ng-click="addToLibraryByIsbn(currentUser.library, book.isbn)">Add by ISBN</a>

@@ -1,3 +1,4 @@
+/* general */
 body
 {
     /*min-width: 480px;*/
@@ -8,36 +9,37 @@ div
     /*border: 1px red dotted;*/
 }
 
-/* header */
+#spacer10px
+{
+    height: 10px;
+}
 
-.header
+/* main */
+.main-header
 {
     height: 44px;
     background-color: #8BA9D2;
     box-shadow: 0px 2px 2px #B3B3B3;
 }
 
-#headerBox
-{
-    position: absolute;
-    border: #3F3F3F 1px solid;
-    height: 500px;
-    top: 20px;
-}
-
-.header a
+.main-header a
 {
     text-decoration: none;
     color: #FFFFFF;
 }
 
-#title
+.main-header a:hover
+{
+    color: #D6D7D9;
+}
+
+#main-title
 {
     font-size: 26px;
     display: inline-block;
 }
 
-#login
+#main-login
 {
     display: inline-block;
     position: absolute;
@@ -45,38 +47,27 @@ div
     font-size: 26px;
 }
 
-#loginIcon
+#main-loginIcon
 {
     height: 44px;
     position: absolute;
     right: 0px;
 }
 
-.header a:hover
+/* home view */
+.home-splash span
 {
-    color: #D6D7D9;
-}
-
-.pageContent
-{
-    position: relative;
-    top: 5px;
-}
-
-
-/* front page splash screen */
-
-.splash span
-{
-    font-size: 56px;
+    font-size: 70px;
     color: #FFFFFF;
     position: absolute;
-    right: 0px;
-    bottom: -28px;
+    bottom: 2px;
     font-family: 'News Cycle', sans-serif;
+    line-height: 0.8;
+    text-align: right;
+    right: 0px;
 }
 
-.splash
+.home-splash
 {
     height: 1220px;
     overflow: hidden;
@@ -88,11 +79,44 @@ div
     position: relative;
 }
 
-
 /*book view*/
+.book-pageContent
+{
+    line-height: normal;
+}
+
+#book-bookDisplay
+{
+}
 
 #book-bookCover
 {
     box-shadow: 2px 2px 10px #B3B3B3;
     max-width: 275px;
+}
+
+#book-bookTitle
+{
+    font-size: 27px;
+    font-weight: normal;
+}
+
+#book-bookSubtitle
+{
+    font-size: 13px;
+    font-style: italic;
+}
+
+#book-authors
+{
+    font-size: 20px;
+}
+
+#spacerLine
+{
+    border: 1px solid #D1D1D1;
+}
+
+#book-stats
+{
 }
