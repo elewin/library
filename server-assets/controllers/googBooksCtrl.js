@@ -36,7 +36,9 @@ module.exports = {
         if (queryObj.totalItems > 0){
           var i = 0; //for now we'll just go with the first hit if it returns more than one result, thus [0]. Maybe I'll change this later to handle multiple results if it becomes necessary
 
-          if (queryObj.items[i].selfLink) book.googBooksUrl = queryObj.items[i].selfLink;
+          if (queryObj.items[i].accessInfo){
+            if (queryObj.items[i].accessInfo.webReaderLink) book.googBooksUrl = queryObj.items[i].accessInfo.webReaderLink;
+          }
           if (queryObj.items[i].volumeInfo){
             if (queryObj.items[i].volumeInfo.title) book.title = queryObj.items[i].volumeInfo.title;
             if (queryObj.items[i].volumeInfo.subtitle) book.subtitle = queryObj.items[i].volumeInfo.subtitle;

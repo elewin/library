@@ -3,7 +3,7 @@
   <div class="container" id="book-bookDisplay">
     <div class="row" >
       <div class="col-xs-12 col-sm-5">
-        <img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" />
+        <a href="{{book.amazonUrl}}"><img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" /></a>
 
       </div>
       <div class="col-xs-12 col-sm-7">
@@ -35,19 +35,56 @@
             <div ng-if="book.dewyDec.length">
               DDC: <span ng-repeat="ddc in book.dewyDec">{{ddc}}{{$last ? '' : ', '}}</span>
             </div>
+            <div>
+              {{book.numOwners}} users have this book
+            </div>
+            <div>
+              {{book.numRead}} users have read this book
+            </div>
+            <div>
+              {{book.numCurrentlyReading}} users are currently reading this book
+            </div>
+            <div>
+              Average rating: {{avgRating}} ({{book.numReviews}} reviews)
+            </div>
+
         </div>
         <div id="spacerLine"></div>
-        does user have book: {{doesUserHaveBook}}
         <div>
-          <!-- stats -->
+          <a href="{{book.amazonUrl}}">See this book on Amazon.com</a>
+        </div>
+        <div>
+          <a href="{{book.googBooksUrl}}">See this book on Google Books</a>
+        </div>
+        <div ng-if="currentUser">
+          <div ng-if="doesUserHaveBook==false">
+            <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add this book to your library</a>
+          </div>
+          <div id="book-userOwn" ng-if="doesUserHaveBook">
+            This book is in your library &#187;
+            <a href="" ng-click="removeBookConfirm=true">
+              Remove
+            </a>
+            <span ng-show="removeBookConfirm">
+              Are you sure?
+              <a href="" ng-click="removeFromLibrary(currentUser.library, book._id); removeBookConfirm=false; ">
+                Yes
+              </a> /
+              <a href="" ng-click="removeBookConfirm=false">
+                Cancel
+              </a>
+            </span>
+          </div>
         </div>
 
-        <div>
-          <!-- add this book to your library -->
-        </div>
 
-        <div>
-          <!-- tags -->
+        <div id="book-bookTags" ng-if="book.tags.length">
+          <span ng-hide="showTags"><a href="" ng-click="showTags=true">Book tags +</a></span>
+          <span ng-show="showTags"><a href="" ng-click="showTags=false">Book tags -</a></span>
+          <div ng-show="showTags">
+            <span ng-repeat="tag in book.tags">
+              {{tag}}{{$last ? '' : ', '}}
+            </span>
         </div>
       </div> <!-- end of 2nd col -->
     </div> <!-- end of row -->
@@ -75,7 +112,7 @@
     </div>
 
     <!-- put edit prompt here -->
-    
+
     <!-- delete prompt -->
     &#187;
     <a href="" ng-click="deleteConfirm=true">
