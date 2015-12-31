@@ -1,5 +1,6 @@
 var Book = require('../models/bookSchema');
 var Library = require('../models/librarySchema');
+var adminCtrl = require('./adminCtrl');
 var libraryCtrl = require('./libraryCtrl');
 var googBooksCtrl = require('./googBooksCtrl');
 var amazonCtrl = require('./amazonCtrl');
@@ -304,23 +305,38 @@ module.exports = {
   },
 
   deleteBook: function(req, res) {
-    Book.findByIdAndRemove(req.params.id, function(err, result){
-      if(err){
-        res.status(400).json(err);
-      } else {
-        Library.find({'books.book.bookData': req.params.id}).exec().then(function(docs) {
-          //loop through the libraries that contain this book and splice it out
-          for (var i = 0; i < docs.length; i++){
-            for(var j = 0; j< docs[i].books.length; j++){
-              if (docs[i].books[j].book.bookData == req.params.id){ // == instead of === is on purpose here!
-                docs[i].books.splice(j,1); //remove 1 element at position j, which is the book we are deleting
+
+    //get the book data for the deletion history
+    Book.findById(req.params.id).exec().then(function(book){
+
+      var deletedBook = {
+        isbn: book.isbn,
+        name: book.title,
+      };
+      adminCtrl.addDeletedBook(deletedBook);
+
+    }).then(function(){
+      Book.findByIdAndRemove(req.params.id, function(err, result){
+        if(err){
+          res.status(400).json(err);
+        } else {
+
+          Library.find({'books.book.bookData': req.params.id}).exec().then(function(docs) {
+            //loop through the libraries that contain this book and splice it out
+            for (var i = 0; i < docs.length; i++){
+              for(var j = 0; j< docs[i].books.length; j++){
+                if (docs[i].books[j].book.bookData == req.params.id){ // == instead of === is on purpose here!
+                  docs[i].books.splice(j,1); //remove 1 element at position j, which is the book we are deleting
+                }
+                docs[i].save(); //save the library with our changes
               }
-              docs[i].save(); //save the library with our changes
             }
-          }
-        });
-        res.json(result);
-      }
+          });
+          res.json(result);
+        }
+      });
+    }).catch(function(err){
+      console.log(err);
     });
   }
 
