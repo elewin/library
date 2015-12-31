@@ -28,11 +28,13 @@ module.exports = {
   //add to the deleted book history
   addDeletedBook: function(deletedBook){
     Admin.findOne().exec().then(function(result){
-      result.deletedBooks.push(deletedBook);
-      if(result.deletedBooks.length > deleteBookHistoryLength){ //check if we're at the max size
-        result.deletedBooks.shift(); //if so get rid of the oldest element
+      if (result){
+        result.deletedBooks.push(deletedBook);
+        if(result.deletedBooks.length > deleteBookHistoryLength){ //check if we're at the max size
+          result.deletedBooks.shift(); //if so get rid of the oldest element
+        }
+        result.save();
       }
-      result.save();
     }).catch(function(err){
       console.log(err);
     });
