@@ -36,7 +36,7 @@ module.exports = {
     //searchParams is an object containing the type of search to be done (param) and the term to search for (term): eg, { param: 'title', term: 'the iliad' }
     //param can be: author, title, keywords (see http://docs.aws.amazon.com/AWSECommerceService/latest/DG/ItemSearch.html)
     var deferred = q.defer();
-    
+
     //set up fixed search paramaters here:
     var searchObj = {
       searchIndex : 'Books',
@@ -45,7 +45,6 @@ module.exports = {
     };
     //add the search parameters that were passed in:
     searchObj[searchParams.param] = searchParams.term;
-
 
     client.itemSearch(searchObj).then(function(results){ //search for results based on searchObj
       deferred.resolve(results); //results is an array of objects from the amazon api
