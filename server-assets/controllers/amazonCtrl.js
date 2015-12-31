@@ -88,6 +88,7 @@ module.exports = {
           }
 
           if (results[i].ItemAttributes[0].Author) book.authors = results[i].ItemAttributes[0].Author;
+          if (results[i].ItemAttributes[0].Edition) book.edition = results[i].ItemAttributes[0].Edition[0];
           if (results[i].ItemAttributes[0].PublicationDate) book.publishDate = results[i].ItemAttributes[0].PublicationDate[0];
           if (results[i].ItemAttributes[0].Publisher)book.publisher = results[i].ItemAttributes[0].Publisher[0];
           if (results[i].ItemAttributes[0].NumberOfPages) book.length = results[i].ItemAttributes[0].NumberOfPages[0];
@@ -96,6 +97,15 @@ module.exports = {
               if (results[i].ItemAttributes[0].Languages[0].Language[0].Name) book.lang =  results[i].ItemAttributes[0].Languages[0].Language[0].Name[0];
             }
           }
+
+          // I've yet to see a book search result return anything with the genre attribute, so I haven't been able to test it.
+          // if (results[i].ItemAttributes[0].Genre){
+          //   for (var j = 0; j < results[i].ItemAttributes[0].Genre.length; j++){
+          //     if (book.tags.indexOf(results[i].ItemAttributes[0].Genre[j]) === -1){ //check that this hasn't already been added
+          //       book.tags.push(results[i].ItemAttributes[0].Genre[j]);
+          //     }
+          //   }
+          // }
         }
         if(results[i].EditorialReviews){
           if (results[i].EditorialReviews[0].EditorialReview){
@@ -113,8 +123,6 @@ module.exports = {
         if (results[i].SmallImage) book.coverArtUrl.small = results[i].SmallImage[0].URL[0];
 
         if (results[i].DetailPageURL) book.amazonUrl = results[i].DetailPageURL[0];
-
-        //  book.tags = //it doesn't look like amazon provides categories in their API?
 
         resolve(book);
       }).catch(function(err) {
