@@ -212,3 +212,39 @@ div
 {
     text-align: center;
 }
+
+#book-descriptions
+{
+    background-color: #E7E7E7;
+    padding: 3px;
+    border: 1px solid #727272;
+    box-shadow: 0px 2px 2px #B3B3B3;
+    font-size: 15px;
+}
+
+#book-descriptionHeader
+{
+    font-style: normal;
+    color: #A3A3A3;
+    font-size: 25px;
+}
+
+#book-descriptionHeader a
+{
+    font-style: normal;
+    color: #A3A3A3;
+    font-size: 25px;
+}
+
+#book-descSource
+{
+    font-style: italic;
+    font-size: 15px;
+}
+
+#book-descriptionText
+{
+    font-style: normal;
+    font-size: 17px;
+    text-indent: 50px;
+}

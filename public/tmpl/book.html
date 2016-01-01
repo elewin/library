@@ -164,11 +164,49 @@
     </div> <!-- /end doesUserHaveBook -->
 
     <!-- descriptions here  -->
+    <div ng-if="book.googDescription || book.azDescription.length">
+      <div class="spacer10px"></div>
+      <div class="row" id="book-descriptions">
+        <div class="col-xs-12">
+          <span id="book-descriptionHeader">Reviews</span>
 
-  </div>
+          <div  ng-if="book.googDescription">
+            <div id="spacerLine"></div>
+            <div class="spacer10px"></div>
+            <div id="book-descSource">
+              Google Books
+            </div>
+            <div id="book-descriptionText">
+              {{book.googDescription}}
+            </div>
+          </div>
+          <div class="spacer10px"></div>
+          <div id="spacerLine"></div>
+          <div class="spacer10px"></div>
+          <div ng-if="book.azDescription.length">
+            <div id="book-descSource">
+              Amazon
+            </div>
+            <div ng-repeat="desc in book.azDescription" id="book-descriptionText">
+              {{desc}}
+                <div class="spacer10px"></div>
+                <div id="spacerLine"></div>
+                <div class="spacer10px"></div>
+            </div>
+          </div>
+        </div> <!-- /end col -->
+      </div> <!-- /end row -->
+    </div>
+    <div class="spacer10px"></div>
 
 
-<!-- --------------------------------------------------------------------------------------->
+
+
+
+  </div> <!-- /end container -->
+
+
+<!-- Admin controls --------------------------------------------------------------------------------------->
   <div ng-if="hasAdminRole">
     <hr>
     Admin:

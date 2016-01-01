@@ -91,11 +91,6 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   .state('main.book', {
     url: 'book?:isbn',
     controller: 'bookPageCtrl',
-    // data:{
-    //   permissions: {
-    //     only: ['user'],
-    //   }
-    // },
     templateUrl: './tmpl/book.html',
     resolve: {
       bookRef: function(bookService, $stateParams){

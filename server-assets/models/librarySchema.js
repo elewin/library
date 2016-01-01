@@ -12,6 +12,7 @@ var librarySchema = new mongoose.Schema({
       status: { type: String, enum: ['read', 'unread', 'reading'], default: 'unread' }, //has the user read this book?
       own: { type: Boolean, default: false }, //does the user own this book?
       rating: {type: Number, default: 0}, //allow the user to rate the book
+      lastPage: {type: Number, default: 0},
       notes: {type: []},
       updatedAt: { type: Date, default: Date.now },
       dateAdded: { type: Date, default: Date.now},
