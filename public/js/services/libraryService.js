@@ -15,7 +15,7 @@ angular.module('library').service('libraryService', function($stateParams, $http
     };
     return $http({
       method: 'PUT',
-      url:'/api/library/'+libraryId+'/'+bookId,
+      url:'/api/library/edit/'+libraryId+'/'+bookId,
       data: JSON.stringify(dataObj),
     });
   };

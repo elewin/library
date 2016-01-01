@@ -206,5 +206,9 @@ div
 {
     position: relative;
     bottom: 2px;
-    
+}
+
+#book-controlsOwn
+{
+    text-align: center;
 }

@@ -175,7 +175,7 @@ app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a s
 app.get('/api/library/:libraryId/:bookId', requireAuth, libraryCtrl.getBookFromLibrary); //gets a specific book from a library
 app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user
 app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array
-app.put('/api/library/:libraryId/:bookId', requireAuth, libraryCtrl.editBookInLibrary); //edits user properties on a book in their library
+app.put('/api/library/edit/:libraryId/:bookId', requireAuth, libraryCtrl.editBookInLibrary); //edits user properties on a book in their library
 app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library by either ISBN or bookId given a query. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
 app.put('/api/library/:id/remove', requireAuth, libraryCtrl.removeBookFromLibrary); //removes a book from the library
 app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibrary); //deletes the library, should only be invoked when deleting the user

@@ -134,10 +134,10 @@
       <div class="row" id="book-ownerControls">
         <div class="col-xs-12">
           <div class="col-sm-4">
-            <div ng-if="userBook.own==true">
+            <div ng-if="userBook.own==true" id="book-controlsOwn">
               <a href="" ng-click="editBook(currentUser.library, book._id, 'own', false)"><img id="book-check" src="img/check.png" /> You own this book</a>
             </div>
-            <div ng-if="userBook.own==false">
+            <div ng-if="userBook.own==false" id="book-controlsOwn">
                <a href="" ng-click="editBook(currentUser.library, book._id, 'own', true)"><img id="book-check" src="img/x.png" /> You do not own this book </a>
             </div>
 
