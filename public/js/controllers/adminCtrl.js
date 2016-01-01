@@ -4,6 +4,10 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
     $scope.deletedBooks = admin.data.deletedBooks;
   });
 
+  $scope.createAdminDb = function(){
+    adminService.createDb();
+  };
+
   $scope.currentUser = userRef;
 
   //books: **************************************************************

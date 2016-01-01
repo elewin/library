@@ -7,4 +7,12 @@ angular.module('library').service('adminService', function($stateParams, $http) 
     });
   };
 
+  this.createDb = function(){
+    return $http({
+      method: 'POST',
+      url: '/api/admin/createDb'
+    });
+  };
+
+
 });
