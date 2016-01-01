@@ -38,21 +38,6 @@ angular.module('library').controller('bookPageCtrl', function($scope, bookServic
     $scope.avgRating = bookRef.data.totalScore/bookRef.data.numReviews;
   }else $scope.avgRating = 0;
 
-  $scope.statusOptions = [
-    {
-      name: 'Read',
-      value: 'read',
-    },
-    {
-      name: 'Unread',
-      value: 'unread',
-    },
-    {
-      name: 'Reading',
-      value: 'reading',
-    },
-  ];
-
   $scope.editBook = function(libraryId, bookId, property, value){
     libraryService.editBookInLibrary(libraryId, bookId, property, value).then(function(){
       $state.go($state.current, {}, {reload: true}); //refresh page

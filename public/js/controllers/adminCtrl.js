@@ -1,4 +1,8 @@
-angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q, userRef) {
+angular.module('library').controller('adminCtrl', function($scope, bookService, userService, libraryService, $q, userRef, adminService) {
+
+  adminService.getAdmin().then(function(admin){
+    $scope.deletedBooks = admin.data.deletedBooks;
+  });
 
   $scope.currentUser = userRef;
 
@@ -36,7 +40,21 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 	// 	// }
 	// ];
 
+  //add everything thats in the deleted books array back to the book collection
+  //this is sloppy and was written primarily to aid in development with testing, it should not be used in production
+  $scope.addAllDeletedBooks = function(){
+    var addArray = []; //array of books to add
 
+    for (var i = 0; i < $scope.deletedBooks.length; i++){
+      if (addArray.indexOf($scope.deletedBooks[i].isbn) === -1){ //check for duplicates
+        addArray.push($scope.deletedBooks[i].isbn);
+      }
+    }
+    //now add each of these books:
+    for(i = 0; i < addArray.length; i++){
+      $scope.addBookByIsbn(addArray[i]);
+    }
+  };
 
   var getBooks = function(){
     bookService.getAllBooks().then(function (books){

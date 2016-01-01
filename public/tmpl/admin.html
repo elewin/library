@@ -176,6 +176,17 @@ Books:
   </li>
 </ul>
 
+<!-- deleted books -->
+<hr>
+Deleted books:
+<br>
+<ul>
+  <li ng-repeat="book in deletedBooks">
+    {{book.name}} ({{book.isbn}}) - <a href="" ng-click="addBookByIsbn(book.isbn)">re-add</a>
+  </li>
+</ul>
+<a href="" ng-click="addAllDeletedBooks()">re-add all</a>
+
 <!-- list users -->
 <hr>
 Users:

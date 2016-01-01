@@ -140,20 +140,21 @@
             <div ng-if="userBook.own==false" id="book-controlsOwn">
                <a href="" ng-click="editBook(currentUser.library, book._id, 'own', true)"><img id="book-check" src="img/x.png" /> You do not own this book </a>
             </div>
-
-
           </div>
           <div class="col-sm-4">
-            2
+            <div ng-if="userBook.status=='read'" id="book-controlsOwn">
+                <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'unread')"><img id="book-check" src="img/check.png" /> You have read this book</a>
+            </div>
+            <div ng-if="userBook.status=='unread'" id="book-controlsOwn">
+                <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'reading')"><img id="book-check" src="img/x.png" /> You have not read this book</a>
+            </div>
+            <div ng-if="userBook.status=='reading'" id="book-controlsOwn">
+                <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'read')"><img id="book-check" src="img/circle.png" /> You are currently reading this book</a>
+            </div>
           </div>
           <div class="col-sm-4">
             3
           </div>
-
-            <!-- <div id="book-statusBox">
-  						<select ng-model="statusOption" ng-options="option.value as option.name for option in statusOptions" ng-init="statusOption = statusOptions[0].value">
-  						</select>
-  					</div> -->
 
         </div>
       </div> <!-- /end row -->

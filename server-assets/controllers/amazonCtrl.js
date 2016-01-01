@@ -112,7 +112,10 @@ module.exports = {
             for (var k =0; k < results[i].EditorialReviews[0].EditorialReview.length; k++){
               if (results[i].EditorialReviews[0].EditorialReview[k].Content){
                 if (results[i].EditorialReviews[0].EditorialReview[k].Content[0] !== book.googDescription){ //dont copy descriptions that are duplicates of the goolge books provided description
-                  book.azDescription.push(stripHtml(results[i].EditorialReviews[0].EditorialReview[k].Content[0])); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
+                  //dont copy amazon duplicates either:
+                  if (book.azDescription.indexOf(stripHtml(results[i].EditorialReviews[0].EditorialReview[k].Content[0])) === -1){
+                    book.azDescription.push(stripHtml(results[i].EditorialReviews[0].EditorialReview[k].Content[0])); //amazon's descriptions often have HTML in them, so here we strip them out with our stripHtml() function
+                  }
                 }
               }
             }

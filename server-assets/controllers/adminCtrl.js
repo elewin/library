@@ -40,4 +40,13 @@ module.exports = {
     });
   },
 
+  getAdmin: function(req, res){
+    Admin.findOne().exec().then(function(result){
+      return res.send(result);
+    }).catch(function(err){
+      console.log(err);
+      return res.status(500).end();
+    });
+  }
+
 };

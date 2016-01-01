@@ -182,6 +182,7 @@ app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibr
 
 //admin
 app.post('/api/admin/createDb', requireAuth, requireAdmin, adminCtrl.createAdminDb);
+app.get('/api/admin/', requireAuth, requireAdmin, adminCtrl.getAdmin);
 
 
 
