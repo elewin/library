@@ -6,6 +6,7 @@ var userCtrl = require('./userCtrl');
 
 module.exports = {
 
+  //edits a book in a user's library collection
   editBookInLibrary: function(req, res){
     var libraryId = req.params.libraryId;
     var bookId = req.params.bookId;
@@ -14,7 +15,7 @@ module.exports = {
 
     //security to make sure a user can only get their own library (unless admin)
     if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
-      Library.findOne(libraryId).populate('books.book.bookData').exec()
+      Library.findById(libraryId).populate('books.book.bookData').exec()
       .then(function(library){
         var books = library.books; //this is the array of books in this library
         var foundBookIndex = -1; //we need to find where in the books array the book we're looking for is located
@@ -30,8 +31,39 @@ module.exports = {
             return res.status(404).end();
           }else{
             //if we are succesful:
+            var oldValue = books[foundBookIndex].book[property];
             books[foundBookIndex].book[property] = value;//books[foundBookIndex].book is the book we are editing
-            library.save().then(function(){
+            library.save().then(function(){ //save the updated book
+
+              //now, if applicable, we need to update the main values for that book on the book collection depending on what we just did:
+              Book.findById(bookId).exec().then(function(foundBook){
+                if (property === 'status'){ //if we updated the status of the book:
+                  if (oldValue === 'unread' && value === 'read') foundBook.numRead++;
+                  if (oldValue === 'unread' && value === 'reading') foundBook.numCurrentlyReading++;
+                  if (oldValue === 'read' && value === 'unread') foundBook.numRead--;
+                  if (oldValue === 'read' && value === 'reading'){
+                    foundBook.numRead--;
+                    foundBook.numCurrentlyReading++;
+                  }
+                  if (oldValue === 'reading' && value == 'unread') foundBook.numCurrentlyReading--;
+                  if (oldValue === 'reading' && value == 'read'){
+                    foundBook.numCurrentlyReading--;
+                    foundBook.numRead++;
+                  }
+                }
+                if (property === 'own'){
+                  if (value === true) foundBook.numOwnBook++;
+                  if (value === false) foundBook.numOwnBook--;
+                }
+                //save the result:
+                foundBook.save().then(function(){
+                  return res.status(200).end();
+                }).catch(function(err){
+                  console.log('error saving foundBook after updating stats', err);
+                });
+              }).catch(function(err){
+                console.log('error finding book after edit save', err);
+              });
               return res.status(200).end();
             }).catch(function(err){
               console.log('error saving library after update', err);
@@ -257,10 +289,19 @@ module.exports = {
           return res.status(404).json('Book', bookToDelete, 'not found!');
         }
 
+        //get their stats so we can adjust the global counters:
+        var own = books[bookToRemoveIndex].book.own;
+        var status = books[bookToRemoveIndex].book.status;
+
         books.splice(bookToRemoveIndex, 1); //remove the book at the index where it was found
-        return library.save().then(function(theLibrary){ //save the result
+        library.save().then(function(theLibrary){ //save the result
           Book.findById(bookToDelete).exec().then(function(theBook){
-            theBook.numOwners--; //update our counter
+            //adjust our counters:
+            theBook.numOwners--;
+            if(own) theBook.numOwnBook--; //if the user owned this book, decrement the counter
+            if(status === 'read') theBook.numRead--;
+            if(status === 'reading') theBook.numCurrentlyReading--;            
+
             theBook.save().then(function(){
               return res.status(204).end();
             }).catch(function(err){

@@ -55,7 +55,10 @@
             DDC: <span ng-repeat="ddc in book.dewyDec">{{ddc}}{{$last ? '' : ', '}}</span>
           </div>
           <div>
-            {{book.numOwners}} users have this book
+            {{book.numOwners}} users have this book in their library
+          </div>
+          <div>
+            {{book.numOwnBook}} users own this book
           </div>
           <div>
             {{book.numRead}} users have read this book
@@ -149,7 +152,7 @@
                 <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'reading')"><img id="book-check" src="img/x.png" /> You have not read this book</a>
             </div>
             <div ng-if="userBook.status=='reading'" id="book-controlsOwn">
-                <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'read')"><img id="book-check" src="img/circle.png" /> You are currently reading this book</a>
+                <a href="" ng-click="editBook(currentUser.library, book._id, 'status', 'read')"><img id="book-check" src="img/openbook.png" /> You are currently reading this book</a>
             </div>
           </div>
           <div class="col-sm-4">
