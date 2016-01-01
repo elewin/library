@@ -1,6 +1,6 @@
 //settings:
 var config = require('./config'); //config file. ***** Change the bool variable 'local' in this file (config.js) to true for local developlemt, false for heroku deployment
-var useMongolab = false; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
+var useMongolab = true; //use mongolab (true) or local mongodb (false) ***** must be set to true for heroku deployment!
 var local = config.local;
 
 //alert user to the current mode to asssit with debugging:
