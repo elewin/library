@@ -150,7 +150,7 @@ app.get('/api/auth/fb/cb', authCtrl.callback);
 app.get('/api/auth/fb/logout', authCtrl.logout);
 
 //books (these apply to the main book collection, not a particluar user's library. See library endpoints for that)
-app.get('/api/books/all',  bookCtrl.getAllBooks);
+app.get('/api/books/all',  bookCtrl.getAllBooks); //dev only, need to get rid of this later (or lock it down for admin or something)
 app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn> //********secure this later!!! leaving it unsecured now for dev
 app.get('/api/books/search', requireAuth, bookCtrl.unifiedSearch); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
 //app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
@@ -159,7 +159,7 @@ app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
 
 //users
-app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn);
+app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn); //checks if a user is logged in, retruns a bool
 app.get('/api/users/currentUser',  requireAuth, userCtrl.getCurrentUser);
 app.get('/api/users', requireAuth, requireAdmin, userCtrl.getUsers);
 //app.get('/api/users/:id', userCtrl.getUser);
@@ -168,10 +168,11 @@ app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);
 
 //library
-app.get('/api/library/:id/bookCheck',  libraryCtrl.doesUserHaveBook); //checks if an isbn exists in the user's library, returns a bool *********** add requireAuth later!!
+app.get('/api/library/:id/bookCheck', requireAuth, libraryCtrl.doesUserHaveBook); //checks if an isbn exists in the user's library, returns a bool
 app.get('/api/library/user/:id', requireAuth, libraryCtrl.getUserLibraryByUserId); //returns the library assosiated with the given user id
 app.get('/api/library/', requireAuth, requireAdmin, libraryCtrl.getAllLibraries); //should be removed later, should only need to use getUserLibrary
 app.get('/api/library/:id', requireAuth, libraryCtrl.getUserLibrary); //gets a specific library, id is libraryId
+app.get('/api/library/:libraryId/:bookId', requireAuth, libraryCtrl.getBookFromLibrary); //gets a specific book from a library
 app.post('/api/library', requireAuth, libraryCtrl.addLibrary); //adds a library, should only be invoked when adding a user
 app.put('/api/library/:id', requireAuth, libraryCtrl.editLibrary); //edits the library, to be used for properties other than the books array
 app.put('/api/library/:id/add', requireAuth, libraryCtrl.addBookToLibrary); //adds a book to the library by either ISBN or bookId given a query. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc

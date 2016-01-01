@@ -166,22 +166,38 @@ module.exports = {
     }
   },
 
+  //returns the requested book from the given library (this differs from making a request for a book from bookCtrl, as that will return a book from the main book collection. This returns a book from a specific library, which has additional user-specific properties)
+  getBookFromLibrary: function(req, res){
+    var bookId = req.params.bookId;
+    var libraryId = req.params.libraryId;
+    //security to make sure a user can only get their own library (unless admin)
+    if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
+      Library.findOne(libraryId).populate('books.book.bookData').exec()
+      .then(function(library){
+        var books = library.books; //this is the array of books in this library
+        var foundBookIndex = -1; //we need to find where in the books array the book we're looking for is located
+        //we iterate through the array looking for the element that has the bookId we want
+        for (var i = 0; i < books.length; i++){
+          if(books[i].book.bookCollectionId === bookId){
+            foundBookIndex = i; //this is the index in the books array where the book we want is located
+          }
+        }
+          //if we could not find the book, give an error:
+          if (foundBookIndex === -1){
+            console.log('libraryCtrl.getBookFromLibrary error: could not find bookId', bookId, 'in library', libraryId);
+            return res.status(404).end();
+          }else{
+            return res.send(books[foundBookIndex].book).end();
+          }
+      }).catch(function(err){
+        console.log('libraryCtrl.getBookFromLibrary', err);
+      });
+    }else{
+      return res.status(401).end();
+    }
+  },
 
-  // old but working
-  // //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
-  // addBookToLibrary: function(req, res){
-  //   Library.findById(req.params.id).exec().then(function(library){
-  //     var books = library.books;
-  //     books.push(req.body.books);
-  //     return library.save().then(function(theLibrary){
-  //       return res.json(theLibrary);
-  //     });
-  //   }).catch(function(err){
-  //     return res.status(400).json(err);
-  //   });
-  // },
-
-
+  //removes a specific book from a specific library given a libraryId and bookId
   removeBookFromLibrary: function(req, res){
     var bookToDelete = req.body.books.book.bookData; // the ._id of the book as it pertains to the main book collection
     if (req.user && (req.user.library === req.params.id || req.user.roles.indexOf('admin') >=0)){

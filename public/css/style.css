@@ -9,7 +9,7 @@ div
     /*border: 1px red dotted;*/
 }
 
-#spacer10px
+.spacer10px
 {
     height: 10px;
 }
@@ -87,11 +87,15 @@ div
 
 #book-bookDisplay
 {
+    background-color: #E7E7E7;
+    padding: 3px;
+    border: 1px solid #727272;
+    box-shadow: 0px 2px 2px #B3B3B3;
 }
 
 #book-bookCover
 {
-    box-shadow: 2px 2px 10px #B3B3B3;
+    box-shadow: 2px 2px 3px #B3B3B3;
     max-width: 275px;
 }
 
@@ -119,4 +123,75 @@ div
 
 #book-stats
 {
+    font-size: 15px;
+}
+
+#book-links
+{
+    font-size: 15px;
+}
+
+#book-bookInLib
+{
+    font-size: 20px;
+}
+
+#book-removePrompt
+{
+    font-size: 20px;
+}
+
+#book-addLink a
+{
+    color: #01AB3E;
+    text-decoration: none;
+}
+
+#book-addLink a:hover
+{
+    text-decoration: none;
+    color: #7C7C7C;
+}
+
+#book-trashIcon
+{
+    position: absolute;
+    bottom: 2px;
+}
+
+#book-removeBookConfirm
+{
+    color: #D50000;
+}
+
+#book-removeWarning
+{
+    color: #595858;
+    font-size: 15px;
+}
+
+#book-noUser a
+{
+    font-size: 19px;
+    color: #3B659E;
+    text-decoration: none;
+}
+
+#book-noUser a:hover
+{
+    text-decoration: none;
+    color: #91AACC;
+}
+
+#book-ownerControls
+{
+    background-color: #E7E7E7;
+    padding: 3px;
+    border: 1px solid #727272;
+    box-shadow: 0px 2px 2px #B3B3B3;
+}
+
+#book-statusBox
+{
+    display: inline-block;
 }

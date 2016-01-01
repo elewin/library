@@ -1,7 +1,7 @@
 <div class="book-pageContent" >
-  <div id="spacer10px"></div>
-  <div class="container" id="book-bookDisplay">
-    <div class="row" >
+  <div class="spacer10px"></div>
+  <div class="container" >
+    <div class="row" id="book-bookDisplay">
       <div class="col-xs-12 col-sm-5">
         <a href="{{book.amazonUrl}}"><img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" /></a>
 
@@ -14,84 +14,126 @@
         <span id="book-authors" ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span>
         <div id="spacerLine"></div>
         <div id="book-stats">
-            <div ng-if="book.length">
-              {{book.length}} pages
+          <div ng-if="book.length">
+            {{book.length}} pages
+          </div>
+          <div>
+            Published {{book.publishDate}} by {{book.publisher}}<span ng-repeat="place in book.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span>
+          </div>
+          <div ng-if="book.lang">
+            Language: {{book.lang}}
+          </div>
+
+          <div ng-if="book.tags.length">
+            <div ng-if="tagsLimited.length">
+              Subjects:
+              <span ng-repeat="tag in tagsLimited">{{tag}}, </span>
+              <span ng-hide="showMoreTags"><a href="" ng-click="showMoreTags=true">More +</a></span>
+              <span ng-show="showMoreTags">
+                <a href="" ng-click="showMoreTags=false">Less -</a><br>
+                <span ng-repeat="tag in tagsRemainder">{{tag}}{{$last ? '' : ', '}}</span>
+
             </div>
-            <div>
-              Published {{book.publishDate}} by {{book.publisher}}<span ng-repeat="place in book.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span>
+            <div ng-if="tagsLimited.length==false">
+              Subjects:
+              <span ng-repeat="tag in book.tags">
+                {{tag}}{{$last ? '' : ', '}}
+              </span>
             </div>
-            <div ng-if="book.lang">
-              Language: {{book.lang}}
-            </div>
-            <div ng-if="book.isbn10">
-              ISBN-10: {{book.isbn10}}
-            </div>
-            <div ng-if="book.isbn13">
-              ISBN-13: {{book.isbn13}}
-            </div>
-            <div ng-if="book.lcClass.length">
-              LCC: <span ng-repeat="lcc in book.lcClass">{{lcc}}{{$last ? '' : ', '}}</span>
-            </div>
-            <div ng-if="book.dewyDec.length">
-              DDC: <span ng-repeat="ddc in book.dewyDec">{{ddc}}{{$last ? '' : ', '}}</span>
-            </div>
-            <div>
-              {{book.numOwners}} users have this book
-            </div>
-            <div>
-              {{book.numRead}} users have read this book
-            </div>
-            <div>
-              {{book.numCurrentlyReading}} users are currently reading this book
-            </div>
-            <div>
-              Average rating: {{avgRating}} ({{book.numReviews}} reviews)
-            </div>
+          </div>
+
+          <div ng-if="book.isbn10">
+            ISBN-10: {{book.isbn10}}
+          </div>
+          <div ng-if="book.isbn13">
+            ISBN-13: {{book.isbn13}}
+          </div>
+          <div ng-if="book.lcClass.length">
+            LCC: <span ng-repeat="lcc in book.lcClass">{{lcc}}{{$last ? '' : ', '}}</span>
+          </div>
+          <div ng-if="book.dewyDec.length">
+            DDC: <span ng-repeat="ddc in book.dewyDec">{{ddc}}{{$last ? '' : ', '}}</span>
+          </div>
+          <div>
+            {{book.numOwners}} users have this book
+          </div>
+          <div>
+            {{book.numRead}} users have read this book
+          </div>
+          <div>
+            {{book.numCurrentlyReading}} users are currently reading this book
+          </div>
+          <div>
+            Average rating: {{avgRating}} ({{book.numReviews}} reviews)
+          </div>
+
 
         </div>
         <div id="spacerLine"></div>
-        <div>
+        <div id="book-links">
           <a href="{{book.amazonUrl}}">See this book on Amazon.com</a>
         </div>
-        <div>
+        <div id="book-links">
           <a href="{{book.googBooksUrl}}">See this book on Google Books</a>
         </div>
-        <div ng-if="currentUser">
+        <div id="spacerLine"></div>
+
+        <div ng-if="currentUser==false" id="book-noUser">
+          <a href='/api/auth/fb/login'>Login to add this to your library!</a>
+        </div>
+
+        <!-- this only displays to a logged in user -->
+        <div ng-if="currentUser" id="book-bookInLib">
           <div ng-if="doesUserHaveBook==false">
-            <a href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add this book to your library</a>
+            <span id="book-addLink">
+              <a  href="" ng-click="addToLibraryByBookId(currentUser.library, book._id)">Add this book to your library</a>
+            </span>
           </div>
           <div id="book-userOwn" ng-if="doesUserHaveBook">
-            This book is in your library &#187;
-            <a href="" ng-click="removeBookConfirm=true">
-              Remove
-            </a>
-            <span ng-show="removeBookConfirm">
-              Are you sure?
-              <a href="" ng-click="removeFromLibrary(currentUser.library, book._id); removeBookConfirm=false; ">
-                Yes
-              </a> /
-              <a href="" ng-click="removeBookConfirm=false">
-                Cancel
+            <span ng-hide="removeBookConfirm">This book is in your library</span>
+            <span id="book-removePrompt">
+              <a href="" ng-click="removeBookConfirm=true">
+                <span ng-hide="removeBookConfirm">
+                 <img id="book-trashIcon" src="img/trash.png"/ alt="Remove book">
+                </span>
               </a>
+              <span id="book-removeBookConfirm" ng-show="removeBookConfirm">
+                Remove?
+                <a href="" ng-click="removeFromLibrary(currentUser.library, book._id); removeBookConfirm=false; ">
+                  Yes
+                </a> /
+                <a href="" ng-click="removeBookConfirm=false">
+                  Cancel
+                </a>
+                <div id="book-removeWarning">Your notes, ratings, and status will be lost</div>
+              </span>
             </span>
           </div>
         </div>
+        <!-- /end ng-if currentUser -->
 
 
-        <div id="book-bookTags" ng-if="book.tags.length">
-          <span ng-hide="showTags"><a href="" ng-click="showTags=true">Book tags +</a></span>
-          <span ng-show="showTags"><a href="" ng-click="showTags=false">Book tags -</a></span>
-          <div ng-show="showTags">
-            <span ng-repeat="tag in book.tags">
-              {{tag}}{{$last ? '' : ', '}}
-            </span>
-        </div>
+
       </div> <!-- end of 2nd col -->
     </div> <!-- end of row -->
+    <div class="row">
+      <div class="spacer10px"></div>
+      <div class="col-xs-14">
+        <div id="book-ownerControls"> <!-- ng-if="doesUserHaveBook"> commenting out for dev -->
+          Current status:
+          <div id="book-statusBox">
+						<select ng-model="statusOption" ng-options="option.value as option.name for option in statusOptions" ng-init="statusOption = statusOptions[0].value">
+						</select>
+					</div>
+        </div>
+      </div>
+
+    </div>
 
     <!-- descriptions here  -->
 
   </div>
+
 
 <!-- --------------------------------------------------------------------------------------->
   <div ng-if="hasAdminRole">

@@ -40,7 +40,6 @@ angular.module('library').service('userService', function($stateParams, $http, $
         defer.resolve(true);
       }
       else{
-        //defer.reject(isUser);
         defer.resolve(false);
       }
     });
@@ -60,7 +59,7 @@ angular.module('library').service('userService', function($stateParams, $http, $
           $http({
             method: "GET",
             url: "/api/users/currentUser"
-          }).then(function(response) {            
+          }).then(function(response) {
             defer.resolve(response.data); //. . .and if so get the user data and return it
           });
         }
