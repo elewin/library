@@ -7,6 +7,19 @@ angular.module('library').service('libraryService', function($stateParams, $http
     });
   };
 
+  //edits the 'property' on 'bookId' in 'libraryId' to 'value'
+  this.editBookInLibrary = function(libraryId, bookId, property, value){
+    var dataObj = {
+      property: property,
+      value: value,
+    };
+    return $http({
+      method: 'PUT',
+      url:'/api/library/'+libraryId+'/'+bookId,
+      data: JSON.stringify(dataObj),
+    });
+  };
+
   this.doesUserHaveBook = function(libraryId, isbn){
     return $http({
       method: 'GET',

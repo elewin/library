@@ -90,25 +90,37 @@
             </span>
           </div>
           <div id="book-userOwn" ng-if="doesUserHaveBook">
-            <span ng-hide="removeBookConfirm">This book is in your library</span>
-            <span id="book-removePrompt">
-              <a href="" ng-click="removeBookConfirm=true">
-                <span ng-hide="removeBookConfirm">
-                 <img id="book-trashIcon" src="img/trash.png"/ alt="Remove book">
-                </span>
-              </a>
-              <span id="book-removeBookConfirm" ng-show="removeBookConfirm">
-                Remove?
-                <a href="" ng-click="removeFromLibrary(currentUser.library, book._id); removeBookConfirm=false; ">
-                  Yes
-                </a> /
-                <a href="" ng-click="removeBookConfirm=false">
-                  Cancel
+            <div>
+              <span ng-hide="removeBookConfirm">This book is in your library</span>
+              <span id="book-removePrompt">
+                <a href="" ng-click="removeBookConfirm=true">
+                  <span ng-hide="removeBookConfirm">
+                   <img id="book-trashIcon" src="img/trash.png"/ alt="Remove book">
+                  </span>
                 </a>
-                <div id="book-removeWarning">Your notes, ratings, and status will be lost</div>
+                <span id="book-removeBookConfirm" ng-show="removeBookConfirm">
+                  Remove?
+                  <a href="" ng-click="removeFromLibrary(currentUser.library, book._id); removeBookConfirm=false; ">
+                    Yes
+                  </a> /
+                  <a href="" ng-click="removeBookConfirm=false">
+                    Cancel
+                  </a>
+                  <div id="book-removeWarning">Your notes, ratings, and status will be lost</div>
+                </span>
               </span>
-            </span>
+            </div>
+            <div id="book-ownership" ng-hide="removeBookConfirm">
+              <div ng-if="userBook.own==false">
+                You currnetly do not own this book. <a href="{{book.amazonUrl}}">Get it from Amazon</a>
+              </div>
+              <div ng-if="userBook.own==true">
+                You own this book
+              </div>
+            </div>
+
           </div>
+
         </div>
         <!-- /end ng-if currentUser -->
 
@@ -116,19 +128,36 @@
 
       </div> <!-- end of 2nd col -->
     </div> <!-- end of row -->
-    <div class="row">
-      <div class="spacer10px"></div>
-      <div class="col-xs-14">
-        <div id="book-ownerControls"> <!-- ng-if="doesUserHaveBook"> commenting out for dev -->
-          Current status:
-          <div id="book-statusBox">
-						<select ng-model="statusOption" ng-options="option.value as option.name for option in statusOptions" ng-init="statusOption = statusOptions[0].value">
-						</select>
-					</div>
-        </div>
-      </div>
 
-    </div>
+    <div ng-if="doesUserHaveBook">
+      <div class="spacer10px"></div>
+      <div class="row" id="book-ownerControls">
+        <div class="col-xs-12">
+          <div class="col-sm-4">
+            <div ng-if="userBook.own==true">
+              <a href="" ng-click="editBook(currentUser.library, book._id, 'own', false)"><img id="book-check" src="img/check.png" /> You own this book</a>
+            </div>
+            <div ng-if="userBook.own==false">
+               <a href="" ng-click="editBook(currentUser.library, book._id, 'own', true)"><img id="book-check" src="img/x.png" /> You do not own this book </a>
+            </div>
+
+
+          </div>
+          <div class="col-sm-4">
+            2
+          </div>
+          <div class="col-sm-4">
+            3
+          </div>
+
+            <!-- <div id="book-statusBox">
+  						<select ng-model="statusOption" ng-options="option.value as option.name for option in statusOptions" ng-init="statusOption = statusOptions[0].value">
+  						</select>
+  					</div> -->
+
+        </div>
+      </div> <!-- /end row -->
+    </div> <!-- /end doesUserHaveBook -->
 
     <!-- descriptions here  -->
 

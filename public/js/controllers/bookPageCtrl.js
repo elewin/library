@@ -13,7 +13,7 @@ angular.module('library').controller('bookPageCtrl', function($scope, bookServic
         //if the user has this book in their library, get that book entry from the book array in their library:
         if(result.data){
           libraryService.getBookFromLibrary(userRef.library, bookRef.data._id).then(function(book){
-            $scope.userBook = book.data; //the book from the user's book library, including their own personal info (own, read, notes, etc)            
+            $scope.userBook = book.data; //the book from the user's book library, including their own personal info (own, read, notes, etc)
           });
         }
       });
@@ -53,6 +53,11 @@ angular.module('library').controller('bookPageCtrl', function($scope, bookServic
     },
   ];
 
+  $scope.editBook = function(libraryId, bookId, property, value){
+    libraryService.editBookInLibrary(libraryId, bookId, property, value).then(function(){
+      $state.go($state.current, {}, {reload: true}); //refresh page
+    });
+  };
 
   $scope.deleteBook = function(id){
     bookService.deleteBook(id).then(function(res){

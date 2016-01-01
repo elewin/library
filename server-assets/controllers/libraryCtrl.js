@@ -6,15 +6,56 @@ var userCtrl = require('./userCtrl');
 
 module.exports = {
 
+  editBookInLibrary: function(req, res){
+    var libraryId = req.params.libraryId;
+    var bookId = req.params.bookId;
+    var property = req.body.property; //the property on the book we are updating
+    var value = req.body.value; //what we are updating it to
+
+    //security to make sure a user can only get their own library (unless admin)
+    if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
+      Library.findOne(libraryId).populate('books.book.bookData').exec()
+      .then(function(library){
+        var books = library.books; //this is the array of books in this library
+        var foundBookIndex = -1; //we need to find where in the books array the book we're looking for is located
+        //we iterate through the array looking for the element that has the bookId we want
+        for (var i = 0; i < books.length; i++){
+          if(books[i].book.bookCollectionId === bookId){
+            foundBookIndex = i; //this is the index in the books array where the book we want is located
+          }
+        }
+          //if we could not find the book, give an error:
+          if (foundBookIndex === -1){
+            console.log('libraryCtrl.editBookInLibrary error: could not find bookId', bookId, 'in library', libraryId);
+            return res.status(404).end();
+          }else{
+            //if we are succesful:
+            books[foundBookIndex].book[property] = value;//books[foundBookIndex].book is the book we are editing
+            library.save().then(function(){
+              return res.status(200).end();
+            }).catch(function(err){
+              console.log('error saving library after update', err);
+              return res.status(500).end();
+            });
+          }
+      }).catch(function(err){
+        console.log('libraryCtrl.getBookFromLibrary', err);
+      });
+    }else{
+      return res.status(401).end();
+    }
+
+  },
+
   getUserLibrary: function(req, res){
   //make sure a user is logged in, and that they are getting their own library (or have admin privledges)
-  if (req.user && (req.user.library === req.query || req.user.roles.indexOf('admin') >=0)){
-    Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
-        if (err){
-          res.status(400).send(err);
-        }
-        res.send(result);
-      });
+    if (req.user && (req.user.library === req.query || req.user.roles.indexOf('admin') >=0)){
+      Library.find(req.query).populate('books.book.bookData').exec(function(err, result){
+          if (err){
+            res.status(400).send(err);
+          }
+          res.send(result);
+        });
     } else return res.status(401).end();
   },
 
@@ -24,7 +65,7 @@ module.exports = {
     var isbn = req.query.isbn;
     var result = false;
 
-    if (req.user && req.user.library === libraryId){ //make sure someone doesnt try to mess with someone else's library
+    if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){ //make sure someone doesnt try to mess with someone else's library
       Library.findById(libraryId).populate('books.book.bookData').exec()
       .then(function(library){
         for (var i = 0; i < library.books.length; i++){ //iterate through the books in this library
