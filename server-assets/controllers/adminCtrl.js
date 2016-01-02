@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var Admin = require('../models/adminSchema');
 
+//most (all?) of this stuff is for testing/dev and probably not suitable for production
+
 //set how many books we want to keep in the delteted book history
 var deleteBookHistoryLength = 10;
 
@@ -9,7 +11,6 @@ module.exports = {
   //this should only be run once to get the admin collection built
   createAdminDb: function(req, res){
     Admin.find().exec().then(function(result){
-      console.log(result.length);
       if(result.length === 0){ //if there is not an existing admin db, make one
         newAdmin = new Admin({
 

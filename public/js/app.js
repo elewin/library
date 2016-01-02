@@ -1,4 +1,4 @@
-var app = angular.module('library', ['ui.router', 'ngSanitize', 'permission']);
+var app = angular.module('library', ['ui.router', 'permission', 'angularSlideables']);
 
 app.run(function (Permission, userService, $q) {
 
@@ -101,14 +101,21 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
       },
     }
   })
-  .state('main.test', {
-    url: 'test',
+  //library view:
+  .state('main.library', {
+    url: 'library',
     data:{
       permissions: {
         only: ['user'],
+        redirectTo: 'main.home',
       }
     },
-    templateUrl: './tmpl/test.html',
+    templateUrl: './tmpl/library.html',
+    resolve: {
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
+      },
+    },
   })
   .state('logout', {
 		url: '/logout',

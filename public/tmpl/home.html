@@ -1,6 +1,12 @@
 <div class="home-splash">
     <span>Book Collector</span>
 </div>
+<div ng-if="hasUserRole">
+  <a ui-sref="main.library">Library</a>
+</div>
+<div ng-if="hasAdminRole">
+  <a ui-sref="main.admin">Admin</a>
+</div>
 Books:
 <ul>
   <li ng-repeat="book in books">
@@ -8,9 +14,3 @@ Books:
       {{book.title}} by <span ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span> (ISBN: {{book.isbn}})</a>
   </li>
 </ul>
-<span ng-if="hasAdminRole"><a ui-sref="main.admin">Admin</a></span>
-<br>
-<a ui-sref="main.test">test</a>
-<br>
-
-<span ng-if="hasUserRole">user: {{hasUserRole}}</span>

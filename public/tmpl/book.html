@@ -44,13 +44,24 @@
           <div ng-if="book.tags.length">
             <div ng-if="tagsLimited.length">
               Subjects:
-              <span ng-repeat="tag in tagsLimited">{{tag}}, </span>
-              <span ng-hide="showMoreTags"><a href="" ng-click="showMoreTags=true">More +</a></span>
-              <span ng-show="showMoreTags">
-                <a href="" ng-click="showMoreTags=false">Less -</a><br>
-                <span ng-repeat="tag in tagsRemainder">{{tag}}{{$last ? '' : ', '}}</span>
-
+              <span ng-repeat="tag in tagsLimited">
+                {{tag}},
+              </span>
+              <span slide-toggle="#moreTags">
+                <span ng-hide="showMoreTags">
+                  <a href="" ng-click="showMoreTags=true">More +</a>
+                </span>
+                <span ng-show="showMoreTags" >
+                  <a href= "" ng-click="showMoreTags=false">Less -</a>
+                </span>
+              </span>
+              <div id="moreTags" class="slideable">
+                <span ng-repeat="tag in tagsRemainder">
+                  {{tag}}{{$last ? '' : ', '}}
+                </span>
+              </div>
             </div>
+
             <div ng-if="tagsLimited.length==false">
               Subjects:
               <span ng-repeat="tag in book.tags">
@@ -190,40 +201,50 @@
       </div> <!-- /end row -->
     </div> <!-- /end doesUserHaveBook -->
 
+
+
+
     <!-- descriptions here  -->
     <div ng-if="book.googDescription || book.azDescription.length">
       <div class="spacer10px"></div>
       <div class="row" id="book-descriptions">
         <div class="col-xs-12">
-          <span id="book-descriptionHeader">Reviews</span>
-
-          <div  ng-if="book.googDescription">
+          <span slide-toggle="#showReviews">
+            <span id="book-descriptionHeader">
+              <span ng-hide="showDescription"><a href="" ng-click="showDescription=true">Synopsis +</a></span>
+              <span ng-show="showDescription"><a href="" ng-click="showDescription=false">Synopsis -</a></span>
+            </span>
+          </span>
+          <div id="spacerLine"></div>
+          <div id="showReviews" class="slideable">
+            <div  ng-if="book.googDescription">
+              <!-- <div id="spacerLine"></div> -->
+              <div class="spacer10px"></div>
+              <div id="book-descSource">
+                Google Books
+              </div>
+              <div id="book-descriptionText">
+                {{book.googDescription}}
+              </div>
+            </div>
+            <div class="spacer10px"></div>
             <div id="spacerLine"></div>
             <div class="spacer10px"></div>
-            <div id="book-descSource">
-              Google Books
+            <div ng-if="book.azDescription.length">
+              <div id="book-descSource">
+                Amazon
+              </div>
+              <div ng-repeat="desc in book.azDescription" id="book-descriptionText">
+                {{desc}}
+                  <div class="spacer10px"></div>
+                  <div id="spacerLine"></div>
+                  <div class="spacer10px"></div>
+              </div>
             </div>
-            <div id="book-descriptionText">
-              {{book.googDescription}}
-            </div>
-          </div>
-          <div class="spacer10px"></div>
-          <div id="spacerLine"></div>
-          <div class="spacer10px"></div>
-          <div ng-if="book.azDescription.length">
-            <div id="book-descSource">
-              Amazon
-            </div>
-            <div ng-repeat="desc in book.azDescription" id="book-descriptionText">
-              {{desc}}
-                <div class="spacer10px"></div>
-                <div id="spacerLine"></div>
-                <div class="spacer10px"></div>
-            </div>
-          </div>
+          </div> <!-- /end slideable -->
         </div> <!-- /end col -->
       </div> <!-- /end row -->
-    </div>
+    </div> <!-- /end description -->
     <div class="spacer10px"></div>
 
 
