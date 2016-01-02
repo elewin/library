@@ -55,6 +55,11 @@ module.exports = {
                   if (value === true) foundBook.numOwnBook++;
                   if (value === false) foundBook.numOwnBook--;
                 }
+                if (property === 'rating'){
+                  foundBook.totalScore += value;
+                  foundBook.numReviews++;
+                }
+
                 //save the result:
                 foundBook.save().then(function(){
                   return res.status(200).end();
@@ -292,6 +297,7 @@ module.exports = {
         //get their stats so we can adjust the global counters:
         var own = books[bookToRemoveIndex].book.own;
         var status = books[bookToRemoveIndex].book.status;
+        var rating = books[bookToRemoveIndex].book.rating;
 
         books.splice(bookToRemoveIndex, 1); //remove the book at the index where it was found
         library.save().then(function(theLibrary){ //save the result
@@ -300,7 +306,11 @@ module.exports = {
             theBook.numOwners--;
             if(own) theBook.numOwnBook--; //if the user owned this book, decrement the counter
             if(status === 'read') theBook.numRead--;
-            if(status === 'reading') theBook.numCurrentlyReading--;            
+            if(status === 'reading') theBook.numCurrentlyReading--;
+            if(rating > 0){ //if the user has made a rating, remove that score 
+              theBook.totalScore -= rating;
+              theBook.numReviews --;
+            }
 
             theBook.save().then(function(){
               return res.status(204).end();

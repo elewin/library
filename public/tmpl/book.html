@@ -12,8 +12,25 @@
           <div id="book-bookSubtitle">{{book.subtitle}}</div>
         </div>
         <span id="book-authors" ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span>
+
         <div id="spacerLine"></div>
+
         <div id="book-stats">
+
+          <!-- review score -->
+          <div ng-if="avgScorePct">
+            <div id="book-ratingStars">
+              <div id="book-bookScorePctFill" style="width:{{avgScorePct}}%;">
+                <img id="bookScorePctImg" src="img/stars/5stars.png" />
+              </div>
+            </div>
+            Average rating: {{avgRating}}/5 ({{book.numReviews}} reviews)
+          </div>
+          <div ng-if="avgScorePct == false">
+            No reviews
+          </div>
+
+          <!-- general info -->
           <div ng-if="book.length">
             {{book.length}} pages
           </div>
@@ -66,9 +83,7 @@
           <div>
             {{book.numCurrentlyReading}} users are currently reading this book
           </div>
-          <div>
-            Average rating: {{avgRating}} ({{book.numReviews}} reviews)
-          </div>
+
 
 
         </div>
@@ -136,11 +151,11 @@
       <div class="spacer10px"></div>
       <div class="row" id="book-ownerControls">
         <div class="col-xs-12">
-          <div class="col-sm-4">
-            <div ng-if="userBook.own==true" id="book-controlsOwn">
+          <div class="col-sm-4" id="book-controlsOwn">
+            <div ng-if="userBook.own==true" id=>
               <a href="" ng-click="editBook(currentUser.library, book._id, 'own', false)"><img id="book-check" src="img/check.png" /> You own this book</a>
             </div>
-            <div ng-if="userBook.own==false" id="book-controlsOwn">
+            <div ng-if="userBook.own==false">
                <a href="" ng-click="editBook(currentUser.library, book._id, 'own', true)"><img id="book-check" src="img/x.png" /> You do not own this book </a>
             </div>
           </div>
@@ -156,9 +171,21 @@
             </div>
           </div>
           <div class="col-sm-4">
-            3
+            <div id="book-ratingInput">
+              <span class="rating">
+                <input type="radio" ng-model="newReviewScore" ng-value="5" class="rating-input" id="rating-input-1-5" name="rating-input-1" ng-click="starRating(newReviewScore)"/>
+                <label for="rating-input-1-5" class="rating-star"></label>
+                <input type="radio" ng-model="newReviewScore" ng-value="4" class="rating-input" id="rating-input-1-4" name="rating-input-1"/ ng-click="starRating(newReviewScore)">
+                <label for="rating-input-1-4" class="rating-star"></label>
+                <input type="radio" ng-model="newReviewScore" ng-value="3" class="rating-input" id="rating-input-1-3" name="rating-input-1"/ ng-click="starRating(newReviewScore)">
+                <label for="rating-input-1-3" class="rating-star"></label>
+                <input type="radio" ng-model="newReviewScore" ng-value="2" class="rating-input" id="rating-input-1-2" name="rating-input-1"/ ng-click="starRating(newReviewScore)">
+                <label for="rating-input-1-2" class="rating-star"></label>
+                <input type="radio" ng-model="newReviewScore" ng-value="1" class="rating-input" id="rating-input-1-1" name="rating-input-1"/ ng-click="starRating(newReviewScore)">
+                <label for="rating-input-1-1" class="rating-star"></label>
+              </span>
+            </div>
           </div>
-
         </div>
       </div> <!-- /end row -->
     </div> <!-- /end doesUserHaveBook -->

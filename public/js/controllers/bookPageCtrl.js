@@ -34,9 +34,19 @@ angular.module('library').controller('bookPageCtrl', function($scope, bookServic
   }
 
   //the average rating for this book
+  var avgRating = 0;
   if(bookRef.data.numReviews >0){
-    $scope.avgRating = bookRef.data.totalScore/bookRef.data.numReviews;
-  }else $scope.avgRating = 0;
+    avgRating = bookRef.data.totalScore/bookRef.data.numReviews;
+  }
+   $scope.avgScorePct = (avgRating/5)*100;
+   $scope.avgRating = avgRating.toFixed(2);
+
+   //handles when a user clicks a star to rate the book
+   $scope.starRating = function(score){
+     libraryService.editBookInLibrary(userRef.library, bookRef.data._id, 'rating', parseInt(score)).then(function(){
+       $state.go($state.current, {}, {reload: true}); //refresh page
+     });
+   };
 
   $scope.editBook = function(libraryId, bookId, property, value){
     libraryService.editBookInLibrary(libraryId, bookId, property, value).then(function(){
