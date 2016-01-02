@@ -1,4 +1,4 @@
-var app = angular.module('library', ['ui.router', 'permission', 'angularSlideables']);
+var app = angular.module('library', ['ui.router', 'permission', 'angularSlideables', 'angularUtils.directives.dirPagination']);
 
 app.run(function (Permission, userService, $q) {
 
@@ -104,6 +104,7 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
   //library view:
   .state('main.library', {
     url: 'library',
+    controller: 'libraryCtrl',
     data:{
       permissions: {
         only: ['user'],

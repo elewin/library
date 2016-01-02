@@ -1,0 +1,31 @@
+<div class="paginationControls" ng-if="1 < pages.length || !autoHide">
+  {{currentPage}}
+    <a href="" ng-click="setCurrent(1)">
+      <div id="paginationControlsButton" ng-if="boundaryLinks" ng-class="{ disabled : pagination.current == 1 }">
+        &laquo;
+      </div>
+    </a>
+    <a href="" ng-click="setCurrent(pagination.current - 1)">
+      <div id="paginationControlsButton" ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }">
+        &lsaquo;
+      </div>
+    </a>
+    <div id="paginationControlsRepeating" ng-repeat="pageNumber in pages track by tracker(pageNumber, $index)" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
+      <a href="" ng-click="setCurrent(pageNumber)">
+        <div id="paginationControlsButton">
+          {{ pageNumber }}
+        </div>
+      </a>
+    </div>
+
+    <a href="" ng-click="setCurrent(pagination.current + 1)">
+      <div id="paginationControlsButton" ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }">
+        &rsaquo;
+      </div>
+    </a>
+    <a href="" ng-click="setCurrent(pagination.last)">
+      <div id="paginationControlsButton" ng-if="boundaryLinks"  ng-class="{ disabled : pagination.current == pagination.last }">
+        &raquo;
+      </div>
+    </a>
+</div>

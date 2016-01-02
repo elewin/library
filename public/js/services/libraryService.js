@@ -34,6 +34,7 @@ angular.module('library').service('libraryService', function($stateParams, $http
     });
   };
 
+  //returns a promise
   this.getUserLibrary = function(userId){
     return $http({
       method: 'GET',
