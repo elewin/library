@@ -79,41 +79,60 @@
             <div class="col-sm-12 hidden-xs">
               <!-- if the book was in the database, parse it this way: -->
               <div ng-if="book.type=='db'">
-
-                <div class="col-sm-3">
-                  <img src="{{book.data.coverArtUrl.medium}}" class="pull-right"/>
-                </div>
-                <div class="col-sm-9">
-                  <div id="search-Title">
-                    {{book.data.title}}
+                <a ui-sref="main.book({isbn:book.data.isbn})">
+                  <div class="col-sm-3">
+                    <img src="{{book.data.coverArtUrl.medium}}" class="pull-right"/>
                   </div>
-                  <div ng-if="book.data.subtitle" id="search-Subtitle">
-                    {{book.data.subtitle}}
-                  </div>
-                  <div id="search-authors">
-                    <span ng-repeat="author in book.data.authors">{{author}}{{$last ? '' : ', '}}</span>
-                  </div>
-                  <div id="search-publishInfo" ng-if="book.data.publisher">
-                    Published {{book.data.publishDate}} by {{book.data.publisher}}<span ng-if="book.data.publishPlaces.length"><span ng-repeat="place in book.data.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span></span>
-                  </div>
-                  <div>
-                    <span id="search-pages" ng-if="book.data.length">{{book.data.length}} pages, </span id="search-isbn">ISBN: {{book.data.isbn}}</span>
-                  </div>
-
-
-
-                </div> <!-- /end col -->
-
-
+                  <div class="col-sm-9">
+                    <div id="search-Title">
+                      {{book.data.title}}
+                    </div>
+                    <div ng-if="book.data.subtitle" id="search-Subtitle">
+                      {{book.data.subtitle}}
+                    </div>
+                    <div id="search-authors">
+                      <span ng-repeat="author in book.data.authors">{{author}}{{$last ? '' : ', '}}</span>
+                    </div>
+                    <div id="search-publishInfo" ng-if="book.data.publisher">
+                      Published {{book.data.publishDate}} by {{book.data.publisher}}<span ng-if="book.data.publishPlaces.length"><span ng-repeat="place in book.data.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span></span>
+                    </div>
+                    <div id="search-pages">
+                      <span ng-if="book.data.length">{{book.data.length}} pages, </span>ISBN: {{book.data.isbn}}</span>
+                    </div>
+                    <div ng-if="book.data.inLibrary" id="search-inLibrary">
+                      <img id="search-bookIcon" src="img/openbook.png" /> In your collection
+                    </div>
+                  </div> <!-- /end col -->
+                </a>              
               </div> <!-- /end db -->
 
               <!-- if the book was from amazon, parse it this way: -->
               <div ng-if="book.type=='az'">
-                {{book.type}}
+                <a href="book.data.ItemAttributes[0].ISBN[0]"> <!-- book page sim link here -->
+                  <div class="col-sm-3">
+                    <img src="{{book.data.MediumImage[0].URL[0]}}" class="pull-right"/>
+                  </div>
+                  <div class="col-sm-9">
+                    <div id="search-Title">
+                      {{book.data.ItemAttributes[0].Title[0]}}
+                    </div>
+                    <div id="search-authors">
+                      <span ng-repeat="author in book.data.ItemAttributes[0].Author">{{author}}{{$last ? '' : ', '}}</span>
+                    </div>
+                    <div id="search-publishInfo" ng-if="book.data.ItemAttributes[0].Publisher">
+                      Published {{book.data.ItemAttributes[0].PublicationDate[0]}} by {{book.data.ItemAttributes[0].Publisher[0]}}
+                    </div>
+                    <div id="search-pages">
+                      <span ng-if="book.data.ItemAttributes[0].NumberOfPages">{{book.data.ItemAttributes[0].NumberOfPages[0]}} pages, </span>ISBN: {{book.data.ItemAttributes[0].ISBN[0]}}</span>
+                    </div>
+                  </div> <!-- /end col -->
+                </a>
               </div> <!-- /end az -->
 
             </div> <!-- /end col -->
+
           </div> <!-- /end row -->
+          <div class="spacer10px"></div>
 
         </div> <!-- /end search results paginate -->
 
@@ -121,6 +140,19 @@
 
       </div> <!-- /end col -->
     </div> <!-- /end row -->
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="pageControlsBox" class="text-center">
+          <dir-pagination-controls
+
+            max-size="5"
+            direction-links="true"
+            boundary-links="true"
+            template-url="./tmpl/dirPagination.tpl.html">
+          </dir-pagination-controls>
+        </div>
+      </div>
+    </div>
   </div> <!-- /end ng-if -->
 
 

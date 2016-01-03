@@ -154,9 +154,7 @@ module.exports = {
       var deferred = q.defer();
       //if a user is logged in, flag any books that are already in their book collection:
       if(req.user){
-        console.log('req.user.library', req.user.library);
         libraryCtrl.getIsbnArr(req.user.library).then(function(isbnArr){
-          console.log('isbnArr', isbnArr);
           for (var i = 0; i < dbSearchResult.length; i++){
             if(isbnArr.indexOf(dbSearchResult[i].isbn) >= 0){ //check if this book is already in our library
               dbSearchResult[i].inLibrary = true; //set the flag to true
