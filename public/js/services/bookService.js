@@ -71,7 +71,7 @@ angular.module('library').service('bookService', function($stateParams, $http) {
   //   });
   // };
 
-  this.unifiedSearchForBook = function(searchParam, searchTerm){
+  this.searchForBook = function(searchParam, searchTerm){
     console.log('searching for '+searchParam+": " +searchTerm);
     return $http({
       method: 'GET',

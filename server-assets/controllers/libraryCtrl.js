@@ -181,32 +181,6 @@ module.exports = {
     });
   },
 
-  //DEPRECATED:
-  // // old method, took data object in the PUT request:
-  // // data: {
-  // //   books: {
-  // //     book: {bookData: bookId},
-  // //   }
-  // // },
-  // addBookToLibrary: function(req, res){
-  //
-  //   var newBookObj = req.body.books; //this is the object of our new book, assigning it req.body.books will include bookData which is a ref to the book we are adding
-  //   newBookObj.book.bookCollectionId = req.body.books.book.bookData; //here we are filling in the bookId field with the book's ID from the main book collection. This is so we can more easily search for this book ID later (eg, when searching for this book in the case of removing it from the library. The _id of this book being created right now will refer to the book within the user's library, not the book within the main book colleciton. Mixing up these two elsewhere will lead to problems that may be difficult to notice/debug)
-  //
-  //   console.log('newBookObj', newBookObj);
-  //
-  //   Library.findById(req.params.id).exec().then(function(library){ //find the target library
-  //     var books = library.books; //the array of books in the library
-  //     books.push(newBookObj); //add the new book to the array of books
-  //     return library.save().then(function(theLibrary){ //save the library with our new book in it
-  //       return res.json(theLibrary);
-  //     });
-  //   }).catch(function(err){ //uh-oh
-  //     return res.status(400).json(err);
-  //   });
-  // },
-
-
   //this takes a query of either bookId or isbn and adds that book to the user's library. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
   addBookToLibrary: function(req, res){
     var libraryId = req.params.id;

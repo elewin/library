@@ -109,7 +109,7 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
   };
 
   $scope.unifiedSearchForBook = function(searchParam, searchTerm){
-    bookService.unifiedSearchForBook(searchParam, searchTerm).then(function(result){
+    bookService.searchForBook(searchParam, searchTerm).then(function(result){
       $scope.unifiedSearchResults = result.data;
     });
   };

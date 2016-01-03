@@ -437,6 +437,65 @@ div
     font-size: 15px;
 }
 
+/*home view */
+#home-searchBox
+{
+}
+
+#home-bookSearchInput
+{
+}
+
+#home-searchButton
+{
+}
+
+#home-greeting
+{
+    font-size: 20px;
+}
+
+#home-libIcon
+{
+    height: 20px;
+    position: relative;
+    bottom: 2px;
+}
+
+#home-libraryLink
+{
+    font-size: 20px;
+}
+
+#home-greeting-sm
+{
+    font-size: 15px;
+}
+
+#home-libIcon-sm
+{
+    height: 12px;
+    position: relative;
+    bottom: 2px;
+}
+
+#home-libraryLink-sm
+{
+    font-size: 15px;
+}
+
+#home-bookSearchForm
+{
+}
+
+#home-selectSearchBox
+{
+}
+
+#home-searchBookOptionBox
+{
+}
+
 /* star rating */
 .rating
 {

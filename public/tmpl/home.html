@@ -1,16 +1,103 @@
 <div class="home-splash">
     <span>Book Collector</span>
 </div>
-<div ng-if="hasUserRole">
+<div class="spacer10px"></div>
+<div class="container">
+  <div class="row hidden-xs" ng-if="currentUser">
+    <div class="col-sm-6">
+      <div id="home-greeting">
+        Hi, {{currentUser.name}}
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div id="home-libraryLink" class="text-right">
+        <a ui-sref="main.library"><img id="home-libIcon" src="img/openbook.png" /> Your Collection</a>
+      </div>
+    </div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+  </div>
+
+  <div class="row hidden-sm hidden-md hidden-lg" ng-if="currentUser">
+    <div class="col-xs-6">
+      <div id="home-greeting-sm">
+        Hi, {{currentUser.name}}
+      </div>
+    </div>
+    <div class="col-xs-6">
+      <div id="home-libraryLink-sm" class="text-right">
+        <a ui-sref="main.library"><img id="home-libIcon-sm" src="img/openbook.png" /> Your Collection</a>
+      </div>
+    </div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <form name="bookSearchForm" id="home-bookSearchForm">
+
+
+
+        <div id="home-searchBookSelectBox">
+          <select id="searchBookOptionBox" ng-model="searchBookOption" ng-options="option.value as option.name for option in searchBookOptions" ng-init="searchBookOption = searchBookOptions[0].value">
+          </select>
+        </div>
+        <div id="home-searchBox">
+          <input type="text" ng-model="searchTerm" id="home-bookSearchInput" class="form-control" placeholder="Search for a book. . ." required/>
+        </div>
+
+
+        <div class="spacer10px"></div>
+        <div class="spacer10px"></div>
+        <div id="home-searchButton">
+          <button ng-disabled="bookSearchForm.$invalid"  class="center-block" ng-click="
+            searchForBook(searchBookOption, searchTerm);
+            searchResults = true;
+            resultsTerm = searchTerm;
+            resultsParam = searchBookOption;
+            searchTerm ='';
+          ">
+            Book Collector Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div> <!-- /end row -->
+
+  <!-- search results  -->
+  <div class="row">
+
+    <div ng-if="searchResults">
+      <div>{{searchResults.total}} results for {{resultsParam}}: {{resultsTerm}}</div>
+
+      
+
+
+
+    </div> <!-- /end ng-if -->
+
+
+
+
+
+
+
+  </div> <!-- /end row -->
+
+
+
+</div> <!-- /end container -->
+
+<!-- <div ng-if="hasUserRole">
   <a ui-sref="main.library">Library</a>
-</div>
+</div> -->
+<div class="spacer10px"></div>
 <div ng-if="hasAdminRole">
+  <hr>
   <a ui-sref="main.admin">Admin</a>
 </div>
-Books:
-<ul>
-  <li ng-repeat="book in books">
-      <a ui-sref="main.book({isbn:book.isbn})"><img src="{{book.coverArtUrl.small}}">
-      {{book.title}} by <span ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span> (ISBN: {{book.isbn}})</a>
-  </li>
-</ul>
