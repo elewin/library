@@ -2,6 +2,28 @@ var Library = require('../models/librarySchema');
 var User = require('../models/userSchema');
 var Book = require('../models/bookSchema');
 var userCtrl = require('./userCtrl');
+var q = require('q'); //promises library
+
+//given a library and a bookId, returns a promise true or false if the book is in the book array of the given library
+function findDuplicate(libraryId, bookId){
+  bookId = bookId.toString(); //cast bookId to string if we are given an ObjectId
+  var deferred = q.defer();
+  var duplicate = false;
+  Library.findById(libraryId).populate('books.book.bookData').exec().then(function(library){
+    for (var i =0; i < library.books.length; i++){
+      if(library.books[i].book.bookData._id.toString() === bookId){ //compare bookIds to those in the library
+        duplicate = true;
+        deferred.resolve(true);
+      }
+    }
+    if (!duplicate){
+      deferred.resolve(false);
+    }
+  }).catch(function(err){
+    console.log('libraryCtrl.addBookToLibrary findDuplicate() error while searching for duplicates:', err);
+  });
+  return deferred.promise;
+}
 
 
 module.exports = {
@@ -96,6 +118,7 @@ module.exports = {
     } else return res.status(401).end();
   },
 
+  //this is now redundant given the findDuplicate() function above, ill refactor this later to use it
   //checks if a user has a book in his/her library, returns a bool
   doesUserHaveBook: function(req, res){
     var libraryId = req.params.id;
@@ -183,7 +206,7 @@ module.exports = {
   //   });
   // },
 
-  //***later, secure this by checking if use is admin, and if not only allow this to go through if this library id matches that which belongs to the logged in user id
+
   //this takes a query of either bookId or isbn and adds that book to the user's library. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
   addBookToLibrary: function(req, res){
     var libraryId = req.params.id;
@@ -199,30 +222,39 @@ module.exports = {
         }
       };
       //now find the library we need to add the book to
-        if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
-          Library.findById(libraryId).exec().then(function(library){
-          var books = library.books; //the array of books in the library that we will be adding to
-          books.push(bookObj); //add the new book to the array of books
-          return library.save().then(function(){ //save the library with our new book in it
-            Book.findById(bookId).exec().then(function(thisBook){
-              thisBook.numOwners++; //increment the number of owners of this book
-              thisBook.save().then(function(){
-                return res.status(201).end();
-              }).catch(function(err){
-                console.log('libraryCtrl.addBookToLibrary/addBook on thisBook.save():', err);
+
+      findDuplicate(libraryId, bookId).then(function(duplicate){
+        if(!duplicate){
+          if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
+            Library.findById(libraryId).exec().then(function(library){
+              var books = library.books; //the array of books in the library that we will be adding to
+              books.push(bookObj); //add the new book to the array of books
+              return library.save().then(function(){ //save the library with our new book in it
+                Book.findById(bookId).exec().then(function(thisBook){
+                  thisBook.numOwners++; //increment the number of owners of this book
+                  thisBook.save().then(function(){
+                    return res.status(201).end();
+                  }).catch(function(err){
+                    console.log('libraryCtrl.addBookToLibrary/addBook on thisBook.save():', err);
+                  });
+                }).catch(function(err){
+                  console.log('libraryCtrl.addBookToLibrary error finding book numOwners', err);
+                });
+              }).catch(function(err){ //something broke
+                console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', err, JSON.stringify(err,null,2));
+                return res.status(500).json(err);
               });
-            }).catch(function(err){
-              console.log('libraryCtrl.addBookToLibrary error finding book numOwners', err);
+            }).catch(function(err){ //uh-oh
+              console.log('libraryCtrl.addBookToLibrary/addBook: ', err, JSON.stringify(err,null,2));
+              return res.status(400).json(err);
             });
-          }).catch(function(err){ //something broke
-            console.log('libraryCtrl.addBookToLibrary/addBook on library.save(): ', err, JSON.stringify(err,null,2));
-            return res.status(500).json(err);
-          });
-        }).catch(function(err){ //uh-oh
-          console.log('libraryCtrl.addBookToLibrary/addBook: ', err, JSON.stringify(err,null,2));
-          return res.status(400).json(err);
-        });
-      } else return res.status(401).end();
+          } else return res.status(401).end();
+        }else{
+          return res.status(409).end(); //this is a duplicate
+        }
+      }).catch(function(err){
+        console.log('libraryCtrl.addBookToLibrary error after searching for duplicates', err);
+      });
     };
 
     //if we're passed an ISBN, then we will look up the book that corosponds to it and then add that book to the library
@@ -307,7 +339,7 @@ module.exports = {
             if(own) theBook.numOwnBook--; //if the user owned this book, decrement the counter
             if(status === 'read') theBook.numRead--;
             if(status === 'reading') theBook.numCurrentlyReading--;
-            if(rating > 0){ //if the user has made a rating, remove that score 
+            if(rating > 0){ //if the user has made a rating, remove that score
               theBook.totalScore -= rating;
               theBook.numReviews --;
             }
