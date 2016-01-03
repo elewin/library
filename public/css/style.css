@@ -14,6 +14,11 @@ div
     height: 10px;
 }
 
+#spacerLine
+{
+    border: 1px solid #D1D1D1;
+}
+
 /* main */
 .main-header
 {
@@ -80,6 +85,40 @@ div
 }
 
 /*book view*/
+#book-splashTitle
+{
+    font-size: 70px;
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 2px;
+    font-family: 'News Cycle', sans-serif;
+    line-height: 0.8;
+    text-align: right;
+    right: 0px;
+}
+
+#book-splashTextBox
+{
+    height: 131px;
+    width: 595px;
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
+    font-size: 0px;
+}
+
+#book-splash
+{
+    height: 1220px;
+    overflow: hidden;
+    box-shadow: 0px 2px 2px #B3B3B3;
+    height: 200px;
+    min-width: 320px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/bookshelf.jpg);
+    background-size: cover;
+    position: relative;
+}
+
 .book-pageContent
 {
     line-height: normal;
@@ -114,11 +153,6 @@ div
 #book-authors
 {
     font-size: 20px;
-}
-
-#spacerLine
-{
-    border: 1px solid #D1D1D1;
 }
 
 #book-stats
@@ -265,6 +299,30 @@ div
 }
 
 /* library view */
+#library-splash span
+{
+    font-size: 70px;
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 2px;
+    font-family: 'News Cycle', sans-serif;
+    line-height: 0.8;
+    text-align: right;
+    right: 0px;
+}
+
+#library-splash
+{
+    height: 1220px;
+    overflow: hidden;
+    box-shadow: 0px 2px 2px #B3B3B3;
+    height: 200px;
+    min-width: 320px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(../img/bookshelf.jpg);
+    background-size: cover;
+    position: relative;
+}
+
 #library-book a
 {
     color: #484848;
@@ -278,15 +336,19 @@ div
 #library-bookList
 {
     background-color: #E7E7E7;
-    padding: 3px;
+    padding: 5px;
     border: 1px solid #727272;
     box-shadow: 0px 2px 2px #B3B3B3;
-    font-weight: bold;
 }
 
 #library-bookCoverImg
 {
     width: 51px;
+}
+
+#library-bookCoverImg-lg
+{
+    width: 105px;
 }
 
 #library-bookCover
@@ -305,20 +367,34 @@ div
     background-image: ;
 }
 
+#library-bookTitle-lg
+{
+    font-size: 20px;
+    line-height: 1;
+    background-image: ;
+}
+
 #library-bookSubtitle
 {
     font-size: 12px;
-    line-height: 1;
+    line-height: 1.3;
+}
+
+#library-bookSubtitle-lg
+{
+    font-size: 16px;
+    line-height: 1.3;
 }
 
 #library-bookAuthors
 {
-    line-height: 1;
+    line-height: 1.3;
 }
 
-#library-bookStatus
+#library-bookAuthors-lg
 {
-    line-height: 1;
+    line-height: 1.3;
+    font-size: 17px;
 }
 
 #library-check
@@ -326,6 +402,28 @@ div
     position: relative;
     bottom: 2px;
     height: 12px;
+}
+
+#library-check-lg
+{
+    position: relative;
+    bottom: 2px;
+}
+
+#library-bookStatus
+{
+    line-height: 1.3;
+}
+
+#library-bookStatus-lg
+{
+    line-height: 1.3;
+    font-size: 17px;
+}
+
+#library-header
+{
+    font-size: 25px;
 }
 
 /* star rating */
@@ -368,7 +466,7 @@ div
 /* pagination controls */
 #paginationControlsButton
 {
-    padding: 6px 12px;
+    padding: 10px 15px;
     line-height: 1.42857143;
     text-decoration: none;
     color: #428BCA;

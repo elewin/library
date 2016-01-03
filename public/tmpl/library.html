@@ -1,64 +1,130 @@
+<div id="library-splash" class="hidden-xs">
+    <span>Your Collection</span>
+</div>
 <div class="spacer10px"></div>
 <div class="container">
+  <div id="library-header" class="hidden-sm hidden-md hidden-lg">
+    Your Collection
+  </div>
+
+
   <div class="row" >
 
-    <!-- books column -->
-    <div class="col-sm-12 col-md-6" >
+    <!-- books column, small -->
+    <div class="col-xs-12 hidden-sm hidden-md hidden-lg" id="library-bookList">
+        <div dir-paginate="thisBook in library.books | filter: q | itemsPerPage: 6" pagination-id="small" id="library-book">
+          <div class="row" >
+            <a ui-sref="main.book({isbn:thisBook.book.bookData.isbn})">
+              <div id="library-bookCover" class="col-xs-3">
+                <div class="pull-right">
+                  <img src="{{thisBook.book.bookData.coverArtUrl.small}}" id="library-bookCoverImg" />
+                </div>
+              </div>
+              <div id="library-bookInfo" class="col-xs-9">
+                <div id="library-bookTitle">
+                  {{thisBook.book.bookData.title}}
+                </div>
+                <div ng-if="thisBook.book.bookData.subtitle" id="library-bookSubtitle">
+                  {{thisBook.book.bookData.subtitle}}
+                </div>
+                <div id="library-bookAuthors">
+                  <span ng-repeat="author in thisBook.book.bookData.authors">{{author}}{{$last ? '' : ', '}}</span>
+                </div>
+                <div id="library-bookStatus">
+                  <div ng-if="thisBook.book.status=='read'">
+                      <img id="library-check" src="img/check.png" /> Read
+                  </div>
+                  <div ng-if="thisBook.book.status=='unread'">
+                      <img id="library-check" src="img/x.png" /> Unread
+                  </div>
+                  <div ng-if="thisBook.book.status=='reading'">
+                      <img id="library-check" src="img/openbook.png" /> Current
+                  </div>
 
-      <div dir-paginate="thisBook in library.books | filter: q | itemsPerPage: 6" id="library-book">
-        <div class="row" >
-          <a ui-sref="main.book({isbn:thisBook.book.bookData.isbn})">
-            <div id="library-bookCover" class="col-xs-3">
-              <div class="pull-right">
-                <img src="{{thisBook.book.bookData.coverArtUrl.small}}" id="library-bookCoverImg" />
-              </div>
-            </div>
-            <div id="library-bookInfo" class="col-xs-9">
-              <div id="library-bookTitle">
-                {{thisBook.book.bookData.title}}
-              </div>
-              <div ng-if="thisBook.book.bookData.subtitle" id="library-bookSubtitle">
-                {{thisBook.book.bookData.subtitle}}
-              </div>
-              <div id="library-bookAuthors">
-                <span ng-repeat="author in thisBook.book.bookData.authors">{{author}}{{$last ? '' : ', '}}</span>
-              </div>
-              <div id="library-bookStatus">
-                <div ng-if="thisBook.book.status=='read'">
-                    <img id="library-check" src="img/check.png" /> Read
                 </div>
-                <div ng-if="thisBook.book.status=='unread'">
-                    <img id="library-check" src="img/x.png" /> Unread
-                </div>
-                <div ng-if="thisBook.book.status=='reading'">
-                    <img id="library-check" src="img/openbook.png" /> Current
-                </div>
-
               </div>
-            </div>
-          </a>
-        </div>
-        <div class="spacer10px"></div>
-      </div> <!-- /end ng-repeat books -->
+            </a>
+          </div>
+          <div class="spacer10px"></div>
+        </div> <!-- /end ng-repeat books -->
+    </div> <!-- /end books col -->
+  </div> <!-- /end row -->
+  <div class="spacer10px"></div>
+  <div class="row">
+    <div class="col-xs-12 hidden-sm hidden-md hidden-lg">
       <div id="pageControlsBox" class="text-center">
         <dir-pagination-controls
+          pagination-id="small"
           max-size="5"
           direction-links="true"
           boundary-links="true"
           template-url="./tmpl/dirPagination.tpl.html">
         </dir-pagination-controls>
       </div>
-    </div> <!-- /end books col -->
-
-    <!-- stats column -->
-    <div class="col-xs-12 col-md-6">
-      Total books:
-      Books owned:
-      Books read:
-      Books unread:
-      Books reading:
-    </div> <!-- /end stats column-->
-
+    </div>
   </div> <!-- /end row -->
 
+  <!-- books column, large -->
+  <div class="col-sm-12 hidden-xs" id="library-bookList">
+      <div dir-paginate="thisBook in library.books | filter: q | itemsPerPage: 10" pagination-id="large" id="library-book">
+        <div class="row" >
+          <a ui-sref="main.book({isbn:thisBook.book.bookData.isbn})">
+            <div id="library-bookCover" class="col-xs-3">
+              <div class="pull-right">
+                <img src="{{thisBook.book.bookData.coverArtUrl.medium}}" id="library-bookCoverImg-lg" />
+              </div>
+            </div>
+            <div id="library-bookInfo" class="col-xs-9">
+              <div id="library-bookTitle-lg">
+                {{thisBook.book.bookData.title}}
+              </div>
+              <div ng-if="thisBook.book.bookData.subtitle" id="library-bookSubtitle-lg">
+                {{thisBook.book.bookData.subtitle}}
+              </div>
+              <div id="library-bookAuthors-lg">
+                <span ng-repeat="author in thisBook.book.bookData.authors">{{author}}{{$last ? '' : ', '}}</span>
+              </div>
+
+              <div id="library-bookStatus-lg">
+                <div ng-if="thisBook.book.own==true">
+                    <img id="library-check-lg" src="img/check.png" /> You own this book
+                </div>
+                <div ng-if="thisBook.book.own==false">
+                    <img id="library-check-lg" src="img/x.png" /> You do not own this book
+                </div>
+                <div ng-if="thisBook.book.status=='read'">
+                    <img id="library-check-lg" src="img/check.png" /> You have read this book
+                </div>
+                <div ng-if="thisBook.book.status=='unread'">
+                    <img id="library-check-lg" src="img/x.png" /> You have not read this book
+                </div>
+                <div ng-if="thisBook.book.status=='reading'">
+                    <img id="library-check-lg" src="img/openbook.png" /> You are currently reading this book
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="spacer10px"></div>
+      </div> <!-- /end ng-repeat books -->
+  </div> <!-- /end books col -->
+</div> <!-- /end row -->
+<div class="spacer10px"></div>
+<div class="row">
+  <div class="col-sm-12 hidden-xs">
+    <div id="pageControlsBox" class="text-center">
+      <dir-pagination-controls
+        pagination-id="large"
+        max-size="5"
+        direction-links="true"
+        boundary-links="true"
+        template-url="./tmpl/dirPagination.tpl.html">
+      </dir-pagination-controls>
+    </div>
+  </div>
+</div> <!-- /end row -->
+
+
+
 </div> <!-- /end container -->
+<div class="spacer10px"></div>
