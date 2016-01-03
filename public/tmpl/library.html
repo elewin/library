@@ -7,11 +7,16 @@
     Your Collection
   </div>
 
+  <div id="library-searchBox">
+    <input ng-model="q" id="librarySearchInput" class="form-control" placeholder="Search your collection. . .">
+  </div>
 
   <div class="row" >
-
     <!-- books column, small -->
     <div class="col-xs-12 hidden-sm hidden-md hidden-lg" id="library-bookList">
+      <div ng-if="library.books.length==0" id="library-empty">
+        Your collection is empty. Add some books to begin building your collection!
+      </div>
         <div dir-paginate="thisBook in library.books | filter: q | itemsPerPage: 6" pagination-id="small" id="library-book">
           <div class="row" >
             <a ui-sref="main.book({isbn:thisBook.book.bookData.isbn})">
@@ -66,6 +71,9 @@
 
   <!-- books column, large -->
   <div class="col-sm-12 hidden-xs" id="library-bookList">
+    <div ng-if="library.books.length==0" id="library-empty">
+      Your collection is empty. Add some books to begin building your collection!
+    </div>
       <div dir-paginate="thisBook in library.books | filter: q | itemsPerPage: 10" pagination-id="large" id="library-book">
         <div class="row" >
           <a ui-sref="main.book({isbn:thisBook.book.bookData.isbn})">
@@ -123,6 +131,29 @@
     </div>
   </div>
 </div> <!-- /end row -->
+<!-- <div class="row">
+  <div class="col-xs-12" id="library-bookList">
+    <div>
+      {{numBooks}} total books
+    </div>
+    <div>
+      {{numOwned}} books owned
+    </div>
+    <div>
+      {{numRead}} books read
+    </div>
+    <div>
+      {{numUnread}} books unread
+    </div>
+    <div>
+      {{numReading}} books currently reading
+    </div>
+    <div>
+      {{numRated}} books rated
+    </div>
+  </div>
+</div> -->
+
 
 
 
