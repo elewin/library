@@ -153,6 +153,7 @@ app.get('/api/auth/fb/logout', authCtrl.logout);
 app.get('/api/books/all', requireAuth, requireAdmin, bookCtrl.getAllBooks); //should only be used for dev/admin/debugging purposes
 app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn> //********secure this later!!! leaving it unsecured now for dev
 app.get('/api/books/search',  bookCtrl.search); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
+app.get('/api/books/amazon', bookCtrl.getAzBookByIsbn); //get as search result from the amazon products api given an isbn, eg ?isbn=123456789
 //app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);

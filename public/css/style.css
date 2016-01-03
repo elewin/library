@@ -550,6 +550,16 @@ div
     font-size: 15px;
 }
 
+#search-filterBox
+{
+    width: 118px;
+}
+
+#search-resultStats
+{
+    line-height: 1.3px;
+}
+
 /* star rating */
 .rating
 {

@@ -101,6 +101,19 @@ app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
       },
     }
   })
+  .state('main.bookPreview', {
+    url: 'bookPreview?:isbn',
+    controller: 'bookPreviewPageCtrl',
+    templateUrl: './tmpl/bookPreview.html',
+    resolve: {
+      bookRef: function(bookService, $stateParams){
+        return bookService.getAzBookByIsbn($stateParams.isbn);
+      },
+      userRef: function(userService, $stateParams){
+        return userService.getCurrentUser();
+      },
+    }
+  })
   //library view:
   .state('main.library', {
     url: 'library',

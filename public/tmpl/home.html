@@ -71,7 +71,15 @@
 
   <!-- search results  -->
   <div ng-if="searchResults">
-    <div>{{searchResults.data.length}} results for {{resultsParam}}: {{resultsTerm}}</div>
+    <div id="search-filterBox">
+      <input ng-model="q" id="search-filterhInput" class="form-control" placeholder="Filter results. . .">
+    </div>
+    <div class="spacer10px"></div>
+    <div id="search-resultStats">
+      {{searchResults.data.length}} results for {{resultsParam}}: {{resultsTerm}}
+    </div>
+    <div class="spacer10px"></div>
+    <div class="spacer10px"></div>
     <div class="row">
       <div class="col-sm-12">
         <div dir-paginate="book in searchResults.data | filter: q | itemsPerPage: 3" id="search-resultsBox">
@@ -103,12 +111,12 @@
                       <img id="search-bookIcon" src="img/openbook.png" /> In your collection
                     </div>
                   </div> <!-- /end col -->
-                </a>              
+                </a>
               </div> <!-- /end db -->
 
               <!-- if the book was from amazon, parse it this way: -->
               <div ng-if="book.type=='az'">
-                <a href="book.data.ItemAttributes[0].ISBN[0]"> <!-- book page sim link here -->
+                <a ui-sref="main.bookPreview({isbn:book.data.ItemAttributes[0].ISBN[0]})"> 
                   <div class="col-sm-3">
                     <img src="{{book.data.MediumImage[0].URL[0]}}" class="pull-right"/>
                   </div>

@@ -284,6 +284,17 @@ module.exports = {
   //   });
   // },
 
+  //get a book from the amazon api given an isbn
+  getAzBookByIsbn: function(req, res){
+    var isbn = req.query.isbn;
+    amazonCtrl.isbnSearch(isbn).then(function(result){
+      return res.send(result);      
+    }).catch(function(err){
+      console.log('getAzBookByIsbn:', err);
+      return res.status(500).end();
+    });
+  },
+
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
     //see if a library was specified to add this book to after its been added to the main book collection:

@@ -1,0 +1,131 @@
+<div id="book-splash" class="hidden-xs">
+  <div id="book-splashTextBox">
+    <div id="book-splashTitle">{{book.title}}</div>
+  </div>
+</div>
+<div class="book-pageContent" >
+  <div class="spacer10px"></div>
+  <div class="container" >
+    <div>
+      <a ui-sref='main.home'>&#171; Home</a>
+    </div>
+    <div class="row" id="book-bookDisplay">
+      <div class="col-xs-12 col-sm-5">
+        <a href="{{book.amazonUrl}}"><img id="book-bookCover" class="center-block" src="{{book.coverArtUrl.large}}" /></a>
+
+      </div>
+      <div class="col-xs-12 col-sm-7">
+        <div>
+          <div id="book-bookTitle">{{book.title}}</div>
+        </div>
+        <span id="book-authors" ng-repeat="author in book.authors">{{author}}{{$last ? '' : ', '}}</span>
+
+        <div id="spacerLine"></div>
+
+        <div id="book-stats">
+
+          <div>
+            No reviews
+          </div>
+
+          <!-- general info -->
+          <div ng-if="book.length">
+            {{book.length}} pages
+          </div>
+          <div>
+            Published {{book.publishDate}} by {{book.publisher}}
+          </div>
+          <div ng-if="book.lang">
+            Language: {{book.lang}}
+          </div>
+
+          <div>
+            ISBN: {{book.isbn}}
+          </div>
+          <div>
+            0 users have this book in their collection
+          </div>
+          <div>
+            0 users own this book
+          </div>
+          <div>
+            0 users have read this book
+          </div>
+          <div>
+            0 users are currently reading this book
+          </div>
+
+
+
+        </div>
+        <div id="spacerLine"></div>
+        <div id="book-links">
+          <a href="{{book.amazonUrl}}">See this book on Amazon.com</a>
+        </div>
+        <div id="book-links">
+          <a href="{{book.googBooksUrl}}">See this book on Google Books</a>
+        </div>
+        <div id="spacerLine"></div>
+
+        <div ng-if="currentUser==false" id="book-noUser">
+          <a href='/api/auth/fb/login'>Login to add this to your collection!</a>
+        </div>
+
+        <!-- this only displays to a logged in user -->
+        <div ng-if="currentUser" id="book-bookInLib">
+          <div>
+            <span id="book-addLink">
+              <a  href="" ng-click="addToLibrary(currentUser.library, book._id)">Add this book to your collection</a>
+            </span>
+          </div>
+          <div id="book-userOwn">
+            <div id="book-ownership">
+              <div >
+                You currnetly do not own this book. <a href="{{book.amazonUrl}}">Get it from Amazon</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /end ng-if currentUser -->
+
+
+
+      </div> <!-- end of 2nd col -->
+    </div> <!-- end of row -->
+
+    <!-- descriptions here  -->
+    <div ng-if="book.azDescription.length">
+      <div class="spacer10px"></div>
+      <div class="row" id="book-descriptions">
+        <div class="col-xs-12">
+          <span slide-toggle="#showReviews">
+            <span id="book-descriptionHeader">
+              <span ng-hide="showDescription"><a href="" ng-click="showDescription=true">Synopsis +</a></span>
+              <span ng-show="showDescription"><a href="" ng-click="showDescription=false">Synopsis -</a></span>
+            </span>
+          </span>
+          <div id="spacerLine"></div>
+          <div id="showReviews" class="slideable">
+            <div class="spacer10px"></div>
+            <div id="spacerLine"></div>
+            <div class="spacer10px"></div>
+            <div ng-if="book.azDescription.length">
+              <div id="book-descSource">
+                Amazon
+              </div>
+              <div ng-repeat="desc in book.azDescription" id="book-descriptionText">
+                {{desc}}
+                  <div class="spacer10px"></div>
+                  <div id="spacerLine"></div>
+                  <div class="spacer10px"></div>
+              </div>
+            </div>
+          </div> <!-- /end slideable -->
+        </div> <!-- /end col -->
+      </div> <!-- /end row -->
+    </div> <!-- /end description -->
+    <div class="spacer10px"></div>
+
+
+  </div> <!-- /end container -->

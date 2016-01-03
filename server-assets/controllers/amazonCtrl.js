@@ -59,6 +59,24 @@ module.exports = {
     return deferred.promise;
   },
 
+  //get a from the amazon products api given an ISBN, returns a promise
+  isbnSearch: function(isbn){
+    var deferred = q.defer();
+
+    client.itemLookup({
+      idType: 'ISBN',
+      itemId: isbn,
+      responseGroup: 'ItemAttributes,Images,EditorialReview'
+    }).then(function(results) {
+      deferred.resolve(results);
+    }).catch(function(err){
+      console.log('amazonCtrl.isbnSearch error:', err);
+      deferred.reject();
+    });
+    return deferred.promise;
+
+  },
+
   //takes a book object (that should have already been processed by the google books API) and updates its properties with data from the Amazon Products API and returns a promise
   updateFromAmazon : function(book){
     return q.Promise(function(resolve, reject){

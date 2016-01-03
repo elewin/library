@@ -7,11 +7,19 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
-  //need to refactor end point to use this
+
   this.getBook = function(isbn){
     return $http({
       method: 'GET',
       url: '/api/books?isbn='+isbn
+    });
+  };
+
+
+  this.getAzBookByIsbn = function(isbn){
+    return $http({
+      method: 'GET',
+      url: '/api/books/amazon?isbn='+isbn,
     });
   };
 
