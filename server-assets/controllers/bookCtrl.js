@@ -125,68 +125,166 @@ function dbSearch(searchParam, searchTerm){
 
 module.exports = {
 
-  //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword)
-  unifiedSearch: function(req, res){
+  //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword). Returns an object containing an array of objects of both search results
+  search: function(req, res){
     var searchParam = req.query.param; //our search paramater
     var searchTerm = req.query.term;   //our search term
-    var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
+    var isbnArr = []; // this will be an array of ISBNs of the results returned from our db search, so that we can easily filter out duplicates from the amazon search later
+    var outputArr = []; //the array of our final output of search results
 
-    //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out
+    //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out:
     searchTerm = filterString(searchTerm, "'");
 
     //search our books collection
-    dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
-      for (var j = 0; j < dbSearchResult.length; j++){
+    dbSearch(searchParam, searchTerm)
+    .then(function(dbSearchResult){
+      var dbLength = dbSearchResult.length;
+      for (var j = 0; j < dbLength; j++){
         //add these ISBNs to our isbnArr to compare against after we get the reuslts back from the amazon api search
-        if (dbSearchResult[j].isbn13 !== 'None'){
+        if (dbSearchResult[j].isbn13 !== 'None'){ //dont add the default string 'None' to the isbn array
           isbnArr.push(dbSearchResult[j].isbn13);
         }
         if (dbSearchResult[j].isbn10 !== 'None'){
           isbnArr.push(dbSearchResult[j].isbn10);
         }
-
       }
       return dbSearchResult;
+
     }).then(function(dbSearchResult){
-      //search the amazon api
+      var deferred = q.defer();
+      //if a user is logged in, flag any books that are already in their book collection:
+      if(req.user){
+        console.log('req.user.library', req.user.library);
+        libraryCtrl.getIsbnArr(req.user.library).then(function(isbnArr){
+          console.log('isbnArr', isbnArr);
+          for (var i = 0; i < dbSearchResult.length; i++){
+            if(isbnArr.indexOf(dbSearchResult[i].isbn) >= 0){ //check if this book is already in our library
+              dbSearchResult[i].inLibrary = true; //set the flag to true
+            } else{
+               dbSearchResult[i].inLibrary = false; //if not, then set it to false
+             }
+          }
+          deferred.resolve(dbSearchResult);
+        }).catch(function(err){
+          console.log('bookCtrl.search error calling getIsbnArr: ', err); //something messed up, but this is not eseential to returning search results so we can continue without it
+          deferred.resolve(dbSearchResult);
+        });
+
+      } else deferred.resolve(dbSearchResult); //if there is no user logged in, then continue on
+
+      return deferred.promise;
+
+    }).then(function(dbSearchResult){
+      //then search the amazon api
       azSearch(searchParam, searchTerm).then(function(azSearchResult){
 
-        //clean up data:
-        var arrLength = azSearchResult.length;
+        //clean up the data (remove null ISBNs and duplicates already returned by the database search):
+        var arrLength = azSearchResult.length; //the length will change as we iterate through the array so we need to save it first
         for ( var i = arrLength-1; i >= 0; i--){
           //remove results without an ISBN (our entire system is built around ISBN lookups so these books are not able to be added to our book collection, plus these are often garbage results of out of print/unavailable books or oddball editions anyway)
           if(!azSearchResult[i].ItemAttributes[0].ISBN){ //if there is no ISBN. . .
              azSearchResult.splice(i,1); //. . . then remove this element
-           }
-           else{ //if there is an ISBN present, check if we already returned that result from the db search. If so, remove it:
-             if(isbnArr.indexOf(azSearchResult[i].ItemAttributes[0].ISBN[0]) > -1){
+          }
+          else{ //if there is an ISBN present, check if we already returned that result from the db search. If so, remove it:
+            if(isbnArr.indexOf(azSearchResult[i].ItemAttributes[0].ISBN[0]) > -1){
                azSearchResult.splice(i,1); //remove this element since it already exists in the db
-             }
-           }
+            }
+          }
         }
 
-        //now that the data is cleaned up and we have filtered out duplicates, lets build our final results object:
-        var azCount = azSearchResult.length;
-        var dbCount = dbSearchResult.length;
-        var unifiedResult = {
-          db : dbSearchResult,
-          dbCount: dbCount,
-          az: azSearchResult,
-          azCount: azCount,
-          total:  dbCount+azCount,
+        //now that the data is cleaned up and we have filtered out duplicates, lets build our final results array:
+        for (i = 0; i < dbSearchResult.length; i++){
+          outputArr.push({
+            type: 'db', //this tells us that it is a database search result (so the front end knows how to parse it)
+            data: dbSearchResult[i]
+          });
+        }
+        for (i = 0; i < azSearchResult.length; i++){ //(this is not the same length as arrLength, because that was from before we removed duplicates)
+          outputArr.push({
+            type: 'az', //this tells us that it is an amazon search result
+            data: azSearchResult[i]
+          });
+        }
+        var resultsObj = {
+          data: outputArr,
         };
 
-        return res.json(unifiedResult); //return the result
+        return res.json(resultsObj); //return the result
 
       }).catch(function(azErr){ //error handling for amazon search
-        console.log('bookCtrl.unifiedSearch: ', JSON.stringify(azErr,null,2));
+        console.log('bookCtrl.search: ', azErr, JSON.stringify(azErr,null,2));
         return res.status(500).end();
       });
     }).catch(function(err){ //error handling
-      console.log('bookCtrl.unifiedSearch: ', JSON.stringify(err,null,2));
+      console.log('bookCtrl.search: ', err, JSON.stringify(err,null,2));
       return res.status(500).end();
     });
   },
+
+
+  //deprecated, use search()
+  //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword)
+  // unifiedSearch: function(req, res){
+  //   var searchParam = req.query.param; //our search paramater
+  //   var searchTerm = req.query.term;   //our search term
+  //   var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
+  //
+  //   //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out
+  //   searchTerm = filterString(searchTerm, "'");
+  //
+  //   //search our books collection
+  //   dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
+  //     for (var j = 0; j < dbSearchResult.length; j++){
+  //       //add these ISBNs to our isbnArr to compare against after we get the reuslts back from the amazon api search
+  //       if (dbSearchResult[j].isbn13 !== 'None'){
+  //         isbnArr.push(dbSearchResult[j].isbn13);
+  //       }
+  //       if (dbSearchResult[j].isbn10 !== 'None'){
+  //         isbnArr.push(dbSearchResult[j].isbn10);
+  //       }
+  //
+  //     }
+  //     return dbSearchResult;
+  //   }).then(function(dbSearchResult){
+  //     //search the amazon api
+  //     azSearch(searchParam, searchTerm).then(function(azSearchResult){
+  //
+  //       //clean up data:
+  //       var arrLength = azSearchResult.length;
+  //       for ( var i = arrLength-1; i >= 0; i--){
+  //         //remove results without an ISBN (our entire system is built around ISBN lookups so these books are not able to be added to our book collection, plus these are often garbage results of out of print/unavailable books or oddball editions anyway)
+  //         if(!azSearchResult[i].ItemAttributes[0].ISBN){ //if there is no ISBN. . .
+  //            azSearchResult.splice(i,1); //. . . then remove this element
+  //          }
+  //          else{ //if there is an ISBN present, check if we already returned that result from the db search. If so, remove it:
+  //            if(isbnArr.indexOf(azSearchResult[i].ItemAttributes[0].ISBN[0]) > -1){
+  //              azSearchResult.splice(i,1); //remove this element since it already exists in the db
+  //            }
+  //          }
+  //       }
+  //
+  //       //now that the data is cleaned up and we have filtered out duplicates, lets build our final results object:
+  //       var azCount = azSearchResult.length;
+  //       var dbCount = dbSearchResult.length;
+  //       var unifiedResult = {
+  //         db : dbSearchResult,
+  //         dbCount: dbCount,
+  //         az: azSearchResult,
+  //         azCount: azCount,
+  //         total:  dbCount+azCount,
+  //       };
+  //
+  //       return res.json(unifiedResult); //return the result
+  //
+  //     }).catch(function(azErr){ //error handling for amazon search
+  //       console.log('bookCtrl.unifiedSearch: ', JSON.stringify(azErr,null,2));
+  //       return res.status(500).end();
+  //     });
+  //   }).catch(function(err){ //error handling
+  //     console.log('bookCtrl.unifiedSearch: ', JSON.stringify(err,null,2));
+  //     return res.status(500).end();
+  //   });
+  // },
 
   //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
   addBookByIsbn: function(req, res) {
@@ -230,6 +328,8 @@ module.exports = {
                     libraryCtrl.addBookToLibrary(reqObj, res);
                   }
                   return res.status(201).end(); //good to go
+
+                //error handling:
                 }).catch(function(err){
                   console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
                   return res.status(500).end();
@@ -261,6 +361,7 @@ module.exports = {
     });
   },
 
+  //this really should only be used for debugging and admin purposes
   getAllBooks:  function(req, res) {
     Book.find(req.query).exec().then(function(docs) {
       return res.json(docs);
@@ -285,16 +386,7 @@ module.exports = {
     });
   },
 
-  // deprecated?
-  // getBook: function(req, res){
-  //   console.log('wtf');
-  //   Book.findById(req.params.id, function(err){
-  //     return res.json(docs);
-  //   }).catch(function(err) {
-  //     return res.status(400).json(err);
-  //   });
-  // },
-
+  //edits the property on a book, currently not used on the frontend but I'll keep it here in case I need it later
   editBook: function(req, res) {
     Book.findByIdAndUpdate(req.params.id, req.body, {new: true}).exec().then(function(doc) {
       return res.json(doc);
@@ -304,6 +396,7 @@ module.exports = {
     });
   },
 
+  //deletes a book from the main book collection
   deleteBook: function(req, res) {
 
     //get the book data for the deletion history
@@ -320,9 +413,8 @@ module.exports = {
         if(err){
           res.status(400).json(err);
         } else {
-
           Library.find({'books.book.bookData': req.params.id}).exec().then(function(docs) {
-            //loop through the libraries that contain this book and splice it out
+            //loop through the libraries that contain this book and splice it out: (I feel like there should be a more efficient way to do this, I'll have to revisit this later)
             for (var i = 0; i < docs.length; i++){
               for(var j = 0; j< docs[i].books.length; j++){
                 if (docs[i].books[j].book.bookData == req.params.id){ // == instead of === is on purpose here!

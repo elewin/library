@@ -70,16 +70,58 @@
   </div> <!-- /end row -->
 
   <!-- search results  -->
-  <div class="row">
+  <div ng-if="searchResults">
+    <div>{{searchResults.data.length}} results for {{resultsParam}}: {{resultsTerm}}</div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div dir-paginate="book in searchResults.data | filter: q | itemsPerPage: 3" id="search-resultsBox">
+          <div class="row">
+            <div class="col-sm-12 hidden-xs">
+              <!-- if the book was in the database, parse it this way: -->
+              <div ng-if="book.type=='db'">
 
-    <div ng-if="searchResults">
-      <div>{{searchResults.total}} results for {{resultsParam}}: {{resultsTerm}}</div>
+                <div class="col-sm-3">
+                  <img src="{{book.data.coverArtUrl.medium}}" class="pull-right"/>
+                </div>
+                <div class="col-sm-9">
+                  <div id="search-Title">
+                    {{book.data.title}}
+                  </div>
+                  <div ng-if="book.data.subtitle" id="search-Subtitle">
+                    {{book.data.subtitle}}
+                  </div>
+                  <div id="search-authors">
+                    <span ng-repeat="author in book.data.authors">{{author}}{{$last ? '' : ', '}}</span>
+                  </div>
+                  <div id="search-publishInfo" ng-if="book.data.publisher">
+                    Published {{book.data.publishDate}} by {{book.data.publisher}}<span ng-if="book.data.publishPlaces.length"><span ng-repeat="place in book.data.publishPlaces">{{$first ? ',' : ''}} {{place}}{{$last ? '' : ', '}}</span></span>
+                  </div>
+                  <div>
+                    <span id="search-pages" ng-if="book.data.length">{{book.data.length}} pages, </span id="search-isbn">ISBN: {{book.data.isbn}}</span>
+                  </div>
 
-      
+
+
+                </div> <!-- /end col -->
+
+
+              </div> <!-- /end db -->
+
+              <!-- if the book was from amazon, parse it this way: -->
+              <div ng-if="book.type=='az'">
+                {{book.type}}
+              </div> <!-- /end az -->
+
+            </div> <!-- /end col -->
+          </div> <!-- /end row -->
+
+        </div> <!-- /end search results paginate -->
 
 
 
-    </div> <!-- /end ng-if -->
+      </div> <!-- /end col -->
+    </div> <!-- /end row -->
+  </div> <!-- /end ng-if -->
 
 
 
@@ -87,7 +129,7 @@
 
 
 
-  </div> <!-- /end row -->
+
 
 
 

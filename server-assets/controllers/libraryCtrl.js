@@ -118,6 +118,23 @@ module.exports = {
     } else return res.status(401).end();
   },
 
+  //returns an array of ISBNs within a given library (we can use this elsewhere to do an indexOf check to check if a book already exists in a library, such as in bookCtrl.search())
+  getIsbnArr: function(libraryId){
+    var deferred = q.defer();
+    var isbnArr = []; //results array
+    Library.findById(libraryId).populate('books.book.bookData').exec() //find the given library and populate it
+    .then(function(library){
+      for (var i =0; i < library.books.length; i++){
+        isbnArr.push(library.books[i].book.bookData.isbn); //add the isbn to the array
+      }
+      deferred.resolve(isbnArr); //return the array
+    }).catch(function(err){
+      console.log('libraryCtrl.getIsbnArr error:', err);
+      deferred.reject();
+    });
+    return deferred.promise;
+  },
+
   //this is now redundant given the findDuplicate() function above, ill refactor this later to use it
   //checks if a user has a book in his/her library, returns a bool
   doesUserHaveBook: function(req, res){

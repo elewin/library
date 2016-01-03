@@ -35,6 +35,7 @@ var bookSchema = new mongoose.Schema({
   numCurrentlyReading: {type: Number, default: 0}, //the number of people who have marked this book as being currently read
   numReviews : {type: Number, default: 0}, //the number of reviews this book has gotten
   totalScore : {type: Number, default: 0}, //total score based off of reviews
+  inLibrary: {type: Boolean, default: false}, //used in search results
 });
 
 module.exports = mongoose.model('Book',bookSchema);

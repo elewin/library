@@ -2,11 +2,8 @@ angular.module('library').controller('homeCtrl', function($scope, bookService, u
 
  $scope.currentUser = userRef;
 
-  bookService.getAllBooks().then(function (books){
-    $scope.books = books.data;
-  });
-
-  $scope.searchBookOptions = [ //search paramaters
+  //search paramaters
+  $scope.searchBookOptions = [
   	{
   		name: 'Title',
   		value: 'title',
@@ -16,7 +13,7 @@ angular.module('library').controller('homeCtrl', function($scope, bookService, u
   		value: 'author',
   	},
     {
-  		name: 'Keyword',
+  		name: 'Keyword  ',
   		value: 'keywords',
   	},
   ];

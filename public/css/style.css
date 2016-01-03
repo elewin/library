@@ -496,6 +496,27 @@ div
 {
 }
 
+/*search results */
+#search-resultsBox
+{
+    line-height: 1.3;
+}
+
+#search-Title
+{
+    font-size: 20px;
+}
+
+#search-Subtitle
+{
+    font-style: italic;
+}
+
+#search-authors
+{
+    font-size: 15px;
+}
+
 /* star rating */
 .rating
 {
