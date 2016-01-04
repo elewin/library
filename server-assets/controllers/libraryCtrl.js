@@ -272,7 +272,7 @@ module.exports = {
     var libraryId = req.params.libraryId;
     //security to make sure a user can only get their own library (unless admin)
     if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
-      Library.findOne(libraryId).populate('books.book.bookData').exec()
+      Library.findById(libraryId).populate('books.book.bookData').exec()
       .then(function(library){
         var books = library.books; //this is the array of books in this library
         var foundBookIndex = -1; //we need to find where in the books array the book we're looking for is located
