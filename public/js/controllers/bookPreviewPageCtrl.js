@@ -1,9 +1,12 @@
-angular.module('library').controller('bookPreviewPageCtrl', function($scope, userRef, bookRef, $state) {
+angular.module('library').controller('bookPreviewPageCtrl', function($scope, userRef, bookRef, bookService, $state) {
+
 
   $scope.currentUser = userRef;
 
-  $scope.addToLibrary = function(userId, isbn){
-    //add combo add fn here
+  $scope.addToLibrary = function(isbn){
+    bookService.comboAdd(userRef.library, isbn).then(function(){
+      $state.go('main.book', {'isbn': isbn});
+    });
   };
 
   //here we format the data to mimic the same structure used elsewhere for consistency
@@ -32,6 +35,7 @@ angular.module('library').controller('bookPreviewPageCtrl', function($scope, use
 
   if(book.ItemAttributes){
     if (book.ItemAttributes[0].ISBN) $scope.book.isbn = book.ItemAttributes[0].ISBN[0];
+    if (!book.ItemAttributes[0].ISBN) $scope.book.isbn =  book.ItemAttributes[0].EISBN[0];
     if (book.ItemAttributes[0].Title) $scope.book.title = book.ItemAttributes[0].Title[0];
     if (book.ItemAttributes[0].Author) $scope.book.authors = book.ItemAttributes[0].Author;
     if (book.ItemAttributes[0].Edition) $scope.book.edition = book.ItemAttributes[0].Edition[0];

@@ -62,9 +62,6 @@
         <div id="book-links">
           <a href="{{book.amazonUrl}}">See this book on Amazon.com</a>
         </div>
-        <div id="book-links">
-          <a href="{{book.googBooksUrl}}">See this book on Google Books</a>
-        </div>
         <div id="spacerLine"></div>
 
         <div ng-if="currentUser==false" id="book-noUser">
@@ -75,7 +72,7 @@
         <div ng-if="currentUser" id="book-bookInLib">
           <div>
             <span id="book-addLink">
-              <a  href="" ng-click="addToLibrary(currentUser.library, book._id)">Add this book to your collection</a>
+              <a href="" ng-click="addToLibrary(book.isbn)">Add this book to your collection</a>
             </span>
           </div>
           <div id="book-userOwn">

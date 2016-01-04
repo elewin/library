@@ -288,7 +288,7 @@ module.exports = {
   getAzBookByIsbn: function(req, res){
     var isbn = req.query.isbn;
     amazonCtrl.isbnSearch(isbn).then(function(result){
-      return res.send(result);      
+      return res.send(result);
     }).catch(function(err){
       console.log('getAzBookByIsbn:', err);
       return res.status(500).end();
@@ -326,15 +326,10 @@ module.exports = {
                   //if we are also going to add this book to a user's library:
                   if(libraryAdd){
                     //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
-                    var reqObj = {
-                      params: {
-                        id: req.query.libraryId //the libraryId
-                      },
-                      query: {
-                        bookId: theBook._id //the _id of the book we just created
-                      }
-                    };
-                    libraryCtrl.addBookToLibrary(reqObj, res);
+                    req.params.id = req.query.libraryId;
+                    req.query.bookId = theBook._id;
+
+                    libraryCtrl.addBookToLibrary(req, res);
                   }
                   return res.status(201).end(); //good to go
 

@@ -200,11 +200,11 @@ module.exports = {
 
   //this takes a query of either bookId or isbn and adds that book to the user's library. eg: /api/library/:id/add?isbn=9780142004371 or /api/library/:id/add?bookId=1234567890abc
   addBookToLibrary: function(req, res){
+    console.log('libraryId', req.params.id);
     var libraryId = req.params.id;
 
     // this function will add the book with bookId to the library passed in req.params.id
     var addBook = function(bookId){
-
       //this is the object of the book which we will add to our library
       var bookObj = {
         book: {
@@ -213,7 +213,6 @@ module.exports = {
         }
       };
       //now find the library we need to add the book to
-
       findDuplicate(libraryId, bookId).then(function(duplicate){
         if(!duplicate){
           if (req.user && (req.user.library === libraryId || req.user.roles.indexOf('admin') >=0)){
