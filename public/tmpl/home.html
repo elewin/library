@@ -82,7 +82,7 @@
     <div class="spacer10px"></div>
     <div class="row">
       <div class="col-sm-12">
-        <div dir-paginate="book in searchResults.data | filter: q | itemsPerPage: 3" id="search-resultsBox">
+        <div dir-paginate="book in searchResults.data | filter: q | itemsPerPage: 6" id="search-resultsBox">
           <div class="row">
             <div class="col-sm-12 hidden-xs">
               <!-- if the book was in the database, parse it this way: -->
@@ -116,7 +116,7 @@
 
               <!-- if the book was from amazon, parse it this way: -->
               <div ng-if="book.type=='az'">
-                <a ui-sref="main.bookPreview({isbn:book.data.ItemAttributes[0].ISBN[0]})"> 
+                <a ui-sref="main.bookPreview({isbn:book.data.ItemAttributes[0].ISBN[0]})">
                   <div class="col-sm-3">
                     <img src="{{book.data.MediumImage[0].URL[0]}}" class="pull-right"/>
                   </div>
@@ -138,6 +138,57 @@
               </div> <!-- /end az -->
 
             </div> <!-- /end col -->
+
+
+            <div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+              <!-- if the book was in the database, parse it this way: -->
+              <div ng-if="book.type=='db'">
+                <a ui-sref="main.book({isbn:book.data.isbn})">
+                  <div class="col-xs-6">
+                    <img src="{{book.data.coverArtUrl.medium}}" class="pull-right"/>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id="search-Title-sm">
+                      {{book.data.title}}
+                    </div>
+                    <div ng-if="book.data.subtitle" id="search-Subtitle-sm">
+                      {{book.data.subtitle}}
+                    </div>
+                    <div id="search-authors-sm">
+                      <span ng-repeat="author in book.data.authors">{{author}}{{$last ? '' : ', '}}</span>
+                    </div>
+                    <div id="search-pages-sm">
+                      <span ng-if="book.data.length">{{book.data.length}} pages
+                    </div>
+                    <div ng-if="book.data.inLibrary" id="search-inLibrary-sm">
+                      <img id="search-bookIcon-sm" src="img/openbook.png" /> In your collection
+                    </div>
+                  </div> <!-- /end col -->
+                </a>
+              </div> <!-- /end db -->
+
+              <!-- if the book was from amazon, parse it this way: -->
+              <div ng-if="book.type=='az'">
+                <a ui-sref="main.bookPreview({isbn:book.data.ItemAttributes[0].ISBN[0]})">
+                  <div class="col-xs-6">
+                    <img src="{{book.data.MediumImage[0].URL[0]}}" class="pull-right"/>
+                  </div>
+                  <div class="col-xs-6">
+                    <div id="search-Title-sm">
+                      {{book.data.ItemAttributes[0].Title[0]}}
+                    </div>
+                    <div id="search-authors-sm">
+                      <span ng-repeat="author in book.data.ItemAttributes[0].Author">{{author}}{{$last ? '' : ', '}}</span>
+                    </div>
+                    <div id="search-pages-sm">
+                      <span ng-if="book.data.ItemAttributes[0].NumberOfPages">{{book.data.ItemAttributes[0].NumberOfPages[0]}} pages
+                    </div>
+                  </div> <!-- /end col -->
+                </a>
+              </div> <!-- /end az -->
+
+            </div> <!-- /end col -->
+
 
           </div> <!-- /end row -->
           <div class="spacer10px"></div>

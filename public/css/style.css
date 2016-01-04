@@ -550,6 +550,44 @@ div
     font-size: 15px;
 }
 
+#search-Title-sm
+{
+    font-size: 20px;
+}
+
+#search-inLibrary-sm
+{
+    font-size: 12px;
+}
+
+#search-bookIcon-sm
+{
+    height: 12px;
+    position: relative;
+    bottom: 2px;
+}
+
+#search-Subtitle-sm
+{
+    font-style: italic;
+    font-size: 12px;
+}
+
+#search-authors-sm
+{
+    font-size: 12px;
+    color: ;
+}
+
+
+{
+    font-size: 15px;
+}
+#search-pages-sm
+{
+    font-size: 12px;
+}
+
 #search-filterBox
 {
     width: 118px;
