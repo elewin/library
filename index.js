@@ -30,27 +30,12 @@ mongoose.Promise = require('q').Promise; //replace mongo promises w/ q library
 var passport = require('passport'); //for OAuth
 var FacebookStrategy = require('passport-facebook'); //for oauth via facebook
 
-//dependencies unused in index.js but used elsewhere, listing for reference:
-// var request = require('request-promise'); //for making http requests
-// var amazon = require('amazon-product-api');
-// var graph = require('fbgraph'); //Facebook Graph API
-
 //controllers:
 var bookCtrl = require('./server-assets/controllers/bookCtrl');
 var userCtrl = require('./server-assets/controllers/userCtrl');
 var libraryCtrl = require('./server-assets/controllers/libraryCtrl');
 var authCtrl = require('./server-assets/controllers/authCtrl');
 var adminCtrl = require('./server-assets/controllers/adminCtrl');
-
-//controllers currently unused in index.js but used elsewhere, listing here for reference:
-//var googBooksCtrl = require('./server-assets/controllers/googBooksCtrl');
-//var amazonCtrl = require('./server-assets/controllers/amazonCtrl');
-//var goodreadsCtrl = require('./server-assets/controllers/goodreadsCtrl');
-
-//schema: (unused in index.js, listing for reference)
-// var Book = require('./server-assets/models/bookSchema');
-// var Library = require('./server-assets/models/librarySchema');
-// var User = require('./server-assets/models/userSchema');
 
 //addresses and ports:
 var serverPort = config.serverPort; //port for server to listen to
@@ -134,15 +119,6 @@ var requireAdmin = function(req,res,next){
   next();
 };
 
-//doesnt work yet, sends the user back to the login api endpoint instead of the page they were on before that
-// var returnUrl = function(req, res ,next){
-//   req.session.returnTo = req.url;
-//   console.log(req.originalUrl);
-//   console.log(req.route.path);
-//   console.log(req.session.returnTo);
-//   next();
-// };
-
 //API endpoints:
 //OAuth
 app.get('/api/auth/fb/login', authCtrl.authenticate);
@@ -151,10 +127,9 @@ app.get('/api/auth/fb/logout', authCtrl.logout);
 
 //books (these apply to the main book collection, not a particluar user's library. See library endpoints for that)
 app.get('/api/books/all', requireAuth, requireAdmin, bookCtrl.getAllBooks); //should only be used for dev/admin/debugging purposes
-app.get('/api/books',  bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn> //********secure this later!!! leaving it unsecured now for dev
+app.get('/api/books', bookCtrl.getBook); //gets a book given a query of ?isbn=<isbn>
 app.get('/api/books/search',  bookCtrl.search); //search both the database book collection and the amazon products API for a book. Eg api/books/search?param=title&term=iliad,
-app.get('/api/books/amazon', bookCtrl.getAzBookByIsbn); //get as search result from the amazon products api given an isbn, eg ?isbn=123456789
-//app.get('/api/books/:id', bookCtrl.getBook); //deprecated?
+app.get('/api/books/amazon', bookCtrl.getAzBookByIsbn); //get as search result from the amazon products api given an isbn, eg ?isbn=123456789 (used for book preview)
 app.post('/api/books', requireAuth, bookCtrl.addBookByIsbn); //adds a Book to the main book roster given an ISBN in the req.body. Can also take a query that will add it to a user's library afterward, eg /api/books?libraryId=0123456789abc
 app.put('/api/books/:id', requireAuth, requireAdmin, bookCtrl.editBook);
 app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //deletes the book from the database and then iterates through every library that contained a reference to it and removes that book from their books array
@@ -163,8 +138,6 @@ app.delete('/api/books/:id', requireAuth, requireAdmin, bookCtrl.deleteBook); //
 app.get('/api/users/isUserLoggedIn', userCtrl.isUserLoggedIn); //checks if a user is logged in, retruns a bool
 app.get('/api/users/currentUser',  requireAuth, userCtrl.getCurrentUser);
 app.get('/api/users', requireAuth, requireAdmin, userCtrl.getUsers);
-//app.get('/api/users/:id', userCtrl.getUser);
-//app.post('/api/users', requireAuth, userCtrl.addUser);
 app.put('/api/users/:id', requireAuth, userCtrl.editUser);
 app.delete('/api/users/:id', requireAuth, requireAdmin, userCtrl.deleteUser);
 
@@ -184,7 +157,6 @@ app.delete('/api/library/:id', requireAuth, requireAdmin, libraryCtrl.deleteLibr
 //admin
 app.post('/api/admin/createDb', requireAuth, requireAdmin, adminCtrl.createAdminDb);
 app.get('/api/admin/', requireAuth, requireAdmin, adminCtrl.getAdmin);
-
 
 
 //connect to database
