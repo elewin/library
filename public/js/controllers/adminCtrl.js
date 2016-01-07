@@ -186,22 +186,6 @@ angular.module('library').controller('adminCtrl', function($scope, bookService, 
 
   //library ******************************************************************
 
-  // unused, probably needs to be deleted
-  // var refreshUserLibrary = function(libraryId){
-  //   libraryService.getUserLibrary(libraryId).then(function(userLibrary){
-  //     $scope.userLibrary = userLibrary.data;
-  //   });
-  // };
-
-  // deprecated
-  // $scope.getUserLibrary = function(libraryId){
-  //   libraryService.getUserLibrary(libraryId).then(function(userLibrary){
-  //     $scope.userLibrary = userLibrary.data;
-  //     console.log('userLibrary:', userLibrary.data);
-  //
-  //   });
-  // };
-
 
   $scope.getUserLibrary = function(userId){
     return libraryService.getUserLibrary(userId).then(function(userLibrary){

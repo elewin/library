@@ -174,7 +174,8 @@ module.exports = {
 
     }).then(function(dbSearchResult){
       //then search the amazon api
-      azSearch(searchParam, searchTerm).then(function(azSearchResult){
+      azSearch(searchParam, searchTerm)
+      .then(function(azSearchResult){
 
         //clean up the data (remove null ISBNs and duplicates already returned by the database search):
         var arrLength = azSearchResult.length; //the length will change as we iterate through the array so we need to save it first
@@ -220,70 +221,6 @@ module.exports = {
   },
 
 
-  //deprecated, use search()
-  //searches both the database and the amazon products api for a given search term based on a given search paramater (title, author, keyword)
-  // unifiedSearch: function(req, res){
-  //   var searchParam = req.query.param; //our search paramater
-  //   var searchTerm = req.query.term;   //our search term
-  //   var isbnArr = []; // this will be an array of ISBNs of the hits returned from our db search, so that we can filter out duplicates from the amazon search
-  //
-  //   //the Amazon API freaks out if an apostrophe is in the search term, so we need to filter those out
-  //   searchTerm = filterString(searchTerm, "'");
-  //
-  //   //search our books collection
-  //   dbSearch(searchParam, searchTerm).then(function(dbSearchResult){
-  //     for (var j = 0; j < dbSearchResult.length; j++){
-  //       //add these ISBNs to our isbnArr to compare against after we get the reuslts back from the amazon api search
-  //       if (dbSearchResult[j].isbn13 !== 'None'){
-  //         isbnArr.push(dbSearchResult[j].isbn13);
-  //       }
-  //       if (dbSearchResult[j].isbn10 !== 'None'){
-  //         isbnArr.push(dbSearchResult[j].isbn10);
-  //       }
-  //
-  //     }
-  //     return dbSearchResult;
-  //   }).then(function(dbSearchResult){
-  //     //search the amazon api
-  //     azSearch(searchParam, searchTerm).then(function(azSearchResult){
-  //
-  //       //clean up data:
-  //       var arrLength = azSearchResult.length;
-  //       for ( var i = arrLength-1; i >= 0; i--){
-  //         //remove results without an ISBN (our entire system is built around ISBN lookups so these books are not able to be added to our book collection, plus these are often garbage results of out of print/unavailable books or oddball editions anyway)
-  //         if(!azSearchResult[i].ItemAttributes[0].ISBN){ //if there is no ISBN. . .
-  //            azSearchResult.splice(i,1); //. . . then remove this element
-  //          }
-  //          else{ //if there is an ISBN present, check if we already returned that result from the db search. If so, remove it:
-  //            if(isbnArr.indexOf(azSearchResult[i].ItemAttributes[0].ISBN[0]) > -1){
-  //              azSearchResult.splice(i,1); //remove this element since it already exists in the db
-  //            }
-  //          }
-  //       }
-  //
-  //       //now that the data is cleaned up and we have filtered out duplicates, lets build our final results object:
-  //       var azCount = azSearchResult.length;
-  //       var dbCount = dbSearchResult.length;
-  //       var unifiedResult = {
-  //         db : dbSearchResult,
-  //         dbCount: dbCount,
-  //         az: azSearchResult,
-  //         azCount: azCount,
-  //         total:  dbCount+azCount,
-  //       };
-  //
-  //       return res.json(unifiedResult); //return the result
-  //
-  //     }).catch(function(azErr){ //error handling for amazon search
-  //       console.log('bookCtrl.unifiedSearch: ', JSON.stringify(azErr,null,2));
-  //       return res.status(500).end();
-  //     });
-  //   }).catch(function(err){ //error handling
-  //     console.log('bookCtrl.unifiedSearch: ', JSON.stringify(err,null,2));
-  //     return res.status(500).end();
-  //   });
-  // },
-
   //get a book from the amazon api given an isbn
   getAzBookByIsbn: function(req, res){
     var isbn = req.query.isbn;
@@ -307,49 +244,29 @@ module.exports = {
     newBook.isbn = filterString(newBook.isbn, '-'); //Often ISBNs have dashes inserted for readability, so we need to strip those out
     var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
 
-    // (this could be cleaned up. need to go back and properly chain .then()s so its less callback-hellish)
     //make sure this is not a duplicate:
     Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
     .then(function(foundBook){
       if(!foundBook){
         if (goodIsbn){
-        //if (newBook.isbn.length >= 9 && !isNaN(newBook.isbn)){
-          googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){ //update properties form the Google Books API
-            newBook = book; //assign the book with the gathered google books info to the new book
-            openLibraryCtrl.updateFromOpenLibrary(newBook).then(function(olBook){
-              newBook = olBook;
-              amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
-                newBook = azBook;
-                newBook.save().then(function(theBook) { //save the book
-                  //console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
-
-                  //if we are also going to add this book to a user's library:
-                  if(libraryAdd){
-                    //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
-                    req.params.id = req.query.libraryId;
-                    req.query.bookId = theBook._id;
-
-                    libraryCtrl.addBookToLibrary(req, res);
-                  }
-                  return res.status(201).end(); //good to go
-
-                //error handling:
-                }).catch(function(err){
-                  console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
-                  return res.status(500).end();
-                });
-              }).catch(function(err) {
-                newBook.save();
-                console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', err, JSON.stringify(err,null,2));
-                return res.status(500).json(err);
-              });
-            }).catch(function(err) {
-              newBook.save();
-              console.log('bookCtrl.addBookByIsbn: updateFromOpenLibrary(newBook)', err, JSON.stringify(err,null,2));
-              return res.status(500).json(err);
-            });
+          googBooksCtrl.updateFromGoogleBooks(newBook) //update properties form the Google Books API
+          .then(function(book){
+            return openLibraryCtrl.updateFromOpenLibrary(book); //get book data from Open Library
+          }).then(function(book){
+            return amazonCtrl.updateFromAmazon(book); //call the amazon products api and update the book with the data returned
+          }).then(function(book){
+            return book.save(); //save the book
+          }).then(function(book) {
+            //if we are also going to add this book to a user's library: (depends on if there was a query string on req)
+            if(libraryAdd){
+              //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
+              req.params.id = req.query.libraryId;
+              req.query.bookId = book._id;
+              libraryCtrl.addBookToLibrary(req, res);
+            }
+            return res.status(201).end(); //good to go
           }).catch(function(err){
-            console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', err, JSON.stringify(err,null,2));
+            console.log('bookCtrl.addBookByIsbn error: ', err);
           });
         }else{
           //if the ISBN is invalid then return an error code
@@ -364,6 +281,78 @@ module.exports = {
       }
     });
   },
+
+
+  // this is the old ugly version. leaving this here for now in case the cleaned up one above breaks something
+  // //Adds a book given an ISBN and retrieves data from the gooble books API and the Amazon Products API.
+  // addBookByIsbn: function(req, res) {
+  //   //see if a library was specified to add this book to after its been added to the main book collection:
+  //   var libraryAdd = false;
+  //   if (req.query.libraryId){
+  //     libraryAdd = true;
+  //   }
+  //
+  //   var newBook = new Book(req.body); //req.body should be {isbn: <isbn number>}
+  //   newBook.isbn = filterString(newBook.isbn, '-'); //Often ISBNs have dashes inserted for readability, so we need to strip those out
+  //   var goodIsbn = checkIsbn(newBook.isbn); //check if the isbn meets the validity critera
+  //
+  //   // (this could be cleaned up. need to go back and properly chain .then()s so its less callback-hellish)
+  //   //make sure this is not a duplicate:
+  //   Book.findOne({$or:[{'isbn10' : newBook.isbn}, {'isbn13' : newBook.isbn}, {'isbn' : newBook.isbn}]}).exec()
+  //   .then(function(foundBook){
+  //     if(!foundBook){
+  //       if (goodIsbn){
+  //       //if (newBook.isbn.length >= 9 && !isNaN(newBook.isbn)){
+  //         googBooksCtrl.updateFromGoogleBooks(newBook).then(function(book){ //update properties form the Google Books API
+  //           newBook = book; //assign the book with the gathered google books info to the new book
+  //           openLibraryCtrl.updateFromOpenLibrary(newBook).then(function(olBook){
+  //             newBook = olBook;
+  //             amazonCtrl.updateFromAmazon(newBook).then(function(azBook){ //call the amazon products api and update the book with the data returned
+  //               newBook = azBook;
+  //               newBook.save().then(function(theBook) { //save the book
+  //                 //console.log(theBook.title, theBook.isbn, 'added to book collection with id:', theBook._id);
+  //
+  //                 //if we are also going to add this book to a user's library:
+  //                 if(libraryAdd){
+  //                   //set up the request object to pass to libraryCtrl.addBookToLibrary() in the format it expects (/api/library/:id/add?bookId=1234567890abc):
+  //                   req.params.id = req.query.libraryId;
+  //                   req.query.bookId = theBook._id;
+  //
+  //                   libraryCtrl.addBookToLibrary(req, res);
+  //                 }
+  //                 return res.status(201).end(); //good to go
+  //
+  //               //error handling:
+  //               }).catch(function(err){
+  //                 console.log('bookCtrl.addBookByIsbn: Could not save book after returning both updates', err);
+  //                 return res.status(500).end();
+  //               });
+  //             }).catch(function(err) {
+  //               newBook.save();
+  //               console.log('bookCtrl.addBookByIsbn: updateFromAmazon(newBook)', err, JSON.stringify(err,null,2));
+  //               return res.status(500).json(err);
+  //             });
+  //           }).catch(function(err) {
+  //             newBook.save();
+  //             console.log('bookCtrl.addBookByIsbn: updateFromOpenLibrary(newBook)', err, JSON.stringify(err,null,2));
+  //             return res.status(500).json(err);
+  //           });
+  //         }).catch(function(err){
+  //           console.log('bookCtrl.addBookByIsbn: updateFromGoogleBooks(newBook)', err, JSON.stringify(err,null,2));
+  //         });
+  //       }else{
+  //         //if the ISBN is invalid then return an error code
+  //         console.log('bad ISBN:', newBook.isbn);
+  //         return res.status(400).json();
+  //       }
+  //     }else { //if that ISBN already exists in our book roster:
+  //       {
+  //         console.log('Book already exists! ._id:', foundBook._id, 'ISBN:', foundBook.isbn10, '/', foundBook.isbn13);
+  //         return res.status(409).json({error: "Book already exists!"});
+  //       }
+  //     }
+  //   });
+  // },
 
   //this really should only be used for debugging and admin purposes
   getAllBooks:  function(req, res) {
@@ -405,7 +394,6 @@ module.exports = {
 
     //get the book data for the deletion history
     Book.findById(req.params.id).exec().then(function(book){
-
       var deletedBook = {
         isbn: book.isbn,
         name: book.title,
@@ -418,7 +406,7 @@ module.exports = {
           res.status(400).json(err);
         } else {
           Library.find({'books.book.bookData': req.params.id}).exec().then(function(docs) {
-            //loop through the libraries that contain this book and splice it out: (I feel like there should be a more efficient way to do this, I'll have to revisit this later)
+            //loop through the libraries that contain this book and splice it out of each one: (I feel like there should be a more efficient way to do this, I'll have to revisit this later)
             for (var i = 0; i < docs.length; i++){
               for(var j = 0; j< docs[i].books.length; j++){
                 if (docs[i].books[j].book.bookData == req.params.id){ // == instead of === is on purpose here!

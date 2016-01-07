@@ -1,7 +1,6 @@
 angular.module('library').controller('bookPageCtrl', function($scope, bookService, userService, libraryService, bookRef, userRef, $state) {
 
   $scope.book = bookRef.data;
-  console.log(userRef);
   $scope.currentUser = userRef;
 
   //check if there is a logged in user, if so get put the following on scope:
@@ -15,7 +14,6 @@ angular.module('library').controller('bookPageCtrl', function($scope, bookServic
         if(result.data){
           libraryService.getBookFromLibrary(userRef.library, bookRef.data._id).then(function(book){
             $scope.userBook = book.data; //the book from the user's book library, including their own personal info (own, read, notes, etc)
-            console.log($scope.userBook);
           });
         }
       });

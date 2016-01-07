@@ -36,41 +36,6 @@ module.exports = {
     });
   },
 
-  // deprecated, use getCurrentUser instead. May be useful for getting a single user for admin purposes later
-  // getUser: function(req, res){
-  //   User.findById(req.params.id, function(err, theUser){
-  //     if(err) {
-  //       res.status(400).json(err);
-  //     } else {
-  //         var options = {
-  //           path: 'library.books.book',
-  //           model: 'Book'
-  //         };
-  //         Book.populate(theUser, options, function(err, user){
-  //           if(err){
-  //             res.status(400).json(err);
-  //           } else {
-  //             res.json(user);
-  //           }
-  //         });
-  //     }
-  //   });
-  // },
-
-  //deprecated, findUserAndLogin should add users automatically
-  // addUser: function(req, res){
-  //   var newUser = new User(req.body);
-  //   newUser.library = new Library(); //instead of here
-  //   newUser.library.save();
-  //   newUser.save(function(err, result){
-  //     if(err){
-  //       res.status(400).json(err);
-  //     } else {
-  //       res.json(result);
-  //       //new librarty push here for multiple libraries later intead of stuff at top (call sep function)
-  //     }
-  //   });
-  // },
 
   //when a user logs in, search to see if their facebook id is already in the user database. if so, login as that user. if not, create a new user and library for them. Returns a promise.
   findUserAndLogin : function(token, profile){ //add refreshToken later if its needed

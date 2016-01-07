@@ -72,25 +72,6 @@ angular.module('library').service('userService', function($stateParams, $http, $
     return defer.promise;
   };
 
-  // DEPRECATED
-  // old version that did not check if there was a user logged in or not
-  // //returns a promise that resolves the currently logged in user
-  // this.getCurrentUser = function() {
-  //   var defer = $q.defer();
-  //   if (user) {  //if there is a user, resolve it
-  //     defer.resolve(user);
-  //   }
-  //   else { //there wasn't a user. . .
-  //     $http({
-  //       method: "GET",
-  //       url: "/api/users/currentUser"
-  //     }).then(function(response) {
-  //       user = response.data; //. . .but now there is
-  //       defer.resolve(response.data);
-  //     });
-  //   }
-  //   return defer.promise;
-  // };
 
   this.getUser = function(id){
     return $http({

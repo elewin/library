@@ -23,21 +23,6 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
-  // deprecated?
-  // this.getBook = function(id){
-  //   return $http({
-  //     method: 'GET',
-  //     url: '/api/books'+id,
-  //   });
-  // };
-
-  // this.lookUpIsbn = function(isbn){
-  //   console.log('looking up info for ISBN: ' + isbn );
-  //   return $http({
-  //     method: 'GET',
-  //     url: 'https://www.googleapis.com/books/v1/volumes?q=isbn:'+isbn,
-  //   })
-  // };
 
   this.deleteBook = function(id){
     console.log('attempting to delete book id:', id);
@@ -58,26 +43,6 @@ angular.module('library').service('bookService', function($stateParams, $http) {
     });
   };
 
-
-  // //deprecated, use unifiedSearch
-  // //searches the Amazon Products API for a book
-  // this.azSearchForBook = function(searchParam, searchTerm){
-  //   console.log('searching amazon for '+searchParam+": " +searchTerm);
-  //   return $http({
-  //     method: 'GET',
-  //     url: '/api/books/azSearch?param='+searchParam+'&term='+searchTerm,
-  //   });
-  // };
-  //
-  // //deprecated, use unifiedSearch
-  // //searches our database for a book
-  // this.dbSearchForBook = function(searchParam, searchTerm){
-  //   console.log('searching db for '+searchParam+": " +searchTerm);
-  //   return $http({
-  //     method: 'GET',
-  //     url: '/api/books/dbSearch?param='+searchParam+'&term='+searchTerm,
-  //   });
-  // };
 
   this.searchForBook = function(searchParam, searchTerm){
     console.log('searching for '+searchParam+": " +searchTerm);
